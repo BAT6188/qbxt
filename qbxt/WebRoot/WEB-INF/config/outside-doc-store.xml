@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<doctype> 
+  <!-- 技侦情报、十二局信息 -->  
+  <first-type> 
+    <element>技侦情报</element>  
+    <element>十二局信息</element>  
+    <element>\u8463\u660a</element>  
+    <element>军队文档</element>
+  </first-type> 
+</doctype>

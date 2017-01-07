@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<entry key="profiler.settings.instrument.empty.methods">true</entry>
+<entry key="ProfilerCPUSettings_profile_runnables">true</entry>
+<entry key="profiler.settings.n.profiled.threads.limit">32</entry>
+<entry key="ProfilerCPUSettings_filter_type">2</entry>
+<entry key="profiler.settings.obj.alloc.stack.sampling.depth">-1</entry>
+<entry key="profiler.settings.instrument.method.invoke">true</entry>
+<entry key="profiler.settings.instr.scheme">1</entry>
+<entry key="ProfilerMemorySettings_mode">4</entry>
+<entry key="ProfilerMemorySettings_track_every">10</entry>
+<entry key="ProfilerCPUSettings_root_classes">com.ushine.cluster.es.**
+com.ushine.cluster.hbase.**
+com.ushine.cluster.hdfs.**
+com.ushine.cluster.hive.test.**
+com.ushine.common.config.**
+com.ushine.common.db.**
+com.ushine.common.inteceptor.**
+com.ushine.common.listener.**
+com.ushine.common.utils.**
+com.ushine.common.vo.**
+com.ushine.core.cache.**
+com.ushine.core.controller.**
+com.ushine.core.init.**
+com.ushine.core.po.**
+com.ushine.core.relolver.**
+com.ushine.core.service.**
+com.ushine.core.verify.**
+com.ushine.dao.**
+com.ushine.init.**
+com.ushine.shss.controller.**
+com.ushine.shss.eimport.controller.**
+com.ushine.shss.eimport.listener.**
+com.ushine.shss.eimport.po.**
+com.ushine.shss.eimport.service.**
+com.ushine.shss.eimport.test.**
+com.ushine.shss.eimport.timer.**
+com.ushine.shss.init.**
+com.ushine.shss.model.**
+com.ushine.shss.relolver.**
+com.ushine.shss.search.**
+com.ushine.shss.service.**
+com.ushine.shss.test.**
+com.ushine.shss.utils.**
+</entry>
+<entry key="ProfilerCPUSettings_filter_value">com.ushine.cluster.es.*,&#13;
+com.ushine.cluster.hbase.*,&#13;
+com.ushine.cluster.hdfs.*,&#13;
+com.ushine.cluster.hive.test.*,&#13;
+com.ushine.common.config.*,&#13;
+com.ushine.common.db.*,&#13;
+com.ushine.common.inteceptor.*,&#13;
+com.ushine.common.listener.*,&#13;
+com.ushine.common.utils.*,&#13;
+com.ushine.common.vo.*,&#13;
+com.ushine.core.cache.*,&#13;
+com.ushine.core.controller.*,&#13;
+com.ushine.core.init.*,&#13;
+com.ushine.core.po.*,&#13;
+com.ushine.core.relolver.*,&#13;
+com.ushine.core.service.*,&#13;
+com.ushine.core.verify.*,&#13;
+com.ushine.dao.*,&#13;
+com.ushine.init.*,&#13;
+com.ushine.shss.controller.*,&#13;
+com.ushine.shss.eimport.controller.*,&#13;
+com.ushine.shss.eimport.listener.*,&#13;
+com.ushine.shss.eimport.po.*,&#13;
+com.ushine.shss.eimport.service.*,&#13;
+com.ushine.shss.eimport.test.*,&#13;
+com.ushine.shss.eimport.timer.*,&#13;
+com.ushine.shss.init.*,&#13;
+com.ushine.shss.model.*,&#13;
+com.ushine.shss.relolver.*,&#13;
+com.ushine.shss.search.*,&#13;
+com.ushine.shss.service.*,&#13;
+com.ushine.shss.test.*,&#13;
+com.ushine.shss.utils.*</entry>
+<entry key="profiler.settings.istrument.getter.setter.methods">true</entry>
+<entry key="ProfilerMemorySettings_stacktraces">-1</entry>
+<entry key="myeclipse.profiling.mode">0</entry>
+<entry key="profiler.settings.sampling.interval">10</entry>
+<entry key="profiler.settings.cpu.profiling.type">0</entry>
+</properties>

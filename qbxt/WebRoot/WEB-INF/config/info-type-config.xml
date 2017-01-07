@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<types>
+	<type>
+		<basedLibraryName>人员库类别</basedLibraryName>
+		<basedLibraryType>PersonStore</basedLibraryType>
+	</type>
+	<type>
+		<basedLibraryName>组织库类别</basedLibraryName>
+		<basedLibraryType>OrganizStore</basedLibraryType>
+	</type>
+	<type>
+		<basedLibraryName>媒体库类别</basedLibraryName>
+		<basedLibraryType>WebsiteJournalStore</basedLibraryType>
+	</type>
+	<type>
+		<basedLibraryName>业务文档库类别</basedLibraryName>
+		<basedLibraryType>VocationalWorkStore</basedLibraryType>
+	</type>
+	<type>
+		<basedLibraryName>外来文档库</basedLibraryName>
+		<basedLibraryType>OutsideDocStore</basedLibraryType>
+	</type>
+	<type>
+		<basedLibraryName>领导讲话</basedLibraryName>
+		<basedLibraryType>LeadSpeakStore</basedLibraryType>
+	</type>
+	<type>
+		<basedLibraryName>证件库类别</basedLibraryName>
+		<basedLibraryType>CertificatesStore</basedLibraryType>
+	</type>
+	<type>
+		<basedLibraryName>网络账号类别</basedLibraryName>
+		<basedLibraryType>NetworkAccountStore</basedLibraryType>
+	</type>
+	<type>
+		<basedLibraryName>涉及领域类别</basedLibraryName>
+		<basedLibraryType>InvolvedInTheField</basedLibraryType>
+	</type>
+</types>

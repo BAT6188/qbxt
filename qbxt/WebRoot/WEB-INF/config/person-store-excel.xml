@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<person-store-excel>
+	<!-- 人员表格的表头 -->
+	<header>
+		<element name='infoType'>类别</element>
+		<element name='personName'>姓名</element>
+		<element name='nameUsedBefore'>曾用名</element>
+		<element name='englishName'>英文名</element>
+		<element name='workUnit'>工作单位</element>
+		<element name='sex'>性别</element>
+		<element name='registerAddress'>户籍地址</element>
+		<element name='presentAddress'>现住地址</element>
+		<element name='bebornTime'>出生日期</element>
+		<element name='mobilephone'>手机号</element>
+		<element name='telephone'>固定电话</element>
+		<element name='email'>电子邮箱</element>
+		<element name='qq'>QQ号码</element>
+		<element name='weixin'>微信号</element>
+		<element name='idcard'>身份证</element>
+		<element name='hktrafficpermit'>港澳通行证</element>
+		<element name='passport'>护照</element>
+	</header>
+	<!-- 网络账号 -->
+	<networkaccount>
+		<contact name='email'>电子邮箱</contact>
+		<contact name='mobilephone'>手机号</contact>
+		<contact name='telephone'>固定电话</contact>
+		<contact name='qq'>QQ号码</contact>
+		<contact name='weixin'>微信号</contact>
+	</networkaccount>
+	<!-- 证件类型 -->
+	<certificates>
+		<contact name='idcard'>身份证</contact>
+		<contact name='hktrafficpermit'>港澳通行证</contact>
+		<contact name='passport'>护照</contact>
+	</certificates>
+</person-store-excel>

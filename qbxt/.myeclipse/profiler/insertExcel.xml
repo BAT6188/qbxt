@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<entry key="profiler.settings.instrument.empty.methods">true</entry>
+<entry key="ProfilerCPUSettings_profile_runnables">true</entry>
+<entry key="ProfilerCPUSettings_filter_type">2</entry>
+<entry key="ProfilerMemorySettings_track_every">10</entry>
+<entry key="ProfilerMemorySettings_mode">4</entry>
+<entry key="ProfilerCPUSettings_root_classes">com.ushine.analysis.common.**
+com.ushine.analysis.init.**
+com.ushine.analysis.pojo.**
+com.ushine.analysis.service.**
+com.ushine.analysis.thread.**
+com.ushine.cluster.elasticsearch.**
+com.ushine.cluster.hbase.**
+com.ushine.cluster.hdfs.**
+com.ushine.cluster.hive.test.**
+com.ushine.cluster.old.es.**
+com.ushine.cluster.old.hbase.**
+com.ushine.common.config.**
+com.ushine.common.db.**
+com.ushine.common.init.**
+com.ushine.common.listener.**
+com.ushine.common.pool.**
+com.ushine.common.utils.**
+com.ushine.common.vo.**
+com.ushine.core.cache.**
+com.ushine.core.controller.**
+com.ushine.core.init.**
+com.ushine.core.inteceptor.**
+com.ushine.core.po.**
+com.ushine.core.relolver.**
+com.ushine.core.service.**
+com.ushine.core.verify.**
+com.ushine.dao.**
+com.ushine.flow.action.**
+com.ushine.flow.constant.**
+com.ushine.flow.controller.**
+com.ushine.flow.event.**
+com.ushine.flow.po.**
+com.ushine.flow.service.**
+com.ushine.flow.timer.**
+com.ushine.flow.vo.**
+com.ushine.init.**
+com.ushine.log.controller.**
+com.ushine.log.service.**
+com.ushine.log.utils.**
+com.ushine.shss.analyse.flow.**
+com.ushine.shss.batchsearch.**
+com.ushine.shss.casemanage.test.**
+com.ushine.shss.condition.**
+com.ushine.shss.controller.**
+com.ushine.shss.eimport.**
+com.ushine.shss.expression.**
+com.ushine.shss.init.**
+com.ushine.shss.model.**
+com.ushine.shss.relolver.**
+com.ushine.shss.search.**
+com.ushine.shss.service.**
+com.ushine.shss.tmptable.**
+com.ushine.shss.warning.**
+com.ushine.util.**
+com.ushine.wbl.**
+</entry>
+<entry key="ProfilerCPUSettings_filter_value">com.ushine.analysis.common.*,
+com.ushine.analysis.init.*,
+com.ushine.analysis.pojo.*,
+com.ushine.analysis.service.*,
+com.ushine.analysis.thread.*,
+com.ushine.cluster.elasticsearch.*,
+com.ushine.cluster.hbase.*,
+com.ushine.cluster.hdfs.*,
+com.ushine.cluster.hive.test.*,
+com.ushine.cluster.old.es.*,
+com.ushine.cluster.old.hbase.*,
+com.ushine.common.config.*,
+com.ushine.common.db.*,
+com.ushine.common.init.*,
+com.ushine.common.listener.*,
+com.ushine.common.pool.*,
+com.ushine.common.utils.*,
+com.ushine.common.vo.*,
+com.ushine.core.cache.*,
+com.ushine.core.controller.*,
+com.ushine.core.init.*,
+com.ushine.core.inteceptor.*,
+com.ushine.core.po.*,
+com.ushine.core.relolver.*,
+com.ushine.core.service.*,
+com.ushine.core.verify.*,
+com.ushine.dao.*,
+com.ushine.flow.action.*,
+com.ushine.flow.constant.*,
+com.ushine.flow.controller.*,
+com.ushine.flow.event.*,
+com.ushine.flow.po.*,
+com.ushine.flow.service.*,
+com.ushine.flow.timer.*,
+com.ushine.flow.vo.*,
+com.ushine.init.*,
+com.ushine.log.controller.*,
+com.ushine.log.service.*,
+com.ushine.log.utils.*,
+com.ushine.shss.analyse.flow.*,
+com.ushine.shss.batchsearch.*,
+com.ushine.shss.casemanage.test.*,
+com.ushine.shss.condition.*,
+com.ushine.shss.controller.*,
+com.ushine.shss.eimport.*,
+com.ushine.shss.expression.*,
+com.ushine.shss.init.*,
+com.ushine.shss.model.*,
+com.ushine.shss.relolver.*,
+com.ushine.shss.search.*,
+com.ushine.shss.service.*,
+com.ushine.shss.tmptable.*,
+com.ushine.shss.warning.*,
+com.ushine.util.*,
+com.ushine.wbl.*</entry>
+<entry key="profiler.settings.istrument.getter.setter.methods">true</entry>
+<entry key="myeclipse.profiling.mode">0</entry>
+<entry key="ProfilerMemorySettings_stacktraces">-1</entry>
+</properties>

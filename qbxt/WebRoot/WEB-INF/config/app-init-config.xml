@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<app-init-config>
+  
+  <!-- ******************************** 定义组织机构信息  ******************************** -->
+  
+  <!-- 上海 -->
+  <organiz name="部中心" region="全国" contacts="张三" tel="13812345678">
+    <department name="总队" >
+       <person number="no:0001" trueName="张三" userName="zhang3" tel="13812345678" />
+    </department>
+    <department name="一支队" ></department>
+    <department name="三支队" ></department>
+    <department name="五支队" ></department>
+    <department name="七支队" ></department>
+    <department name="技术中心" ></department>
+  </organiz>
+  
+  <!-- **************************** 定义系统模块信息及操作信息  **************************** -->
+  
+  <!-- 控件、按钮操作 -->
+  <operations operType="0" >
+    <operation name="禁用" code="0x0000" />
+    <operation name="启用" code="0x0001" />
+    <!--operation name="隐藏" code="0x0010" />
+    <operation name="显示" code="0x0011" /-->
+  </operations>
+  
+  <!-- 数据读取操作 -->
+  <operations operType="1">
+  	<operation name="禁止读取" code="1x0000" />
+    <operation name="读取全部" code="1x0001" />
+    <operation name="所属组织" code="1x0010" />
+    <operation name="所属部门" code="1x0011" />
+    <operation name="个人数据" code="1x0100" />
+  </operations>
+  
+  <!-- 模块1 -->
+  <module name="寄递物流侦控系统">
+
+    <!-- 数据检索-->
+    <menu name="数据检索" url="Ushine.dataSearch.DataSearchPenel" icon="DataSearch" class="">
+    	 <resource operType="0" name="一键搜索" code="YJSS0001" inteceptor="/searchForKeyWord.do" link="" class="" icon=""/>
+    </menu>
+    <!-- 重点信息 -->
+    <menu name="重点信息" url="Ushine.personInfo.PersonInfos" icon="PersonStoreManage" class="">
+    	<!-- 人员管理 -->
+    	<menu type="1" name="重点人员" url="" class="Ushine.personInfo.PersonInfoManage" icon="" perant="null">
+    		<resource operType="0" name="添加人员" code="PI0001" inteceptor="/savePersonStore.do" link="" class="" icon=""/>
+    		<resource operType="1" name="查询人员" code="PI0002" inteceptor="/findPersonStoreByConditions.do" link="" class="" icon=""/>
+    		<resource operType="0" name="修改人员" code="PI0003" inteceptor="/updatePersonStoreById.do" link="" class="" icon=""/>
+    		<resource operType="0" name="删除人员" code="PI0004" inteceptor="/delPersonStoreById.do" link="" class="" icon=""/>
+    		<resource operType="0" name="转线索库" code="PI0005" inteceptor="" link="" class="" icon=""/>
+	   	</menu>
+    	<!-- 组织管理 -->
+    	<menu type="1" name="重点组织" url="" class="Ushine.personInfo.OrganizeInfoManage" icon="" perant="null">
+    		<resource operType="0" name="添加组织" code="OI0001" inteceptor="/saveOrganizStore.do" link="" class="" icon=""/>
+    		<resource operType="1" name="查询组织" code="OI0002" inteceptor="/findOrganizStoreByConditions.do" link="" class="" icon=""/>
+    		<resource operType="0" name="修改组织" code="OI0003" inteceptor="/updateOrganizStoreById.do" link="" class="" icon=""/>
+    		<resource operType="0" name="删除组织" code="OI0004" inteceptor="/delOrganizStoreById.do" link="" class="" icon=""/>
+    		<resource operType="0" name="转线索库" code="OI0005" inteceptor="" link="" class="" icon=""/>
+    		<resource operType="1" name="选择负责人和下属成员信息" code="OI0006" inteceptor="/selectPersonData.do" link="" class="" icon=""/>
+    		<resource operType="1" name="选择下属刊物信息" code="OI0007" inteceptor="/selectWetsiteJournalData.do" link="" class="" icon=""/>
+    		<resource operType="1" name="选择下属组织信息" code="OI0008" inteceptor="/selectOrganizData.do" link="" class="" icon=""/>
+	   	</menu>
+	   	<!-- 媒体网站刊物 -->
+    	<menu type="1" name="重点媒体刊物" url="" class="Ushine.docInfo.MediaNetworkBook" icon="" perant="null">
+    		<resource operType="0" name="新建媒体网站刊物" code="DMNB0001" inteceptor="/saveWebsiteJournalStore.do" link="" class="" icon=""/>
+    		<resource operType="1" name="查询媒体网站刊物" code="DMNB0002" inteceptor="/findWebsiteJournalStore.do" link="" class="" icon=""/>
+    		<resource operType="0" name="修改媒体网站刊物" code="DMNB0003" inteceptor="/updateWebsiteJournalStore.do" link="" class="" icon=""/>
+    		<resource operType="0" name="删除媒体网站刊物" code="DMNB0004" inteceptor="/delWebsiteJournalStore.do" link="" class="" icon=""/>
+    	</menu>
+    </menu>
+    <!-- 线索管理 -->
+    <menu name="线索管理" url="Ushine.cluesInfo.CluesPenel" icon="ClueStoreManage" class="">
+    		<resource operType="0" name="新建线索" code="CCP0001" inteceptor="/saveClueInfo.do" link="" class="" icon=""/>
+    		<resource operType="1" name="查询线索" code="CCP0002" inteceptor="/findClueStore.do" link="" class="" icon=""/>
+    		<resource operType="0" name="修改线索" code="CCP0003" inteceptor="/updateClueStore.do" link="" class="" icon=""/>
+    		<resource operType="0" name="删除线索" code="CCP0004" inteceptor="/delClueStoreByIds.do" link="" class="" icon=""/>
+    		<resource operType="0" name="线索新增涉及人员信息" code="CCP0005" inteceptor="/clueSavePersonStore.do" link="" class="" icon=""/>
+    		<resource operType="0" name="线索新增涉及组织信息" code="CCP0006" inteceptor="/clueSaveOrganizStore.do" link="" class="" icon=""/>
+    		<resource operType="0" name="线索新增涉及媒体刊物信息" code="CCP0007" inteceptor="/clueSaveWebsiteJournal.do" link="" class="" icon=""/>
+    		<resource operType="1" name="选择线索数据" code="CCP0008" inteceptor="/selectClueData.do" link="" class="" icon=""/>
+    		
+    </menu>
+    <!-- 文档信息 -->
+    <menu name="文档管理" url="Ushine.docInfo.DocInfos" icon="DocStoreManage" class="">
+    	<!-- 业务文档库 -->
+    	<menu type="1" name="业务文档库" url="" class="Ushine.docInfo.ServiceDocument" icon="" perant="null">
+    		<resource operType="0" name="新建业务文档" code="DSD0001" inteceptor="/saveVocationalWorkStore.do" link="" class="" icon=""/>
+    		<resource operType="1" name="查询业务文档" code="DSD0002" inteceptor="/findVocationalWorkStoreByConditions.do" link="" class="" icon=""/>
+    		<resource operType="0" name="修改业务文档" code="DSD0003" inteceptor="/updateVocationalWorkStore.do"  link="" class="" icon=""/>
+    		<resource operType="0" name="删除业务文档" code="DSD0004" inteceptor="/delVocationalWorkStore.do" link="" class="" icon=""/>
+    	</menu>
+		
+    	<!-- 外来文档 -->
+    	<menu type="1" name="外来文档库" url="" class="Ushine.docInfo.ForeignDocument" icon="" perant="null">
+    		<resource operType="0" name="新建外来文档" code="DFD0001" inteceptor="/saveOutsideDocStore.do" link="" class="" icon=""/>
+    		<resource operType="1" name="查询外来文档" code="DFD0002" inteceptor="/findOutsideDocStore.do" link="" class="" icon=""/>
+    		<resource operType="0" name="修改外来文档" code="DFD0003" inteceptor="/updateOutsideDocStore.do" link="" class="" icon=""/>
+    		<resource operType="0" name="删除外来文档" code="DFD0004" inteceptor="/delOutsideDocStore.do" link="" class="" icon=""/>
+    	</menu>
+    	<!-- 领导讲话 -->
+    	<menu type="1" name="领导讲话库" url="" class="Ushine.docInfo.LeaderTalk" icon="" perant="null">
+    		<resource operType="0" name="新建领导讲话" code="DLT0001" inteceptor="/saveLeadSpeakStore.do" link="" class="" icon=""/>
+    		<resource operType="1" name="查询领导讲话" code="DLT0002" inteceptor="/findLeadSpeakStore.do" link="" class="" icon=""/>
+    		<resource operType="0" name="修改领导讲话" code="DLT0003" inteceptor="/updateLeadSpeakStore.do" link="" class="" icon=""/>
+    		<resource operType="0" name="删除领导讲话" code="DLT0004" inteceptor="/delLeadSpeakStore.do" link="" class="" icon=""/>
+    	</menu>
+    </menu>
+   
+    <menu name="系统设置" url="Ushine.system.Operations" class="" icon="SystemSet">
+        <resource operType="0" name="查看所有菜单" code="D0001" inteceptor="/findMenuTree.do" link="" class="" icon=""/>
+		  <resource operType="0" name="查看所有角色" code="D0002" inteceptor="/role/findAll.do" link="" class="" icon=""/>
+		  <resource operType="0" name="查看系统设置菜单" code="A0010" inteceptor="/systemMenus.do" link="" class="" icon=""/>
+	    <menu type="1" name="组织信息管理" url="" class="Ushine.system.OrganizManage" icon="" perant="null">
+	      <resource operType="1" name="查看组织下拉列表" code="A0001" inteceptor="/getOrgs.do" link="" class="" icon=""/>
+		  <resource operType="1" name="查看组织树形列表" code="A0002" inteceptor="/getOrgsTree.do" link="" class="" icon=""/>
+	      <resource operType="0" name="添加组织信息" code="A0003" inteceptor="/addOrg.do" link="" class="" icon=""/>
+		  <resource operType="1" name="查看部门信息" code="A0004" inteceptor="/getDepts.do" link="" class="" icon=""/>
+	      <resource operType="0" name="添加部门信息" code="A0005" inteceptor="/addDept.do" link="" class="" icon=""/>
+	      <resource operType="0" name="添加人员信息" code="A0007" inteceptor="/addPerson.do" link="" class="" icon=""/>
+	      <resource operType="0" name="修改人员信息" code="A0011" inteceptor="/updatePerson.do" link="" class="" icon=""/>
+	      <resource operType="0" name="删除人员信息" code="A0008" inteceptor="/delPerson.do" link="" class="" icon=""/>
+	      <resource operType="0" name="设置人员角色" code="A0009" inteceptor="/getPersonsRoles.do" link="" class="" icon=""/>
+	      <resource operType="0" name="删除部门和组织" code="A00012" inteceptor="/deleteOrgAndDempt.do" link="" class="" icon=""/>
+	      <resource operType="0" name="修改组织" code="A00013" inteceptor="/updateOrg.do" link="" class="" icon=""/>
+	      <resource operType="0" name="修改部门" code="A00014" inteceptor="/updateDept.do" link="" class="" icon=""/>
+	    </menu>
+	    <menu type="1" name="角色信息管理" url="" class="Ushine.system.RoleManage" icon="" perant="null">
+		  <resource operType="0" name="添加角色" code="D0003" inteceptor="/role/addRole.do" link="" class="" icon=""/>
+		  <resource operType="0" name="删除角色" code="D0004" inteceptor="/role/delRole.do" link="" class="" icon=""/>
+		  <resource operType="0" name="查看权限" code="D0005" inteceptor="/getres.do" link="" class="" icon=""/>
+		  <resource operType="0" name="保存权限" code="D0006" inteceptor="/setPermit.do" link="" class="" icon=""/>
+	    </menu>
+	    <menu type="1" name="执法监督管理" url="" class="Ushine.system.log.Log" icon="" perant="null">
+			<resource operType="0" name="查询日志" code="L0001" inteceptor="/findLog.do" link="" class="" icon=""/>
+	    </menu>
+	    <!-- 信息类别权限设置 -->
+	   <resource operType="0" name="新增类别" code="I0001" inteceptor="/saveInfoType.do" link="" class="" icon=""/>
+	   <resource operType="0" name="修改类别" code="I0002" inteceptor="/updateInfoType.do" link="" class="" icon=""/>
+	   <resource operType="0" name="删除类别" code="I0003" inteceptor="/delInfoType.do" link="" class="" icon=""/>
+	  <!-- pdf样式设置 -->
+	  <resource operType="0" name="上传字体" code="PDF0001" inteceptor="/uploadFontFile.do" link="" class="" icon=""/>
+	  <resource operType="0" name="人员PDF设置" code="PDF0002" inteceptor="/getPersonStorePDFStyle.do" link="" class="" icon=""/>
+      <resource operType="0" name="重置人员PDF设置" code="PDF0003" inteceptor="/restPersonStorePDFStyle.do" link="" class="" icon=""/>
+   	  <resource operType="0" name="线索PDF设置" code="PDF0004" inteceptor="/getClueStorePDFStyle.do" link="" class="" icon=""/>
+      <resource operType="0" name="重置线索PDF设置" code="PDF0005" inteceptor="/restClueStorePDFStyle.do" link="" class="" icon=""/>
+      <resource operType="0" name="组织PDF设置" code="PDF0006" inteceptor="/getOrganizStorePDFStyle.do" link="" class="" icon=""/>
+      <resource operType="0" name="重置组织PDF设置" code="PDF0007" inteceptor="/restOrganizStorePDFStyle.do" link="" class="" icon=""/>
+   	  <resource operType="0" name="媒体刊物PDF设置" code="PDF0008" inteceptor="/getWebsiteJounalStorePDFStyle.do" link="" class="" icon=""/>
+      <resource operType="0" name="重置媒体刊物PDF设置" code="PDF0009" inteceptor="/restWebsiteJounalStorePDFStyle.do" link="" class="" icon=""/>
+   
+   
+   
+    </menu>
+  </module>
+  
+  <!-- ********************** 定义系统角色信息及人员、角色、权限关系  *********************** -->
+  
+  <role name="系统管理员" >
+    <person userName="zhang3" />
+    <!-- 一键搜索的使用 -->
+     <permit resCode="YJSS0001" operCode="0x0001" />
+    <!-- PDF样式设置 -->
+    <permit resCode="PDF0001" operCode="0x0001" />
+    <permit resCode="PDF0002" operCode="0x0001" />
+    <permit resCode="PDF0003" operCode="0x0001" />
+    <permit resCode="PDF0004" operCode="0x0001" />
+    <permit resCode="PDF0005" operCode="0x0001" />
+    <permit resCode="PDF0006" operCode="0x0001" />
+    <permit resCode="PDF0007" operCode="0x0001" />
+    <permit resCode="PDF0008" operCode="0x0001" />
+    <permit resCode="PDF0009" operCode="0x0001" />
+    <!-- 组织管理 -->
+   	<permit resCode="A0001" operCode="1x0001" />
+    <permit resCode="A0002" operCode="1x0001" />
+    <permit resCode="A0003" operCode="0x0001" />
+    <permit resCode="A0004" operCode="1x0001" />
+    <permit resCode="A0005" operCode="0x0001" />
+    <!--permit resCode="A0006" operCode="1x0001" /-->
+    <permit resCode="A0007" operCode="0x0001" />
+    <permit resCode="A0008" operCode="0x0001" />
+    <permit resCode="A0009" operCode="0x0001" />
+    <permit resCode="A0010" operCode="0x0001" />
+    <permit resCode="A0011" operCode="0x0001" />
+    <permit resCode="A00012" operCode="0x0001" />
+    <permit resCode="A00013" operCode="0x0001" />
+    <permit resCode="A00014" operCode="0x0001" />
+
+    <!-- 角色管理 -->
+    <permit resCode="D0001" operCode="0x0001" />
+    <permit resCode="D0002" operCode="0x0001" />
+    <permit resCode="D0003" operCode="0x0001" />
+    <permit resCode="D0004" operCode="0x0001" />
+    <permit resCode="D0005" operCode="0x0001" />
+    <permit resCode="D0006" operCode="0x0001" />
+
+    <!-- 日志 -->
+    <permit resCode="L0001" operCode="0x0001" />
+     <!-- 类别设置 -->
+     <permit resCode="I0001" operCode="0x0001"/>
+     <permit resCode="I0002" operCode="0x0001"/>
+     <permit resCode="I0003" operCode="0x0001"/>
+     
+     <!-- 人员管理 -->
+     <permit resCode="PI0001" operCode="0x0001"/>
+     <permit resCode="PI0002" operCode="1x0001"/>
+     <permit resCode="PI0003" operCode="0x0001"/>
+     <permit resCode="PI0004" operCode="0x0001"/>
+     <permit resCode="PI0005" operCode="0x0001"/>
+     <!-- 组织管理 -->
+     <permit resCode="OI0001" operCode="0x0001"/>
+     <permit resCode="OI0002" operCode="1x0001"/>
+     <permit resCode="OI0003" operCode="0x0001"/>
+     <permit resCode="OI0004" operCode="0x0001"/>
+     <permit resCode="OI0005" operCode="0x0001"/>
+     <permit resCode="OI0006" operCode="1x0001"/>
+     <permit resCode="OI0007" operCode="1x0001"/>
+     <permit resCode="OI0008" operCode="1x0001"/>
+     
+     <!-- 业务文档 -->
+     <permit resCode="DSD0001" operCode="0x0001"/>
+     <permit resCode="DSD0002" operCode="1x0001"/>
+     <permit resCode="DSD0003" operCode="0x0001"/>
+     <permit resCode="DSD0004" operCode="0x0001"/>
+     <!-- 媒体网站刊物 -->
+     <permit resCode="DMNB0001" operCode="0x0001"/>
+     <permit resCode="DMNB0002" operCode="1x0001"/>
+     <permit resCode="DMNB0003" operCode="0x0001"/>
+     <permit resCode="DMNB0004" operCode="0x0001"/>
+     <!-- 外来文档 -->
+     <permit resCode="DFD0001" operCode="0x0001"/>
+     <permit resCode="DFD0002" operCode="1x0001"/>
+     <permit resCode="DFD0003" operCode="0x0001"/>
+     <permit resCode="DFD0004" operCode="0x0001"/>
+	 <!-- 领导讲话 -->	     
+	 <permit resCode="DLT0001" operCode="0x0001"/>
+     <permit resCode="DLT0002" operCode="1x0001"/>
+     <permit resCode="DLT0003" operCode="0x0001"/>
+     <permit resCode="DLT0004" operCode="0x0001"/>
+     
+     <!-- 线索管理-->
+     <permit resCode="CCP0001" operCode="0x0001"/>
+     <permit resCode="CCP0002" operCode="1x0001"/>
+     <permit resCode="CCP0003" operCode="0x0001"/>
+     <permit resCode="CCP0004" operCode="0x0001"/>
+     <permit resCode="CCP0005" operCode="0x0001"/>
+     <permit resCode="CCP0006" operCode="0x0001"/>
+     <permit resCode="CCP0007" operCode="0x0001"/>
+     <permit resCode="CCP0008" operCode="1x0001"/>
+  </role>
+  
+  <!-- 黑名单检测方式 -->
+  <blackitem name="非常重要"/>
+  <blackitem name="重要"/>
+  <blackitem name="一般"/>
+</app-init-config>

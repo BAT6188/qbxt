@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doctype>
+	<!-- 技侦情报、十二局信息 -->
+	<first-type>
+		<element>技侦情报</element>
+		<element>十二局信息</element>
+	</first-type>
+	<!-- 通知、报告、请示、函 -->
+	<second-type>
+		<element>通知</element>
+		<element>报告</element>
+		<element>请示</element>
+		<element>函</element>
+	</second-type>
+	<!-- 维护网上政治安全专项工作机制 -->
+	<third-type>
+		<element>维护网上政治安全专项工作机制</element>
+	</third-type>
+</doctype>

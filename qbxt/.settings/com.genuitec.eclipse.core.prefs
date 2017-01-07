@@ -1,0 +1,3 @@
+eclipse.preferences.version=1
+validator.Checked=WebRoot/login.jsp,WebRoot/extjs/ext-all-debug.js,WebRoot/webapp/depcontro/test.json,WebRoot/test/webtest/search/js/viewPage.js,WebRoot/extjs/ext-all-dev.js,WebRoot/js/go.js,WebRoot/js/goDev.js,src/com/ushine/shss/service/impl/MessageServiceImpl.java,WebRoot/webapp/case/Case.js
+validator.Unchecked=
