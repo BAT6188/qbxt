@@ -92,7 +92,7 @@ import net.sf.json.JSONSerializer;
  *
  */
 @Transactional
-@Service("personStoreServiceImpl")
+@Service(value="personStoreServiceImpl")
 public class PersonStoreServiceImpl implements IPersonStoreService{
 	private static final Logger logger = LoggerFactory.getLogger(PersonStoreServiceImpl.class);
 	@Autowired
@@ -111,28 +111,6 @@ public class PersonStoreServiceImpl implements IPersonStoreService{
 		//时间倒序排序
 		criteria.addOrder(Order.desc("createDate"));
 		//anyField任意字段搜索
-		if(!StringUtil.isNull(field) && !StringUtil.isNull(fieldValue)&&field.equals("anyField")){
-			//要用or进行查询
-			//如果是add则转成了and关键字所以查出的结果为0
-			/*if(stringToDate(fieldValue)){
-				//包含日期的
-				//System.out.println("=====能转换成日期=====");
-				//.createAlias("certificatesStores", "c")
-				criteria.createAlias("infoType", "i").add(Restrictions.or(Restrictions.like("workUnit", "%"+fieldValue+"%"), 
-						Restrictions.or(Restrictions.like("nameUsedBefore", "%"+fieldValue+"%"), Restrictions.or(Restrictions.or(Restrictions.like("englishName", "%"+fieldValue+"%"),
-								Restrictions.like("personName", "%"+fieldValue+"%")),
-						Restrictions.or(Restrictions.like("bebornTime", "%"+fieldValue+"%"), Restrictions.like("i.typeName", "%"+fieldValue+"%"))))));
-			}else{
-				//不含日期
-				//System.out.println("=====不能转换成日期=====");
-				criteria.createAlias("infoType", "i").add(Restrictions.or(Restrictions.like("workUnit", "%"+fieldValue+"%"), 
-						Restrictions.or(Restrictions.like("nameUsedBefore", "%"+fieldValue+"%"), Restrictions.or(Restrictions.or(Restrictions.like("englishName", "%"+fieldValue+"%"), 
-								Restrictions.like("personName", "%"+fieldValue+"%")),
-						 Restrictions.like("i.typeName", "%"+fieldValue+"%")))));
-			}*/
-			
-		}
-		
 		if(!StringUtil.isNull(startTime) && startTime.length() >=10){
 			startTime = startTime.substring(0,10)+ " 00:00:00";
 			criteria.add(Restrictions.ge("createDate", startTime));

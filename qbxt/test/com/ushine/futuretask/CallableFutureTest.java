@@ -1,4 +1,4 @@
-package com.ushine.storeInfo;
+package com.ushine.futuretask;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
