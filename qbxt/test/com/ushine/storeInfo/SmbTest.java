@@ -111,79 +111,12 @@ public class SmbTest {
 		}
 	}
 	
-	/*public static boolean test4(String nodeName,String docType){
-		boolean b=false;
-		try {
-			String xml=PathUtils.getConfigPath(VocationalWorkStoreServiceImpl.class)+"vocational-work-store.xml";
-			XmlUtilsTest utils=new XmlUtilsTest(xml);
-			List<Element> elements=utils.getNode(nodeName).elements();
-			for (Element element : elements) {
-				String result=StringUtils.trim(element.getText());
-				if (docType.contains(result)) {
-					b=true;
-					break;
-				}
-			}
-		} catch (Exception e) {
-			System.err.println(e.getMessage());
-		}
-		return b;
-	}*/
-	
-	public static void test5() {
-		SmbFileUtils utils=new SmbFileUtils("192.168.183.128");
-		List<String> names=utils.getAllFileName("11");
-		System.err.println("------------");
-		for (String string : names) {
-			System.err.println(string);
-		}
-	}
-	
 	@Test
 	public void test6() throws Exception {
 		//SmbFileUtils utils=new SmbFileUtils("192.168.177.129");
 		//utils.copySmbFilesToDir("十二局信息", "e://testcopy");
 		SmbFileUtils utils=new SmbFileUtils();
 		utils.copySmbWordToDir("\\\\192.168.177.129\\十二局信息", "e://testcopy");
-	}
-	public static void test7() throws Exception {
-		//SmbFileUtils utils=new SmbFileUtils("192.168.183.128");
-		//System.err.println(utils.getRootFolderName());
-		/*for (int i = 0; i < 100; i++) {
-			String name=Long.toString(System.currentTimeMillis());
-			File file=new File("c://testcopy"+File.separator+name);
-			System.err.println("c://testcopy"+File.separator+name);
-			FileUtils.forceMkdir(file);
-		}*/
-		//String identifyInfo=String.format("识别出%s,共%s个文档", "100","11");
-		//System.err.println(identifyInfo);
-		System.err.println(StringUtils.equals(null, null));
-	}
-	
-	public static void test8()  throws Exception {
-		//复制文件  十二局第63750期—十二局文档782.docx
-		//通知（47931）号——测试文档530.docx
-		File srcFile=new File("c://通知.doc");
-		for(int i=0;i<100;i++){
-			Integer integer=(int) (Math.random()*10000);
-			Integer integer2=(int) (Math.random()*1000);
-			String name=String.format("通知（%s）号———测试文档%s.doc", integer.toString(),integer2.toString());
-			File destFile=new File("c://testcopy//"+name);
-			FileUtils.copyFile(srcFile, destFile);
-			System.err.println(destFile.getName());
-		}
-	}
-	
-	public static void test9()  throws Exception {
-		String string="vocationalWorkStoreAttachment\\20160806公安技侦情报第43442期——情报文档585.doc";
-		System.err.println(string);
-		if (string.contains(File.separator)) {
-			int index=string.indexOf(File.separator);
-			String tempFileName=string.substring(index+9);
-			System.err.println(tempFileName);
-		}else{
-			System.err.println("null");
-		}
 	}
 	
 	@Test
@@ -221,22 +154,5 @@ public class SmbTest {
 		String []parsePatterns=Configured.getInstance().get("parsePatterns").split(",");
 		Date date=DateUtils.parseDate(string, parsePatterns);
 		assertEquals(DateFormatUtils.format(date, "yyyy-MM-dd"), "1991-09-04");
-	}
-	
-	/**
-	 * 主机名获得ip地址
-	 * @throws Exception
-	 */
-	@Test
-	public void test13()throws Exception {
-		InetAddress address = null;
-
-		try {
-			address = InetAddress.getByName("192.168.177.129");
-		} catch (Exception e) {
-			System.out.println("not found");
-			System.exit(2);
-		}
-		System.out.println(address.getHostName() + "=" + address.getHostAddress());
 	}
 }
