@@ -1,4 +1,4 @@
-package com.ushine.storeInfo;
+package com.ushine.util;
 
 import java.util.ArrayList;
 import java.util.List;
