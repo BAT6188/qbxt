@@ -71,7 +71,7 @@ import com.ushine.storeInfo.service.IOutsideDocStoreService;
 import com.ushine.storeInfo.service.IPersonStoreService;
 import com.ushine.storeInfo.service.IVocationalWorkStoreService;
 import com.ushine.storeInfo.service.IWebsiteJournalStoreService;
-import com.ushine.storeInfo.storeFinal.StoreFinal;
+import com.ushine.storeInfo.storefinal.StoreFinal;
 import com.ushine.util.CustomXWPFDocument;
 import com.ushine.util.ReadAttachUtil;
 

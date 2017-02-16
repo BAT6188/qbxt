@@ -18,7 +18,7 @@ import com.ushine.storeInfo.controller.PersonStoreController;
 import com.ushine.storeInfo.model.InfoType;
 import com.ushine.storeInfo.service.IInfoTypeService;
 import com.ushine.storeInfo.service.IPersonStoreService;
-import com.ushine.storeInfo.storeFinal.StoreFinal;
+import com.ushine.storeInfo.storefinal.StoreFinal;
 import com.ushine.util.StringUtil;
 /**
  * 信息类别实现测试类

@@ -21,7 +21,7 @@ import com.ushine.storeInfo.model.OutsideDocStore;
 import com.ushine.storeInfo.service.IInfoTypeService;
 import com.ushine.storeInfo.service.IOutsideDocStoreService;
 import com.ushine.storeInfo.service.IPersonStoreService;
-import com.ushine.storeInfo.storeFinal.StoreFinal;
+import com.ushine.storeInfo.storefinal.StoreFinal;
 
 /**
  * 测试OutsideDocStoreServiceImpl

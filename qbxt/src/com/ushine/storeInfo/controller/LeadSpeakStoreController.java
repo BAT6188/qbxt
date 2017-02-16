@@ -41,7 +41,7 @@ import com.ushine.storeInfo.model.InfoType;
 import com.ushine.storeInfo.model.LeadSpeakStore;
 import com.ushine.storeInfo.service.IInfoTypeService;
 import com.ushine.storeInfo.service.ILeadSpeakStoreService;
-import com.ushine.storeInfo.storeFinal.StoreFinal;
+import com.ushine.storeInfo.storefinal.StoreFinal;
 import com.ushine.util.ReadAttachUtil;
 import com.ushine.util.StringUtil;
 import com.ushine.util.UpLoadUtil;
@@ -234,7 +234,7 @@ public class LeadSpeakStoreController {
 					String attaches=leadSpeakStoreFilePath(number, request, response);
 					store.setAttaches(attaches);
 					//设置附件内容
-					String root=System.getProperty("qbtest.root");
+					String root=Configured.getInstance().get("rootIndex");
 					String []attachesNames=attaches.split(",");
 					StringBuffer buffer=new StringBuffer();
 					for (String string : attachesNames) {
@@ -394,7 +394,7 @@ public class LeadSpeakStoreController {
 					store.setAttaches(filePath);
 					
 					//设置附件内容
-					String root=System.getProperty("qbtest.root");
+					String root=Configured.getInstance().get("rootIndex");
 					String []attachesNames=filePath.split(",");
 					StringBuffer content=new StringBuffer();
 					for (String string : attachesNames) {

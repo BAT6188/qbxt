@@ -1,26 +1,20 @@
 package com.ushine.storeInfo;
 
 import static org.junit.Assert.assertEquals;
+
 import java.io.File;
 import java.io.InputStream;
-import java.net.InetAddress;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.commons.lang.time.DateUtils;
-import org.dom4j.Element;
 import org.junit.Test;
 
 import com.ushine.common.config.Configured;
-import com.ushine.common.utils.PathUtils;
-import com.ushine.storeInfo.service.impl.VocationalWorkStoreServiceImpl;
 import com.ushine.util.SmbFileUtils;
-import com.ushine.util.MyXmlUtilsTest;
 
 import jcifs.smb.SmbFile;
 

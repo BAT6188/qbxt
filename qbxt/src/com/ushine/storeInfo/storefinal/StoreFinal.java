@@ -1,4 +1,4 @@
-package com.ushine.storeInfo.storeFinal;
+package com.ushine.storeInfo.storefinal;
 
 public class StoreFinal {
 		/**

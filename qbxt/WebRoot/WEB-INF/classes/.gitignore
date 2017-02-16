@@ -1,1 +1,7 @@
+/IKAnalyzer.cfg.xml
+/applicationContext.xml
 /com/
+/hibernate.cfg.xml
+/log4j.properties
+/logconfig.properties
+/logger.xml

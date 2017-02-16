@@ -59,7 +59,7 @@ import com.ushine.storeInfo.service.IInfoTypeService;
 import com.ushine.storeInfo.service.INetworkAccountStoreService;
 import com.ushine.storeInfo.service.IPersonStoreService;
 import com.ushine.storeInfo.service.ITempClueDataService;
-import com.ushine.storeInfo.storeFinal.StoreFinal;
+import com.ushine.storeInfo.storefinal.StoreFinal;
 import com.ushine.util.CreatAndReadExcel;
 import com.ushine.util.StringUtil;
 import com.ushine.util.UpLoadUtil;

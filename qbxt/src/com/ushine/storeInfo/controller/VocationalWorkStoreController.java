@@ -52,7 +52,7 @@ import com.ushine.storeInfo.model.InfoType;
 import com.ushine.storeInfo.model.VocationalWorkStore;
 import com.ushine.storeInfo.service.IInfoTypeService;
 import com.ushine.storeInfo.service.IVocationalWorkStoreService;
-import com.ushine.storeInfo.storeFinal.StoreFinal;
+import com.ushine.storeInfo.storefinal.StoreFinal;
 import com.ushine.util.IdentifyDocUtils;
 import com.ushine.util.SmbFileUtils;
 import com.ushine.util.StringUtil;

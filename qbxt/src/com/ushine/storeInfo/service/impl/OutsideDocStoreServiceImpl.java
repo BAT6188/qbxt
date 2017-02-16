@@ -34,14 +34,12 @@ import com.ushine.store.index.StoreIndexQuery;
 import com.ushine.storeInfo.model.Attaches;
 import com.ushine.storeInfo.model.InfoType;
 import com.ushine.storeInfo.model.OutsideDocStore;
-import com.ushine.storeInfo.model.VocationalWorkStore;
 import com.ushine.storeInfo.service.IInfoTypeService;
 import com.ushine.storeInfo.service.IOutsideDocStoreService;
-import com.ushine.storeInfo.storeFinal.StoreFinal;
+import com.ushine.storeInfo.storefinal.StoreFinal;
 import com.ushine.util.IdentifyDocUtils;
 import com.ushine.util.StringUtil;
 import com.ushine.util.XmlUtils;
-import com.ushine.util.MyXmlUtilsTest;
 
 import net.sf.ezmorph.bean.MorphDynaBean;
 import net.sf.json.JSONArray;

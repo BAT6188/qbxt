@@ -3,6 +3,7 @@ package com.ushine.store.index;
 import java.io.File;
 
 import com.ushine.common.config.Configured;
+import com.ushine.common.utils.PathUtils;
 
 /**
  * 获得各个库的索引位置
@@ -21,7 +22,7 @@ public final class StoreIndexPath {
 		String value=Configured.getInstance().get("rootIndex");
 		if(value.equals("true")){
 			//程序根目录
-			return System.getProperty("qbtest.root");
+			return PathUtils.getWebRoot(StoreIndexPath.class);
 		}else{
 			return value;
 		}
@@ -69,10 +70,6 @@ public final class StoreIndexPath {
 	 * VocationalWorkStore的索引库目录
 	 */
 	public static final String VOCATIONALWORKSTORE_INDEXPATH=getStoreIndexPath("vocationalWorkStoreIndex");
-	/**
-	 * 附件的索引目录
-	 */
-	public static final String ATTACHES_INDEXPATH=getStoreIndexPath("attachesIndex");
 	/**
 	 * 是否创建索引<br>
 	 * conf.peroperties中createIndex默认为false,不创建 <br>

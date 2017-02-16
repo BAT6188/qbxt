@@ -164,7 +164,7 @@ public class PersonStoreNRTSearch implements IStoreNRTSearch{
 				StringBuffer buffer=new StringBuffer();
 				StringBuffer attachContentBuffer=new StringBuffer();
 				String []attachesNames=personStore.getAppendix().split(",");
-				String root=System.getProperty("qbtest.root");
+				String root=Configured.getInstance().get("rootIndex");
 				for (String string : attachesNames) {
 					int index0=string.indexOf("_");
 					int index1=string.lastIndexOf(".");

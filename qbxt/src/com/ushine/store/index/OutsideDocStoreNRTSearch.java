@@ -35,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wltea.analyzer.lucene.IKAnalyzer;
 
+import com.ushine.common.config.Configured;
 import com.ushine.common.utils.SpringUtils;
 import com.ushine.dao.IBaseDao;
 import com.ushine.storeInfo.model.LeadSpeakStore;
@@ -288,7 +289,7 @@ public class OutsideDocStoreNRTSearch implements IStoreNRTSearch {
 				document.add(new Field("defalutSort", Long.toString(format2.parse(value).getTime()), Store.NO, Index.NOT_ANALYZED));
 			}
 			//附件的名称和内容
-			String root = System.getProperty("qbtest.root");
+			String root = Configured.getInstance().get("rootIndex");
 			String attaches=store.getAttaches();
 			if(null!=attaches){
 				String []attachesNames=attaches.split(",");

@@ -72,23 +72,6 @@ public class InitCoreService implements InitializedService {
 			//****************************************
 			cityTree=cityService.findCity();
 			logger.info("{缓存加载}成功加载城市树形菜单.");
-			//**************
-			//创建索引库的文件夹从配置文件中读取
-			/*String webRoot=System.getProperty("qbtest.root");
-			String dirBaseIndex=webRoot+File.separator+Configured.getInstance().get("baseIndex");
-			//不存在创建
-			File file=new File(dirBaseIndex);
-			if(!file.exists()){
-				file.mkdir();
-			}
-			logger.info("创建索引库根文件夹成功"+dirBaseIndex);*/
-			//***********
-			//为每个库创建索引文件夹及索引文件
-			/*String personStoreIndex=dirBaseIndex+file.separator+Configured.getInstance().get("personStoreIndex");
-			File personIndexFile=new File(personStoreIndex);
-			if(!file.exists()){
-				personIndexFile.mkdir();
-			}*/
 			
 		} catch(Exception e) {
 			logger.error("基础模块初始化服务失败，强制关闭应用程序.", e);

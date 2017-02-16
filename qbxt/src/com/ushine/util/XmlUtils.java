@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
  */
 public class XmlUtils {
 	
-	private static final Logger log = LoggerFactory.getLogger(MyXmlUtilsTest.class);
+	private static final Logger log = LoggerFactory.getLogger(XmlUtils.class);
 	
 	private Document doc;
 	

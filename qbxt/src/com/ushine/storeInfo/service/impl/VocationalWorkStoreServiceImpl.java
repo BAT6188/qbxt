@@ -1,20 +1,15 @@
 package com.ushine.storeInfo.service.impl;
 
 import java.io.File;
-import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -41,16 +36,14 @@ import com.ushine.core.verify.session.UserSessionMgr;
 import com.ushine.dao.IBaseDao;
 import com.ushine.store.index.StoreIndexQuery;
 import com.ushine.store.index.VocationalWorkStoreNRTSearch;
-import com.ushine.storeInfo.model.Attaches;
 import com.ushine.storeInfo.model.InfoType;
 import com.ushine.storeInfo.model.VocationalWorkStore;
 import com.ushine.storeInfo.service.IInfoTypeService;
 import com.ushine.storeInfo.service.IVocationalWorkStoreService;
-import com.ushine.storeInfo.storeFinal.StoreFinal;
+import com.ushine.storeInfo.storefinal.StoreFinal;
 import com.ushine.util.IdentifyDocUtils;
 import com.ushine.util.SmbFileUtils;
 import com.ushine.util.StringUtil;
-import com.ushine.util.MyXmlUtilsTest;
 
 import net.sf.ezmorph.bean.MorphDynaBean;
 import net.sf.json.JSONArray;

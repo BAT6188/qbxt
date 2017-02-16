@@ -44,7 +44,7 @@ import com.ushine.storeInfo.model.InfoType;
 import com.ushine.storeInfo.model.OutsideDocStore;
 import com.ushine.storeInfo.service.IInfoTypeService;
 import com.ushine.storeInfo.service.IOutsideDocStoreService;
-import com.ushine.storeInfo.storeFinal.StoreFinal;
+import com.ushine.storeInfo.storefinal.StoreFinal;
 import com.ushine.util.IdentifyDocUtils;
 import com.ushine.util.ReadAttachUtil;
 import com.ushine.util.SmbFileUtils;
@@ -253,7 +253,7 @@ public class OutsideDocStoreController {
 						String attaches = foreignDocStoreFilePath(number, request, response);
 						store.setAttaches(attaches);
 						// 设置附件内容
-						String root = System.getProperty("qbtest.root");
+						String root = Configured.getInstance().get("rootIndex");
 						String[] attachesNames = attaches.split(",");
 						StringBuffer buffer = new StringBuffer();
 						for (String string : attachesNames) {
@@ -500,7 +500,7 @@ public class OutsideDocStoreController {
 					logger.info("全部附件名称："+filePath);
 					store.setAttaches(filePath);
 					// 设置附件内容
-					String root = System.getProperty("qbtest.root");
+					String root = Configured.getInstance().get("rootIndex");
 					String[] attachesNames = filePath.split(",");
 					StringBuffer content = new StringBuffer();
 					for (String string : attachesNames) {

@@ -29,7 +29,7 @@ import com.ushine.storeInfo.model.WebsiteJournalStore;
 import com.ushine.storeInfo.service.IInfoTypeService;
 import com.ushine.storeInfo.service.ITempClueDataService;
 import com.ushine.storeInfo.service.IWebsiteJournalStoreService;
-import com.ushine.storeInfo.storeFinal.StoreFinal;
+import com.ushine.storeInfo.storefinal.StoreFinal;
 import com.ushine.util.StringUtil;
 
 @Controller
