@@ -20,8 +20,8 @@ import com.ushine.core.service.ICityService;
 import com.ushine.core.service.IOperationService;
 import com.ushine.core.service.IResourceService;
 import com.ushine.dao.IBaseDao;
-import com.ushine.store.index.PersonStoreNRTSearch;
-import com.ushine.storeInfo.model.PersonStore;
+import com.ushine.luceneindex.index.PersonStoreNRTSearch;
+import com.ushine.storesinfo.model.PersonStore;
 
 /**
  * 基础模块初始化服务实现:

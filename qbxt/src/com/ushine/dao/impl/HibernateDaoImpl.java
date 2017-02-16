@@ -23,9 +23,9 @@ import com.ushine.common.utils.DateUtils;
 import com.ushine.common.utils.HibernateUtils;
 import com.ushine.core.po.Person;
 import com.ushine.dao.IBaseDao;
-import com.ushine.storeInfo.model.OrganizStore;
-import com.ushine.storeInfo.model.PersonStore;
-import com.ushine.storeInfo.model.WebsiteJournalStore;
+import com.ushine.storesinfo.model.OrganizStore;
+import com.ushine.storesinfo.model.PersonStore;
+import com.ushine.storesinfo.model.WebsiteJournalStore;
 
 /**
  * HibernateDao方法实现，该实现中不使用Spring管理Session

@@ -15,9 +15,9 @@ import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
 import com.ushine.dao.IBaseDao;
-import com.ushine.storeInfo.model.OrganizStore;
-import com.ushine.storeInfo.model.PersonStore;
-import com.ushine.storeInfo.model.WebsiteJournalStore;
+import com.ushine.storesinfo.model.OrganizStore;
+import com.ushine.storesinfo.model.PersonStore;
+import com.ushine.storesinfo.model.WebsiteJournalStore;
 
 /**
  * 基础Dao支持接口v3.0实现,当BaseDaoImpl实现方法不能满 足业务需要时,需

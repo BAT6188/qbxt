@@ -22,10 +22,10 @@
 	<!-- 日志模块 -->
 	<context:component-scan base-package="com.ushine.log" />
 	<!-- 基础库模块 -->
-	<context:component-scan base-package="com.ushine.storeInfo" />
+	<context:component-scan base-package="com.ushine.storesinfo" />
 	<context:component-scan base-package="com.ushine.util" />
 	<!-- 索引模块 -->
-	<context:component-scan base-package="com.ushine.store" />
+	<context:component-scan base-package="com.ushine.luceneindex" />
 	<!-- 配置sessionFactory -->
 	<bean id="sessionFactory"
 		class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">

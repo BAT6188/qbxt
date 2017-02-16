@@ -43,24 +43,24 @@
 		<mapping class="com.ushine.core.po.City" />
 		<mapping class="com.ushine.core.po.Permit" />
 		<!-- 基础信息库 -->
-		<mapping class="com.ushine.storeInfo.model.InfoType"/>
-		<mapping class="com.ushine.storeInfo.model.VocationalWorkStore"/>
-		<mapping class="com.ushine.storeInfo.model.CertificatesStore"/>
-		<mapping class="com.ushine.storeInfo.model.LeadSpeakStore"/>
-		<mapping class="com.ushine.storeInfo.model.NetworkAccountStore"/>
-		<mapping class="com.ushine.storeInfo.model.PersonStore"/>
-		<mapping class="com.ushine.storeInfo.model.WebsiteJournalStore"/>
-		<mapping class="com.ushine.storeInfo.model.ClueRelationship"/>
-		<mapping class="com.ushine.storeInfo.model.Attaches"/>
-		<mapping class="com.ushine.storeInfo.model.ImportTaskDomain"/>
-		<!-- 当时没有把com.ushine.storeInfo.model.TempClueData添加进来,导致no persistent class -->
-		<mapping class="com.ushine.storeInfo.model.TempClueData"/>
-		<mapping class="com.ushine.storeInfo.model.ClueStore"/>
-		<mapping class="com.ushine.storeInfo.model.OutsideDocStore"/>
-		<mapping class="com.ushine.storeInfo.model.OrganizBranches"/>
-		<mapping class="com.ushine.storeInfo.model.OrganizPerson"/>
-		<mapping class="com.ushine.storeInfo.model.OrganizPublicAction"/>
-		<mapping class="com.ushine.storeInfo.model.OrganizStore"/>
-		<mapping class="com.ushine.storeInfo.model.TempClueData"/>
+		<mapping class="com.ushine.storesinfo.model.InfoType"/>
+		<mapping class="com.ushine.storesinfo.model.VocationalWorkStore"/>
+		<mapping class="com.ushine.storesinfo.model.CertificatesStore"/>
+		<mapping class="com.ushine.storesinfo.model.LeadSpeakStore"/>
+		<mapping class="com.ushine.storesinfo.model.NetworkAccountStore"/>
+		<mapping class="com.ushine.storesinfo.model.PersonStore"/>
+		<mapping class="com.ushine.storesinfo.model.WebsiteJournalStore"/>
+		<mapping class="com.ushine.storesinfo.model.ClueRelationship"/>
+		<!-- <mapping class="com.ushine.storesinfo.model.Attaches"/> -->
+		<mapping class="com.ushine.storesinfo.model.ImportTaskDomain"/>
+		<!-- 当时没有把com.ushine.storesinfo.model.TempClueData添加进来,导致no persistent class -->
+		<mapping class="com.ushine.storesinfo.model.TempClueData"/>
+		<mapping class="com.ushine.storesinfo.model.ClueStore"/>
+		<mapping class="com.ushine.storesinfo.model.OutsideDocStore"/>
+		<mapping class="com.ushine.storesinfo.model.OrganizBranches"/>
+		<mapping class="com.ushine.storesinfo.model.OrganizPerson"/>
+		<mapping class="com.ushine.storesinfo.model.OrganizPublicAction"/>
+		<mapping class="com.ushine.storesinfo.model.OrganizStore"/>
+		<mapping class="com.ushine.storesinfo.model.TempClueData"/>
 	</session-factory>
 </hibernate-configuration>
