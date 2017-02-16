@@ -1,16 +1,5 @@
 package com.ushine.storeInfo;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Random;
-
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.document.Field.Index;
-import org.apache.lucene.document.Field.Store;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -28,7 +17,6 @@ import com.ushine.core.verify.session.UserSessionMgr;
 //import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 import com.ushine.storeInfo.controller.InfoTypeController;
 import com.ushine.storeInfo.controller.VocationalWorkStoreController;
-import com.ushine.storeInfo.model.VocationalWorkStore;
 import com.ushine.storeInfo.service.IInfoTypeService;
 import com.ushine.storeInfo.service.IPersonStoreService;
 import com.ushine.storeInfo.service.IVocationalWorkStoreService;
@@ -101,43 +89,4 @@ public class VocationalWorkStoreControllerTest {
 		// request=new MockHttpServletRequest();
 		// System.out.println("=====request.getContextPath()====="+request.getSession().getServletContext().getRealPath("jquery"));
 	}
-
-	private static String setDate(int startYear, int endYear) {
-		// 创办时间
-		// 随机生成日期
-		Random randomDate = new Random();
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-		Calendar calendar = Calendar.getInstance();
-		calendar.set(startYear, 1, 1);
-		long start = calendar.getTimeInMillis();
-		calendar.set(endYear, 7, 21);
-		long end = calendar.getTimeInMillis();
-		Date date = new Date((long) (start + randomDate.nextDouble() * (end - start)));
-		return format.format(date);
-	}
-
-
-	private static List<Document> addDocs(List<VocationalWorkStore> list) {
-		List<Document> documents = new ArrayList<Document>();
-		for (VocationalWorkStore vocationalWorkStore : list) {
-			Document doc = new Document();
-			//时间不分词
-			doc.add(new Field("id", vocationalWorkStore.getId(), Field.Store.YES, Field.Index.NOT_ANALYZED));
-			doc.add(new Field("docName", vocationalWorkStore.getDocName(), Field.Store.YES, Field.Index.ANALYZED));
-			doc.add(new Field("docNumber", vocationalWorkStore.getDocNumber(), Field.Store.YES, Field.Index.NOT_ANALYZED));
-			doc.add(new Field("time", vocationalWorkStore.getTime(), Field.Store.YES, Field.Index.NOT_ANALYZED));
-			doc.add(new Field("theOriginal", vocationalWorkStore.getTheOriginal(), Field.Store.YES,
-					Field.Index.ANALYZED));
-			doc.add(new Field("infoType", vocationalWorkStore.getInfoType().getTypeName(), Field.Store.YES,
-					Field.Index.ANALYZED));
-			doc.add(new Field("createDate", vocationalWorkStore.getCreateDate(), Store.YES, Index.NOT_ANALYZED));
-			doc.add(new Field("involvedInTheField", vocationalWorkStore.getInvolvedInTheField().getTypeName(), 
-					Store.YES, Index.ANALYZED));
-			documents.add(doc);
-		}
-		return documents;
-	}
-
-	
-
 }
