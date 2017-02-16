@@ -41,7 +41,6 @@ import com.ushine.storeInfo.storeFinal.StoreFinal;
 import com.ushine.util.IdentifyDocUtils;
 import com.ushine.util.StringUtil;
 import com.ushine.util.XmlUtils;
-import com.ushine.util.MyXmlUtilsTest;
 
 import net.sf.ezmorph.bean.MorphDynaBean;
 import net.sf.json.JSONArray;

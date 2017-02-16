@@ -70,10 +70,6 @@ public final class StoreIndexPath {
 	 */
 	public static final String VOCATIONALWORKSTORE_INDEXPATH=getStoreIndexPath("vocationalWorkStoreIndex");
 	/**
-	 * 附件的索引目录
-	 */
-	public static final String ATTACHES_INDEXPATH=getStoreIndexPath("attachesIndex");
-	/**
 	 * 是否创建索引<br>
 	 * conf.peroperties中createIndex默认为false,不创建 <br>
 	 * @return boolean
