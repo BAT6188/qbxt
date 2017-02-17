@@ -9,20 +9,26 @@ import org.apache.solr.client.solrj.beans.Field;
  * @author dh
  *
  */
-public class PersonStore {
+public class PersonStoreSolr {
 	/**
 	 * personId的值唯一，使用数据库里的主键
 	 */
 	@Field
 	private String personId;
 	/**
-	 * 姓名，精确查询不分词
+	 * 姓名，精确查询
 	 */
 	@Field
 	private String personName;
-	
 	/**
-	 * 曾用名，精确查询不分词
+	 * 所属类别
+	 */
+	@Field
+	private String infoType;
+	
+
+	/**
+	 * 曾用名，精确查询
 	 */
 	@Field
 	private String nameUsedBefore;
@@ -32,39 +38,39 @@ public class PersonStore {
 	@Field
 	private String englishName;
 	/**
-	 * 性别，精确查询不分词<br>
+	 * 性别，精确查询<br>
 	 * 男或者女或者空
 	 */
 	@Field
 	private String sex;
 	/**
-	 * 出生日期，精确查询不分词<br>
+	 * 出生日期，精确查询<br>
 	 * 格式统一为yyyy-MM-dd
 	 */
 	@Field
 	private String bebornTime;
 	/**
-	 * 户籍地址，精确查询不分词
+	 * 户籍地址，精确查询
 	 */
 	@Field
 	private String registerAddress;
 	/**
-	 * 现住地址，精确查询不分词
+	 * 现住地址，精确查询
 	 */
 	@Field
 	private String presentAddress;
 	/**
-	 * 工作单位，精确查询不分词
+	 * 工作单位，精确查询
 	 */
 	@Field
 	private String workUnit;
 	/**
-	 * 履历，暂定精确查询不分词
+	 * 履历，暂定精确查询
 	 */
 	@Field
 	private String antecedents;
 	/**
-	 * 活动情况，暂定精确查询不分词
+	 * 活动情况，暂定精确查询
 	 */
 	@Field
 	private String activityCondition;
@@ -74,7 +80,7 @@ public class PersonStore {
 	@Field
 	private String appendix;
 	/**
-	 * 附件内容，暂定精确查询不分词
+	 * 附件内容，暂定精确查询
 	 */
 	@Field
 	private String attachContent;
@@ -83,7 +89,7 @@ public class PersonStore {
 	 * 数据创建时间
 	 */
 	@Field
-	private String createDate;
+	private long createDate;
 	/**
 	 * uid，人员权限依据，不分词，不索引
 	 */
@@ -104,7 +110,7 @@ public class PersonStore {
 	@Field
 	private String certificatesStores;
 	
-	public PersonStore(){
+	public PersonStoreSolr(){
 		
 	}
 	
@@ -198,10 +204,10 @@ public class PersonStore {
 	public void setCertificatesStores(String certificatesStores) {
 		this.certificatesStores = certificatesStores;
 	}
-	public String getCreateDate() {
+	public long getCreateDate() {
 		return createDate;
 	}
-	public void setCreateDate(String createDate) {
+	public void setCreateDate(long createDate) {
 		this.createDate = createDate;
 	}
 	public String getUid() {
@@ -222,10 +228,17 @@ public class PersonStore {
 	public void setDid(String did) {
 		this.did = did;
 	}
+	public String getInfoType() {
+		return infoType;
+	}
+	public void setInfoType(String infoType) {
+		this.infoType = infoType;
+	}
 	/**
 	 * 有id的构造函数
 	 * @param personId
 	 * @param personName
+	 * @param infoType
 	 * @param nameUsedBefore
 	 * @param englishName
 	 * @param sex
@@ -244,13 +257,14 @@ public class PersonStore {
 	 * @param networkAccountStores
 	 * @param certificatesStores
 	 */
-	public PersonStore(String personId, String personName, String nameUsedBefore, String englishName, String sex, String bebornTime, String registerAddress, String presentAddress, String workUnit,
-			String antecedents, String activityCondition, String appendix, String attachContent, String createDate, String uid, String oid, String did, String networkAccountStores,
+	public PersonStoreSolr(String personId, String personName,String infoType, String nameUsedBefore, String englishName, String sex, String bebornTime, String registerAddress, String presentAddress, String workUnit,
+			String antecedents, String activityCondition, String appendix, String attachContent, long createDate, String uid, String oid, String did, String networkAccountStores,
 			String certificatesStores) {
 		this.personId = personId;
 		this.personName = personName;
 		this.nameUsedBefore = nameUsedBefore;
 		this.englishName = englishName;
+		this.infoType=infoType;
 		this.sex = sex;
 		this.bebornTime = bebornTime;
 		this.registerAddress = registerAddress;
@@ -270,6 +284,7 @@ public class PersonStore {
 	/**
 	 * 没有id的构造函数
 	 * @param personName
+	 * @param infoType
 	 * @param nameUsedBefore
 	 * @param englishName
 	 * @param sex
@@ -288,9 +303,10 @@ public class PersonStore {
 	 * @param networkAccountStores
 	 * @param certificatesStores
 	 */
-	public PersonStore(String personName, String nameUsedBefore, String englishName, String sex, String bebornTime, String registerAddress, String presentAddress, String workUnit, String antecedents,
-			String activityCondition, String appendix, String attachContent, String createDate, String uid, String oid, String did, String networkAccountStores, String certificatesStores) {
+	public PersonStoreSolr(String personName,String infoType, String nameUsedBefore, String englishName, String sex, String bebornTime, String registerAddress, String presentAddress, String workUnit, String antecedents,
+			String activityCondition, String appendix, String attachContent, long createDate, String uid, String oid, String did, String networkAccountStores, String certificatesStores) {
 		this.personName = personName;
+		this.infoType=infoType;
 		this.nameUsedBefore = nameUsedBefore;
 		this.englishName = englishName;
 		this.sex = sex;
@@ -312,7 +328,7 @@ public class PersonStore {
 
 	@Override
 	public String toString() {
-		return "PersonStore [personId=" + personId + ", personName=" + personName + ", nameUsedBefore=" + nameUsedBefore + ", englishName=" + englishName + ", sex=" + sex + ", bebornTime="
+		return "PersonStore [personId=" + personId + ", infoType=" + infoType + ",personName=" + personName + ", nameUsedBefore=" + nameUsedBefore + ", englishName=" + englishName + ", sex=" + sex + ", bebornTime="
 				+ bebornTime + ", registerAddress=" + registerAddress + ", presentAddress=" + presentAddress + ", workUnit=" + workUnit + ", createDate=" + createDate + ", uid=" + uid + ", oid="
 				+ oid + ", did=" + did + ", networkAccountStores=" + networkAccountStores + ", certificatesStores=" + certificatesStores + "]";
 	}

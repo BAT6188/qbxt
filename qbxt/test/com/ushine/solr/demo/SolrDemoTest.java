@@ -8,13 +8,14 @@ import java.util.List;
 
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
+import org.apache.solr.common.SolrDocumentList;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import com.ushine.solr.demo.SolrDemo;
-import com.ushine.solr.solrbean.PersonStore;
+import com.ushine.solr.solrbean.PersonStoreSolr;
 
 public class SolrDemoTest {
 	
@@ -57,9 +58,9 @@ public class SolrDemoTest {
 	  */
 	 @Test
 	 public void testAddByBean() throws IOException, SolrServerException{
-		 PersonStore bean=new PersonStore(0001+"", "董昊", "", "lebron james", "男", "1989-11-09", "山东省济宁市", 
+		 PersonStoreSolr bean=new PersonStoreSolr(0001+"", "董昊", "", "lebron james", "男", "1989-11-09", "山东省济宁市", 
 				 	"上海市浦东区", "公安部第三研究所", "专业为GIS", "主要从事java、网络运维", 
-				 	"附件,图片,doc文档", "****", "2017-02-09T11:30:20Z", null, null, null, null, null);
+				 	"附件,图片,doc文档", "****", 10000, null, null, null, null, null);
 		solrJDemo.addDocumentByBean(bean);
 		assertEquals(2, solrJDemo.getCountByCondition("personstoreAll:\"董昊\""));
 	 }
@@ -70,16 +71,16 @@ public class SolrDemoTest {
 	  */
 	 @Test
 	 public void testAddByBeans() throws IOException, SolrServerException{
-		PersonStore bean1 = new PersonStore("0002", "董昊", "", "lebron james", "男", "1989-11-09", "山东省济宁市", "上海市浦东区",
+		PersonStoreSolr bean1 = new PersonStoreSolr("0002", "董昊", "反颠覆","", "lebron james", "男", "1989-11-09", "山东省济宁市", "上海市浦东区",
 				"公安部第三研究所", "专业为GIS", "主要从事java、网络运维", "附件,图片,doc文档", "公司人员车辆网店表,佳吉最新",
-				"2017-02-01T00:00:000Z", null, null, null, "1002361422,13699414937", "donglebron@sina.com,lerbondong@sina.com");
-		PersonStore bean2 = new PersonStore("0003", "董雪", "", "kobe bryant", "男", "1988-12-09", "山东省济宁市", "上海市普陀区",
+				10000, null, null, null, "1002361422,13699414937", "donglebron@sina.com,lerbondong@sina.com");
+		PersonStoreSolr bean2 = new PersonStoreSolr("0003", "董雪","反颠覆", "", "kobe bryant", "男", "1988-12-09", "山东省济宁市", "上海市普陀区",
 				"公安部第三研究所", "专业为GIS", "主要从事java、网络运维", "附件,图片,doc文档", "公司车辆网点表,佳吉最新",
-				"2017-02-02T00:00:00.000Z", null, null, null, null, null);
-		PersonStore bean3 = new PersonStore("0001", "董月", "", "dong yue", "男", "2008-12-28", "山东省济宁市", "上海市静安区",
+				10001, null, null, null, null, null);
+		PersonStoreSolr bean3 = new PersonStoreSolr("0001", "董月","反颠覆", "", "dong yue", "男", "2008-12-28", "山东省济宁市", "上海市静安区",
 				"公安部第三研究所", "专业为GIS", "主要从事java、网络运维", "附件,图片,doc文档", "佳佳",
-				"2017-02-03T00:00:00.000Z", null, null, null, null, null);
-		List<PersonStore> list = new ArrayList<>();
+				10002, null, null, null, null, null);
+		List<PersonStoreSolr> list = new ArrayList<>();
 		list.add(bean1);
 		list.add(bean2);
 		list.add(bean3);
@@ -118,9 +119,9 @@ public class SolrDemoTest {
 	 @Test
 	 public void testUpdateDocumentByBean() throws SolrServerException, IOException{
 		 assertEquals(0, solrJDemo.getCountByCondition("personstoreAll:\"董月\""));
-		 PersonStore bean=new PersonStore("董盼", "", "lebron james", "男", "1989-11-09", "山东省济宁市", "上海市浦东区", 
+		 PersonStoreSolr bean=new PersonStoreSolr("董盼", "网络大咖","", "lebron james", "男", "1989-11-09", "山东省济宁市", "上海市浦东区", 
 				 "公安部第三研究所", "专业为GIS", "主要从事java、网络运维", "附件,图片,doc文档", "公司人员车辆网店表,佳吉最新",
-				 "2017-02-01T00:00:00.000Z", null, null, null, "1002361422,13699414937", "donglebron@sina.com,lerbondong@sina.com");
+				 10001, null, null, null, "1002361422,13699414937", "donglebron@sina.com,lerbondong@sina.com");
 		 solrJDemo.updateDocumentByBean("0001", bean);
 		 assertEquals(1, solrJDemo.getCountByCondition("personstoreAll:\"董月\""));
 	 }
@@ -130,6 +131,7 @@ public class SolrDemoTest {
 	  * @throws SolrServerException
 	  */
 	 @Test
+	 @Deprecated
 	 public void testGetListByDate() throws SolrServerException{
 		 List<String> list = solrJDemo.getListByDate("createDate", "2017-02-01T00:00:00Z", "2017-02-03T23:59:59Z");
 		 assertEquals(3, list.size());
@@ -141,6 +143,20 @@ public class SolrDemoTest {
 	 @Test
 	 public void testGetDetailsByCondition() throws SolrServerException{
 		 solrJDemo.getDetailsByCondition("*:*");
+	 }
+	 /**
+	  * 测试将Document中的bean转成solr包中定义的bean
+	  * @throws SolrServerException
+	  */
+	 @Test
+	 public void testDocumentListToBeanList() throws SolrServerException{
+		SolrDocumentList sdl = solrJDemo.getListByCondition("personId:*");
+		List<PersonStoreSolr> list = solrJDemo.documentListToBeanList(sdl);
+		long[] dates = { 10000, 10001, 10002 };
+		assertTrue(list.size() == 3);
+		for (int i = 0; i < list.size(); i++) {
+			assertEquals(dates[i], list.get(i).getCreateDate());
+		}
 	 }
 	 /**
 	  * 测试删除所有

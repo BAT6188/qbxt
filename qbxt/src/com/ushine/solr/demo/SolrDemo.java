@@ -9,6 +9,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.impl.LogFactoryImpl;
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.beans.DocumentObjectBinder;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
@@ -16,7 +17,7 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 
-import com.ushine.solr.solrbean.PersonStore;
+import com.ushine.solr.solrbean.PersonStoreSolr;
 /**
  * 利用solrj做索引的crud操作<br>
  * 注意：<br>
@@ -57,7 +58,8 @@ public class SolrDemo {
 		SolrDocumentList sdList=null;
 		SolrQuery query = new SolrQuery(condition);
 		// 分页查询
-		query.setStart(0).setRows(50);
+		query.setStart(0).setRows(50)
+			.setSort("createDate",ORDER.asc);
 		QueryResponse response = solrServer.query(query);
 		sdList = response.getResults();
 		logger.error(String.format("符合查询条件为[%s]的总数：%s", condition,sdList.getNumFound()));
@@ -82,6 +84,7 @@ public class SolrDemo {
 	 * @return PersonStore的List
 	 * @throws SolrServerException
 	 */
+	@Deprecated
 	protected List<String> getListByDate(String field, String startDate, String endDate) throws SolrServerException {
 		String condition = String.format("%s:[%s TO %s]", field, startDate, endDate);
 		SolrDocumentList sdList = getListByCondition(condition);
@@ -99,11 +102,10 @@ public class SolrDemo {
 	 * @param sdList
 	 * @return
 	 */
-	@SuppressWarnings("unused")
-	private List<PersonStore> documentListToBeanList(SolrDocumentList sdList){
+	protected List<PersonStoreSolr> documentListToBeanList(SolrDocumentList sdList){
 		//利用DocumentObjectBinder对象将SolrInputDocument和 PersonStore对象相互转换
 		DocumentObjectBinder binder=new DocumentObjectBinder();
-		List<PersonStore> beans = binder.getBeans(PersonStore.class, sdList);
+		List<PersonStoreSolr> beans = binder.getBeans(PersonStoreSolr.class, sdList);
 		return beans;
 	}
 	
@@ -116,12 +118,8 @@ public class SolrDemo {
 		//获得数量
 		SolrDocumentList sdList=getListByCondition(condition);
 		//遍历结果
-		for (SolrDocument document : sdList) {
-			String personId=document.getFieldValue("personId").toString();
-			String personName=document.getFieldValue("personName").toString();
-			//打印结果
-			logger.warn(String.format("personId：%s，personName：%s", personId,personName));
-		}
+		List<PersonStoreSolr> list=documentListToBeanList(sdList);
+		
 	}
 	/**
 	 * 通过bean的形式添加索引
@@ -129,7 +127,7 @@ public class SolrDemo {
 	 * @throws IOException
 	 * @throws SolrServerException
 	 */
-	protected void addDocumentByBean(PersonStore bean) throws IOException, SolrServerException{
+	protected void addDocumentByBean(PersonStoreSolr bean) throws IOException, SolrServerException{
 		solrServer.addBean(bean);
 		solrServer.commit();
 	}
@@ -139,7 +137,7 @@ public class SolrDemo {
 	 * @throws IOException
 	 * @throws SolrServerException
 	 */
-	protected void addDocumentByBeans(List<PersonStore> list) throws IOException, SolrServerException{
+	protected void addDocumentByBeans(List<PersonStoreSolr> list) throws IOException, SolrServerException{
 		solrServer.addBeans(list);
 		solrServer.commit();
 	}
@@ -176,7 +174,7 @@ public class SolrDemo {
 	 * @throws SolrServerException
 	 * @throws IOException
 	 */
-	protected void updateDocumentByBean(String id,PersonStore bean) throws SolrServerException, IOException {
+	protected void updateDocumentByBean(String id,PersonStoreSolr bean) throws SolrServerException, IOException {
 		bean.setPersonId(id);
 		addDocumentByBean(bean);
 	}

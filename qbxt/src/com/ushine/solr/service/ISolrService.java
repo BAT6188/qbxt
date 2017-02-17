@@ -5,26 +5,30 @@ import java.util.List;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
 
 public interface ISolrService<T> {
+	/**
+	 * 添加solr索引
+	 * @param server HttpSolrServer
+	 * @param daoStore dao层的bean模型
+	 */
+	void addDocumentByStore(HttpSolrServer server, T daoStore);
 
-	void addDocumentByStore(HttpSolrServer server, T store);
-
-	void addDocumentByStores(HttpSolrServer server, List<T> store);
+	void addDocumentByStores(HttpSolrServer server, List<T> daoStore);
+	
+	void createNewIndexByStores(HttpSolrServer server, List<T> daoStore);
 
 	void deleteDocumentById(HttpSolrServer server, String id);
 
 	void deleteDocumentByIds(HttpSolrServer server, String[] ids);
+	/**
+	 * 删除所有索引记录
+	 * @param server
+	 */
+	void deleteAll(HttpSolrServer server);
 
-	void updateDocumentByStore(HttpSolrServer server, String id, T store);
+	void updateDocumentByStore(HttpSolrServer server, String id, T daoStore);
 	
 	long getDocumentsCount(HttpSolrServer server,String query,String startDate,String endDate);
 	/**
-	 	SolrQuery params = new SolrQuery();
-		params.setQuery("*:*");
-		//降序
-		params.setSort(fieldName1, ORDER.desc);
-		//升序
-		params.addSort(fieldName2, ORDER.asc);
-		
 	 * @param server
 	 * @param query
 	 * @param startDate
