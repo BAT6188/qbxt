@@ -42,9 +42,9 @@ import org.slf4j.LoggerFactory;
 
 import com.ushine.common.config.Configured;
 import com.ushine.common.utils.PathUtils;
-import com.ushine.storeInfo.model.InfoType;
-import com.ushine.storeInfo.model.PersonStore;
-import com.ushine.storeInfo.service.impl.LeadSpeakStoreServiceImpl;
+import com.ushine.storesinfo.model.InfoType;
+import com.ushine.storesinfo.model.PersonStore;
+import com.ushine.storesinfo.service.impl.LeadSpeakStoreServiceImpl;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;

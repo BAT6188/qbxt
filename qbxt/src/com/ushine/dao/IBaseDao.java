@@ -5,9 +5,9 @@ import java.util.List;
 
 import org.hibernate.criterion.DetachedCriteria;
 
-import com.ushine.storeInfo.model.OrganizStore;
-import com.ushine.storeInfo.model.PersonStore;
-import com.ushine.storeInfo.model.WebsiteJournalStore;
+import com.ushine.storesinfo.model.OrganizStore;
+import com.ushine.storesinfo.model.PersonStore;
+import com.ushine.storesinfo.model.WebsiteJournalStore;
 
 /**
  * 基础DAO支持接口v3.0,所有程序数据的CRUD都通过该接口操作（替换IBaseDaoSupport接口操作）

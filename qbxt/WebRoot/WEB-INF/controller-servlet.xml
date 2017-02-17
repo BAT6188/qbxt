@@ -20,8 +20,7 @@
 	<context:component-scan base-package="com.ushine.core.controller" />
 	<context:component-scan base-package="com.ushine.log.controller" />
 	<context:component-scan base-package="com.ushine.store.controller" />
-	<context:component-scan base-package="com.ushine.storeInfo.controller" />
-	<context:component-scan base-package="com.ushine.storeInfo.exportPDFInfo.controller" />
+	<context:component-scan base-package="com.ushine.luceneindex.controller" />
 	<!-- InternalResourceViewResolver默认的就是JstlView所以这里就不用配置viewClass了 -->
 	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<property name="prefix" value="/"></property>

@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import com.ushine.common.utils.PathUtils;
 import com.ushine.common.utils.XMLUtils;
-import com.ushine.storeInfo.service.impl.VocationalWorkStoreServiceImpl;
+import com.ushine.storesinfo.service.impl.VocationalWorkStoreServiceImpl;
 
 import net.sf.json.JSONObject;
 
