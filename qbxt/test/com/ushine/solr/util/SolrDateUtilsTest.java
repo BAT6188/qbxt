@@ -19,4 +19,9 @@ public class SolrDateUtilsTest {
 		//endDateStr+=" 23:59:59";
 		assertEquals(true, SolrDateUtils.compareDate("2017-02-15", "2017-02-16", "2017-02-16 12:30:30"));
 	}
+	
+	@Test
+	public void testGetDate(){
+		//System.err.println(SolrDateUtils.getDate(111111111));
+	}
 }
