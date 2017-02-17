@@ -1,12 +1,15 @@
 package com.ushine.storesinfo.util;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.ushine.dao.IBaseDao;
 import com.ushine.storesinfo.model.CertificatesStore;
+import com.ushine.storesinfo.model.NetworkAccountStore;
 import com.ushine.storesinfo.model.PersonStore;
 
 /**
@@ -18,6 +21,9 @@ import com.ushine.storesinfo.model.PersonStore;
  * 
  */
 public class AccountsUtils {
+	@Autowired static IBaseDao<CertificatesStore, Serializable> csDao;
+	@Autowired static IBaseDao<NetworkAccountStore, Serializable> nasDao;
+	
 	@Deprecated
 	public List<Class> getAccountsList(PersonStore personStore, IBaseDao baseDao, Class clazz) throws Exception {
 		DetachedCriteria criteria = DetachedCriteria.forClass(clazz);
@@ -25,6 +31,8 @@ public class AccountsUtils {
 		criteria.createAlias("personStore", "p").add(Restrictions.eq("p.id", personStore.getId()));
 		StringBuffer buffer = new StringBuffer();
 		List<Class> list = baseDao.findByCriteria(criteria);
+		
 		return list;
 	}
+	
 }
