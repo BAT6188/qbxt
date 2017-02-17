@@ -6,10 +6,12 @@ import java.text.ParseException;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
 import org.junit.Test;
 
 import com.ushine.solr.solrbean.PersonStoreSolr;
+import com.ushine.solr.vo.PersonStoreVo;
 import com.ushine.storesinfo.model.CertificatesStore;
 import com.ushine.storesinfo.model.InfoType;
 import com.ushine.storesinfo.model.PersonStore;
@@ -53,5 +55,26 @@ public class SolrBeanUtilsTest {
 		assertEquals(value, psSolr.getCreateDate());
 		System.err.println(psSolr.getCertificatesStores());
 		//assertEquals("10001,10002,", psSolr.getCertificatesStores());
+		String [] cstores=psSolr.getCertificatesStores().split(",");
+		assertEquals(true, ArrayUtils.contains(cstores, "10001"));
+		assertEquals(true, ArrayUtils.contains(cstores, "10002"));
+	}
+	
+	/**
+	 * 测试将solr中的PersonStore转成vo对象
+	 * @throws NoSuchMethodException 
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
+	 */
+	@Test
+	public void testConvertPersonStoreSolrToVo() throws IllegalAccessException, InvocationTargetException, NoSuchMethodException{
+		PersonStoreVo vo=null;
+		PersonStoreSolr psSolr=new PersonStoreSolr();
+		psSolr.setCreateDate(10000);
+		psSolr.setBebornTime("1901-01-01");
+		psSolr.setNameUsedBefore(null);
+		vo=SolrBeanUtils.convertPersonStoreSolrToVo(psSolr);
+		assertEquals("1901-01-01", vo.getBebornTime());
+		assertEquals("", vo.getNameUsedBefore());
 	}
 }

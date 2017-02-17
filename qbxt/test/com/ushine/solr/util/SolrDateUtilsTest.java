@@ -3,6 +3,7 @@ import static org.junit.Assert.*;
 
 import java.text.ParseException;
 
+import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 
 public class SolrDateUtilsTest {
@@ -23,5 +24,10 @@ public class SolrDateUtilsTest {
 	@Test
 	public void testGetDate(){
 		//System.err.println(SolrDateUtils.getDate(111111111));
+		String date="2017-01-25 23:37:10.0";
+		String date2="2017-01-25 23:37:10";
+		String pattern="yyyy-MM-dd HH:mm:ss";
+		assertEquals(date2, StringUtils.substring(date, 0, pattern.length()));
+		assertEquals(SolrDateUtils.getTimeMillis(date), SolrDateUtils.getTimeMillis(date2));
 	}
 }

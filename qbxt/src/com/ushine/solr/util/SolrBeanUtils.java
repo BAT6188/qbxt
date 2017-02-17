@@ -41,33 +41,33 @@ public class SolrBeanUtils {
 	public static PersonStoreSolr convertPersonStoreToSolrBean(PersonStore ps) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		PersonStoreSolr psSolr = new PersonStoreSolr();
 		// 复制id属性
-		BeanUtils.copyProperty(psSolr, "personId", ps.getId());
+		BeanUtils.copyProperty(psSolr, "personId", getStringValue(ps.getId()));
 		// 属性集合
 		String[] properties = { "personName", "nameUsedBefore", "englishName", "sex", "bebornTime", "registerAddress", "presentAddress", "workUnit", "antecedents", "appendix", "activityCondition",
-				"uid", "oid", "did", };
+				"uid", "oid", "did"};
 		// PropertyUtils反射获得属性值，复制其他属性
 		for (String property : properties) {
-			String propertyValue = getPropertyValue(PropertyUtils.getSimpleProperty(ps, property));
+			String propertyValue = getStringValue(PropertyUtils.getSimpleProperty(ps, property));
 			BeanUtils.copyProperty(psSolr, property, propertyValue);
 		}
 		// 复制infoType属性
 		InfoType infoType = (InfoType) PropertyUtils.getSimpleProperty(ps, INFOTYPE);
 		if (null != infoType) {
-			String value = getPropertyValue(infoType.getTypeName());
+			String value = getStringValue(infoType.getTypeName());
 			BeanUtils.copyProperty(psSolr, INFOTYPE, value);
-			logger.info("拷贝" + INFOTYPE + "属性值：" + value);
+			//logger.info("拷贝" + INFOTYPE + "属性值：" + value);
 		} else {
 			BeanUtils.copyProperty(psSolr, INFOTYPE, "");
 		}
 		// 复制createDate属性，转成long型
-		logger.info("拷贝" + CREATEDATE + "属性值：" + ps.getCreateDate());
+		//logger.info("拷贝" + CREATEDATE + "属性值：" + ps.getCreateDate());
 		BeanUtils.copyProperty(psSolr, CREATEDATE, SolrDateUtils.getTimeMillis(ps.getCreateDate()));
 		// 复制身份账号集合
 		Set<CertificatesStore> certificatesStores = ps.getCertificatesStores();
 		StringBuffer csBuffer = new StringBuffer();
 		if (null != certificatesStores && certificatesStores.size() > 0) {
 			for (CertificatesStore store : certificatesStores) {
-				csBuffer.append(getPropertyValue(store.getCertificatesNumber()) + ",");
+				csBuffer.append(getStringValue(store.getCertificatesNumber()) + ",");
 			}
 		}
 		BeanUtils.copyProperty(psSolr, "certificatesStores", csBuffer.toString());
@@ -76,7 +76,7 @@ public class SolrBeanUtils {
 		StringBuffer nasBuffer = new StringBuffer();
 		if (null != networkAccountStores && networkAccountStores.size() > 0) {
 			for (NetworkAccountStore store : networkAccountStores) {
-				nasBuffer.append(getPropertyValue(store.getNetworkNumber()) + ",");
+				nasBuffer.append(getStringValue(store.getNetworkNumber()) + ",");
 			}
 		}
 		BeanUtils.copyProperty(psSolr, "networkAccountStores", nasBuffer.toString());
@@ -95,14 +95,15 @@ public class SolrBeanUtils {
 	public static PersonStoreVo convertPersonStoreSolrToVo(PersonStoreSolr psSolr) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		PersonStoreVo vo = new PersonStoreVo();
 		// 复制id属性
-		BeanUtils.copyProperty(vo, "id", psSolr.getPersonId());
+		BeanUtils.copyProperty(vo, "id", getStringValue(psSolr.getPersonId()));
 		String[] properties = {"personName", "nameUsedBefore", "englishName", "sex", "bebornTime", "presentAddress", "workUnit", "registerAddress"};
 		for (String string : properties) {
-			String value = getPropertyValue(PropertyUtils.getSimpleProperty(psSolr, string));
+			String value = getStringValue(PropertyUtils.getSimpleProperty(psSolr, string));
 			BeanUtils.copyProperty(vo, string, value);
 		}
 		// createDate要将long转成日期格式
-
+		String createDate=SolrDateUtils.getDate(psSolr.getCreateDate());
+		BeanUtils.copyProperty(vo, CREATEDATE, createDate);
 		return vo;
 	}
 
@@ -113,7 +114,7 @@ public class SolrBeanUtils {
 	 *            属性值，允许为null
 	 * @return
 	 */
-	public static String getPropertyValue(Object propertyValue) {
+	public static String getStringValue(Object propertyValue) {
 		StringBuilder buffer = new StringBuilder();
 		// 防止出现null
 		if (null != propertyValue && StringUtils.isNotEmpty(propertyValue.toString())) {

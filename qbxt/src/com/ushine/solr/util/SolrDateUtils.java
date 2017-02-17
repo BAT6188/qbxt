@@ -30,6 +30,8 @@ public class SolrDateUtils {
 	 */
 	public static long getTimeMillis(String date) {
 		try {
+			//先截取成标准的格式
+			date=StringUtils.substring(date, 0, DATE_PATTERNS.length());
 			Date parseDate = DateUtils.parseDate(date, new String[] { DATE_PATTERNS });
 			return com.ushine.common.utils.DateUtils.getMillis(parseDate);
 		} catch (Exception e) {
