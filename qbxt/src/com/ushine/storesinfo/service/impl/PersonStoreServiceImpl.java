@@ -80,47 +80,11 @@ import com.ushine.util.XmlUtils;
 @Service(value="personStoreServiceImpl")
 public class PersonStoreServiceImpl implements IPersonStoreService{
 	private static final Logger logger = LoggerFactory.getLogger(PersonStoreServiceImpl.class);
-	@Autowired
-	private IBaseDao<PersonStore, String> baseDao;
-	@Autowired
-	private IBaseDao iBaseDao;
-	
+	@Autowired private IBaseDao<PersonStore, String> baseDao;
+	@Autowired private IBaseDao iBaseDao;
 	@Autowired private IBaseDao personNamesDao;
 	@Autowired private IInfoTypeService infoTypeService;
 	private PersonStoreNRTSearch personStoreNRTSearch=PersonStoreNRTSearch.getInstance();
-	
-	@Transactional(readOnly = true)
-	private DetachedCriteria getCondition(String field,String fieldValue,String startTime,String endTime,int nextPage, int size, String uid,
-			String oid, String did) throws Exception {
-		DetachedCriteria criteria = DetachedCriteria.forClass(PersonStore.class);
-		//时间倒序排序
-		criteria.addOrder(Order.desc("createDate"));
-		//anyField任意字段搜索
-		if(!StringUtil.isNull(startTime) && startTime.length() >=10){
-			startTime = startTime.substring(0,10)+ " 00:00:00";
-			criteria.add(Restrictions.ge("createDate", startTime));
-		}
-		if(!StringUtil.isNull(endTime) && endTime.length()>=10){
-			endTime = endTime.substring(0,10)+" 23:59:59";
-			criteria.add(Restrictions.le("createDate", endTime));
-		}
-		if (!StringUtil.isNull(uid)) {
-			criteria.add(Restrictions.eq("uid", uid));
-		}
-		if (!StringUtil.isNull(oid)) {
-			criteria.add(Restrictions.eq("oid", oid));
-		}
-		if (!StringUtil.isNull(did)) {
-			criteria.add(Restrictions.eq("did", did));
-		}
-		//查询aciton不为3的
-		criteria.add(Restrictions.ne("action", "3"));
-		//查询已入库的数据
-		criteria.add(Restrictions.eq("isToStorage", "1"));
-		return criteria;
-	}
-	
-	
 	public boolean savePersonStore(PersonStore personStore) throws Exception {
 		//新增人员
 		baseDao.save(personStore);
@@ -314,26 +278,6 @@ public class PersonStoreServiceImpl implements IPersonStoreService{
 		return vo;
 	}
 
-	@Transactional(readOnly = true)
-	private DetachedCriteria getCondition(String uid,
-			String oid, String did) throws Exception {
-		DetachedCriteria criteria = DetachedCriteria.forClass(PersonStore.class);
-		//时间倒序排序
-				criteria.addOrder(Order.desc("createDate"));
-		if (!StringUtil.isNull(uid)) {
-			criteria.add(Restrictions.eq("uid", uid));
-		}
-		if (!StringUtil.isNull(oid)) {
-			criteria.add(Restrictions.eq("oid", oid));
-		}
-		if (!StringUtil.isNull(did)) {
-			criteria.add(Restrictions.eq("did", did));
-		}
-		//查询aciton不为3的
-		criteria.add(Restrictions.ne("action", "3"));
-		criteria.add(Restrictions.eq("isEnable", "2"));
-		return criteria;
-	}
 	public void updatePersonStoreIsEnableStart(String[] ids) throws Exception {
 		// 设置成启用
 		for (String id : ids) {
@@ -352,14 +296,6 @@ public class PersonStoreServiceImpl implements IPersonStoreService{
 
 	public boolean findPersonStoreByPersonName(String personName)
 			throws Exception {
-		/*DetachedCriteria criteria = DetachedCriteria.forClass(PersonStore.class);
-		criteria.add(Restrictions.eq("personName", personName))
-				//没有被删除的
-				.add(Restrictions.ne("action", "3"));
-		int restus = baseDao.getRowCount(criteria);
-		if(restus>0){
-			return true;
-		}*/
 		//姓名已经存在
 		String hql=String.format("select id from PersonStore where personName='%s' and action <>'3'", personName);
 		List<PersonStore> list=baseDao.findByHql(hql);

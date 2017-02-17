@@ -61,40 +61,17 @@ public class ClueStoreServiceImpl implements IClueStoreService{
 	public boolean saveClue(ClueStore clueStore) throws Exception {
 		baseDao.save(clueStore);
 		//添加索引
-		
-		
 		return true;
 	}
 	public boolean updateClue(ClueStore clueStore) throws Exception {
 		baseDao.update(clueStore);
 		//更新索引
 		nrtSearch.updateIndex(clueStore.getId(), clueStore);
-		
-		
 		return true;
 	}
 	public ClueStore findClueById(String clueId) throws Exception {
 		// TODO Auto-generated method stub
 		return baseDao.findById(ClueStore.class, clueId);
-	}
-	@SuppressWarnings("unchecked")
-	public String findClueStore(String field,
-			String fieldValue, String startTime, String endTime, int nextPage,
-			int size, String uid, String oid, String did) throws Exception {
-		// TODO Auto-generated method stub
-		/*DetachedCriteria criteria =  getCondition(field, fieldValue, startTime, endTime, nextPage, size, uid, oid, did);
-		
-		int rowCount = baseDao.getRowCount(criteria);
-		Paging paging = new Paging(size, nextPage, rowCount);
-		logger.debug("分页信息：" + JSONObject.fromObject(paging));
-		criteria.setProjection(null);
-		criteria.setResultTransformer(CriteriaSpecification.ROOT_ENTITY);
-		List<ClueStore> list = baseDao.findPagingByCriteria(criteria, size,
-				paging.getStartRecord());
-		PagingObject<ClueStore> vo = new PagingObject<ClueStore>();
-		vo.setPaging(paging);
-		vo.setArray(list);*/
-		return null;
 	}
 	/**
 	 * 包含排序的查询
@@ -112,35 +89,7 @@ public class ClueStoreServiceImpl implements IClueStoreService{
 				endTime, nextPage, size, uid, oid, did,sortField, dir,ClueStore.class);
 		return StoreIndexQuery.clueStoreVoToJson(vo, hasValue);
 	}
-	@Transactional(readOnly = true)
-	private DetachedCriteria getCondition(String field,String fieldValue,String startTime,String endTime,int nextPage, int size, String uid,
-			String oid, String did) throws Exception {
-		DetachedCriteria criteria = DetachedCriteria.forClass(ClueStore.class);
-		//时间倒序排序
-		criteria.addOrder(Order.desc("createDate"));
-		criteria.add(Restrictions.or(Restrictions.eq("action", "1"), Restrictions.eq("action", "2")));
-		if(!StringUtil.isNull(field) && !StringUtil.isNull(fieldValue)){
-		   	criteria.add(Restrictions.like(field, "%"+fieldValue+"%"));
-		}
-		if(!StringUtil.isNull(startTime) && startTime.length() >=10){
-			startTime = startTime.substring(0,10)+ " 00:00:00";
-			criteria.add(Restrictions.ge("createDate", startTime));
-		}
-		if(!StringUtil.isNull(endTime) && endTime.length()>=10){
-			endTime = endTime.substring(0,10)+" 23:59:59";
-			criteria.add(Restrictions.le("createDate", endTime));
-		}
-		if (!StringUtil.isNull(uid)) {
-			criteria.add(Restrictions.eq("uid", uid));
-		}
-		if (!StringUtil.isNull(oid)) {
-			criteria.add(Restrictions.eq("oid", oid));
-		}
-		if (!StringUtil.isNull(did)) {
-			criteria.add(Restrictions.eq("did", did));
-		}
-		return criteria;
-	}
+	
 	public boolean delClueStoreByIds(String[] ids) throws Exception {
 		// 删除
 		StringBuffer buffer = new StringBuffer("update ClueStore set action='3' where ");

@@ -30,8 +30,7 @@ import com.ushine.util.StringUtil;
 @Transactional
 @Service("leadSpeakStoreServiceImpl")
 public class LeadSpeakStoreServiceImpl implements ILeadSpeakStoreService {
-	private static final Logger logger = LoggerFactory
-			.getLogger(LeadSpeakStoreServiceImpl.class);
+	private static final Logger logger = LoggerFactory.getLogger(LeadSpeakStoreServiceImpl.class);
 	@Autowired
 	private IBaseDao<LeadSpeakStore, String> baseDao;
 	//
@@ -120,47 +119,6 @@ public class LeadSpeakStoreServiceImpl implements ILeadSpeakStoreService {
 			hasValue=true;
 		}
 		return StoreIndexQuery.leadSpeakStoreVoToJson(vo,hasValue);
-	}
-	// 多条件查询
-	@Transactional(readOnly = true)
-	private DetachedCriteria getCondition(String field, String fieldValue,
-			String startTime, String endTime, int nextPage, int size,
-			String uid, String oid, String did) throws Exception {
-		DetachedCriteria criteria = DetachedCriteria
-				.forClass(LeadSpeakStore.class);
-		if (!StringUtil.isNull(field) && !StringUtil.isNull(fieldValue)
-				&& !field.equals("infoType")) {
-			// 类别不能直接设置值
-			criteria.add(Restrictions.like(field, "%" + fieldValue + "%"));
-		}
-		if (!StringUtil.isNull(field) && !StringUtil.isNull(fieldValue)
-				&& field.equals("infoType")) {
-			// 如果是类别
-			// 使用createAlias来创建属性别名,然后引用别名进行条件查询
-			criteria.createAlias("infoType", "i").add(
-					Restrictions.like("i.typeName", "%" + fieldValue + "%"));
-		}
-		if (!StringUtil.isNull(startTime) && startTime.length() >= 10) {
-			startTime = startTime.substring(0, 10) + " 00:00:00";
-			criteria.add(Restrictions.ge("createDate", startTime));
-		}
-		if (!StringUtil.isNull(endTime) && endTime.length() >= 10) {
-			endTime = endTime.substring(0, 10) + " 23:59:59";
-			criteria.add(Restrictions.le("createDate", endTime));
-		}
-		if (!StringUtil.isNull(uid)) {
-			criteria.add(Restrictions.eq("uid", uid));
-		}
-		if (!StringUtil.isNull(oid)) {
-			criteria.add(Restrictions.eq("oid", oid));
-		}
-		if (!StringUtil.isNull(did)) {
-			criteria.add(Restrictions.eq("did", did));
-		}
-		// 查询时ACTION为1或者为2
-		// 不等于3,not equals
-		criteria.add(Restrictions.ne("action", "3"));
-		return criteria;
 	}
 	/**
 	 * 领导讲话集合转成json
