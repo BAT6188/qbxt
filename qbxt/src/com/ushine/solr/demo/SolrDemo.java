@@ -4,6 +4,7 @@ package com.ushine.solr.demo;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.impl.LogFactoryImpl;
@@ -56,12 +57,39 @@ public class SolrDemo {
 	 */
 	protected SolrDocumentList getListByCondition(String condition) throws SolrServerException{
 		SolrDocumentList sdList=null;
-		SolrQuery query = new SolrQuery(condition);
-		// 分页查询
+		SolrQuery query = new SolrQuery();
+		/*// 分页查询
 		query.setStart(0).setRows(50)
 			.setSort("createDate",ORDER.asc);
+		query.setHighlight(true);
+		query.addHighlightField("infoType");
+		query.setHighlightSimplePre("<span color='red'>");  
+		query.setHighlightSimplePost("</span>");  */
+		
+		query.setQuery(condition);  
+        query.setHighlight(true);                //开启高亮  
+        query.setHighlightSimplePost("</aa>");    //前缀  
+        query.setHighlightSimplePre("<aa>");    //后缀  
+        query.addHighlightField("sex");      //高亮字段  
+        
 		QueryResponse response = solrServer.query(query);
+		
+		/*Map<String, Map<String, List<String>>> highlighting = response.getHighlighting();
+		
+		Map<String, List<String>> map=highlighting.get("4028318158b444400158b49746570001");
+		List<String> list=map.get("sex");
+		for (String string : list) {
+			System.err.println(string);
+		}*/
+		/*Map<String, List<String>> map=highlighting.get("personId");
+		List<String> list = map.get("infoType");
+		for (String string : list) {
+			System.err.println(string);
+		}*/
 		sdList = response.getResults();
+		for (SolrDocument solrDocument : sdList) {
+			System.err.println(solrDocument.toString());
+		}
 		logger.error(String.format("符合查询条件为[%s]的总数：%s", condition,sdList.getNumFound()));
 		//log.info(String.format("符合查询条件为[%s]的总数：%s", condition,sdList.getNumFound()));
 		return sdList;
@@ -117,9 +145,14 @@ public class SolrDemo {
 	protected void getDetailsByCondition(String condition) throws SolrServerException {
 		//获得数量
 		SolrDocumentList sdList=getListByCondition(condition);
+		/*for (SolrDocument solrDocument : sdList) {
+			System.err.println(solrDocument.getFieldValue("infoType"));
+		}*/
 		//遍历结果
 		List<PersonStoreSolr> list=documentListToBeanList(sdList);
-		
+		for (PersonStoreSolr personStoreSolr : list) {
+			System.err.println(personStoreSolr.toString());
+		}
 	}
 	/**
 	 * 通过bean的形式添加索引

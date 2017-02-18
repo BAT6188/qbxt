@@ -142,7 +142,7 @@ public class SolrDemoTest {
 	  */
 	 @Test
 	 public void testGetDetailsByCondition() throws SolrServerException{
-		 solrJDemo.getDetailsByCondition("*:*");
+		 solrJDemo.getListByCondition("sex:男");
 	 }
 	 /**
 	  * 测试将Document中的bean转成solr包中定义的bean

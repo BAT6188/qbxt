@@ -6,7 +6,17 @@ import java.util.Map;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
 /**
  * 操作solr索引的通用接口<br>
- * 1:solr中要查询必须要进行分词
+ * 1:solr中要查询必须要进行分词<br>
+ * 2:solr中的高亮直接取document没有效果，需要通过下面的方式：<br>
+ * Map<String, Map<String, List<String>>> highlighting = response.getHighlighting();
+		//对应的id的值
+		Map<String, List<String>> map=highlighting.get("4028318158b444400158b49746570001");
+		//取高亮的字段
+		List<String> list=map.get("sex");
+		for (String string : list) {
+			//取高亮的值
+			System.err.println(string);
+		}
  * @author ococat
  * @param <T>
  */
@@ -51,15 +61,4 @@ public interface ISolrService<T> {
 	void updateDocumentByStore(HttpSolrServer server, String id, T daoStore);
 	
 	long getDocumentsCount(HttpSolrServer server,Map<String, String> queryMap,String startDate,String endDate);
-	/**
-	 * @param server
-	 * @param query
-	 * @param startDate
-	 * @param endDate
-	 * @param start
-	 * @param rows
-	 * @param sortField
-	 * @return
-	 */
-	List<T> getDocuementsStores(HttpSolrServer server,Map<String, String> queryMap,String startDate,String endDate,int start,int rows,String sortField);
 }

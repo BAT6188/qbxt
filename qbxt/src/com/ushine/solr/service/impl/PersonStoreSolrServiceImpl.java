@@ -12,16 +12,19 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.beans.DocumentObjectBinder;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocumentList;
+import org.apache.solr.common.util.NamedList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ushine.dao.IBaseDao;
 import com.ushine.solr.factory.SolrServerFactory;
+import com.ushine.solr.service.IPersonStoreSolrService;
 import com.ushine.solr.service.ISolrService;
 import com.ushine.solr.solrbean.PersonStoreSolr;
 import com.ushine.solr.util.SolrBeanUtils;
@@ -31,23 +34,13 @@ import com.ushine.solr.vo.PersonStoreVo;
 import com.ushine.storesinfo.model.PersonStore;
 
 @Service(value = "personStoreSolrServiceImpl")
-public class PersonStoreSolrServiceImpl implements ISolrService<PersonStore> {
+public class PersonStoreSolrServiceImpl implements IPersonStoreSolrService {
 
 	private Logger logger = Logger.getLogger(PersonStoreSolrServiceImpl.class);
 	// 单例的solr server
 	private HttpSolrServer server = SolrServerFactory.getPSSolrServerInstance();
-	/**
-	 * 常量personId
-	 */
-	private static final String PERSONID = "personId:";
-	/**
-	 * 查询字段常量
-	 */
-	private static final String PERSONSTOREALL = "personstoreAll:";
-	/**
-	 * 常量字段createDate
-	 */
-	private static final String CREATEDATE = "createDate";
+	
+	
 
 	@Autowired
 	private IBaseDao<PersonStore, Serializable> baseDao;
@@ -130,7 +123,7 @@ public class PersonStoreSolrServiceImpl implements ISolrService<PersonStore> {
 	@Override
 	public void deleteAll(HttpSolrServer server) {
 		try {
-			server.deleteByQuery(PERSONID + "*");
+			server.deleteByQuery(SolrQueryUtils.PERSON_ID + ":*");
 			server.commit();
 			logger.info("清空solr索引库成功");
 		} catch (SolrServerException | IOException e) {
@@ -157,18 +150,8 @@ public class PersonStoreSolrServiceImpl implements ISolrService<PersonStore> {
 
 	@Override
 	public long getDocumentsCount(HttpSolrServer server, Map<String, String> queryMap, String startDate, String endDate) {
-		startDate+=" 00:00:00";
-		endDate+=" 23:59:59";
-		//开始和结束时间
-		long startTime=SolrDateUtils.getTimeMillis(startDate);
-		long endTime=SolrDateUtils.getTimeMillis(endDate);
-		//获得map中的值personstoreAll
-		String personstoreAll=queryMap.get("personstoreAll");
 		try {
-			//拼接查询语句，时间范围
-			String condition=String.format(PERSONSTOREALL+"%s AND %s:[%s TO %s]", personstoreAll,CREATEDATE,startTime,endTime);
-			logger.info("查询语句为："+condition);
-			QueryResponse response = server.query(SolrQueryUtils.getQuery(condition, queryMap));
+			QueryResponse response = server.query(getQuery(queryMap, startDate, endDate));
 			long result=response.getResults().getNumFound();
 			logger.info("查询符合条件的数量为："+result);
 			return result;
@@ -180,40 +163,69 @@ public class PersonStoreSolrServiceImpl implements ISolrService<PersonStore> {
 	}
 
 	@Override
-	public List<PersonStore> getDocuementsStores(HttpSolrServer server, Map<String, String> queryMap, String startDate, String endDate,
-			int start, int rows, String sortField) {
-		List<PersonStore> psvList=new ArrayList<>();
-		startDate+=" 00:00:00";
-		endDate+=" 23:59:59";
-		//开始和结束时间
-		long startTime=SolrDateUtils.getTimeMillis(startDate);
-		long endTime=SolrDateUtils.getTimeMillis(endDate);
-		//获得map中的值personstoreAll
-		String personstoreAll=queryMap.get("personstoreAll");
-		//再次查询的关键字
-		String queryAgain=queryMap.get("queryAgain");
+	public List<PersonStoreVo> getDocuementsVO(HttpSolrServer server, Map<String, String> queryMap, String startDate,
+			String endDate, int start, int rows, String sortField) {
+		List<PersonStoreVo> psvList=new ArrayList<>();
 		try {
-			//拼接查询语句
-			String condition=String.format(PERSONSTOREALL+"%s AND %s:[%s TO %s]", personstoreAll,CREATEDATE,startTime,endTime);
-			if (null!=queryAgain) {
-				//再增加一个查询条件
-				condition=String.format(PERSONSTOREALL +"%s"+PERSONSTOREALL+" %s AND %s:[%s TO %s]", personstoreAll,personstoreAll,CREATEDATE,startTime,endTime);
-			}
-			logger.info("查询语句为："+condition);
-			SolrQuery query=SolrQueryUtils.getQuery(condition, queryMap);
+			SolrQuery query=getQuery(queryMap, startDate, endDate);
 			//分页
 			query.setStart(start).setRows(rows);
+			//高亮
+			query.setHighlight(true);
+			// 高亮字段  
+			query.addHighlightField(SolrQueryUtils.PERSONSTOREALL);
+			//前缀 后缀
+			query.setHighlightSimplePre(SolrQueryUtils.HIGHLIGHT_PRE);
+			query.setHighlightSimplePost(SolrQueryUtils.HIGHLIGHT_POST);
+			//排序字段 默认createDate
+			if(null==sortField||SolrQueryUtils.CREATEDATE.equals(sortField)){
+				//降序
+				query.addSort(SolrQueryUtils.CREATEDATE, ORDER.desc);
+			}else {
+				query.addSort(sortField, ORDER.desc);
+			}
 			QueryResponse response = server.query(query);
-			//转成beans对象
+			
+			//转成solr bean对象PersonStoreSolr
 			SolrDocumentList sdList = response.getResults();
 			DocumentObjectBinder binder=new DocumentObjectBinder();
 			List<PersonStoreSolr> beans = binder.getBeans(PersonStoreSolr.class, sdList);
-			
+			//转成vo层对象
+			for (PersonStoreSolr personStoreSolr : beans) {
+				PersonStoreVo vo = SolrBeanUtils.convertPersonStoreSolrToVo(personStoreSolr);
+				psvList.add(vo);
+			}
 		} catch (Exception e) {
 			logger.error("查询数量失败");
 			e.printStackTrace();
 		}
 		return psvList;
 	}
-
+	/**
+	 * 拼接SolrQuery查询条件
+	 * @param queryMap 查询条件的map
+	 * @param startDate 开始日期
+	 * @param endDate 结束日期
+	 * @return SolrQuery
+	 */
+	private SolrQuery getQuery(Map<String, String> queryMap, String startDate,String endDate){
+		startDate+=" 00:00:00";
+		endDate+=" 23:59:59";
+		//开始和结束时间
+		long startTime=SolrDateUtils.getTimeMillis(startDate);
+		long endTime=SolrDateUtils.getTimeMillis(endDate);
+		//获得map中的值personstoreAll
+		String personstoreAll=queryMap.get(SolrQueryUtils.PERSONSTOREALL);
+		String condition=String.format(SolrQueryUtils.PERSONSTOREALL+":%s AND %s:[%s TO %s]", personstoreAll,SolrQueryUtils.CREATEDATE,startTime,endTime);
+		//再次查询的关键字
+		String queryAgain=queryMap.get(SolrQueryUtils.QUERY_AGAIN);
+		if (null!=queryAgain) {
+			//再增加一个查询条件
+			condition=String.format(SolrQueryUtils.PERSONSTOREALL +":%s AND "+SolrQueryUtils.PERSONSTOREALL+":%s AND %s:[%s TO %s]", 
+					personstoreAll,queryAgain,SolrQueryUtils.CREATEDATE,startTime,endTime);
+		}
+		//拼接查询语句，时间范围
+		logger.info("查询语句为："+condition);
+		return SolrQueryUtils.getQuery(condition, queryMap);
+	}
 }

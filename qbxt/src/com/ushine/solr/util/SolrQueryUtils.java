@@ -10,6 +10,32 @@ import org.apache.solr.client.solrj.SolrQuery;
  *
  */
 public class SolrQueryUtils {
+	
+	/**
+	 * 常量personId
+	 */
+	public static final String PERSON_ID = "personId";
+	/**
+	 * 查询字段常量
+	 */
+	public static final String PERSONSTOREALL = "personstoreAll";
+	
+	/**
+	 * 常量字段createDate
+	 */
+	public static final String CREATEDATE = "createDate";
+	/**
+	 * 高亮前缀
+	 */
+	public static String HIGHLIGHT_PRE="<span style='background-color:#ffd73a'>";
+	/**
+	 * 高亮后缀
+	 */
+	public static String HIGHLIGHT_POST="</span>";
+	/**
+	 * 再查询
+	 */
+	public static String QUERY_AGAIN="queryAgain";
 	/**
 	 * 返回SolrQuery
 	 * @param condition 基本的查询条件

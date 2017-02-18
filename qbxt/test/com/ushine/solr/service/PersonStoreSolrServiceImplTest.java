@@ -23,6 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ushine.common.utils.SpringUtils;
 import com.ushine.dao.IBaseDao;
 import com.ushine.solr.factory.SolrServerFactory;
+import com.ushine.solr.util.SolrQueryUtils;
+import com.ushine.solr.vo.PersonStoreVo;
 import com.ushine.storesinfo.model.PersonStore;
 
 /**
@@ -46,6 +48,8 @@ public class PersonStoreSolrServiceImplTest {
 	 */
 	@Autowired
 	IBaseDao<PersonStore, Serializable> baseDao;
+	@Autowired
+	IPersonStoreSolrService pssService;
 
 	@Test
 	@Ignore
@@ -119,19 +123,39 @@ public class PersonStoreSolrServiceImplTest {
 		queryMap.put("uid", "40288a625668a0f6015668a151a00004");
 		queryMap.put("oid", null);
 		queryMap.put("did", null);
-		long result=getSolrService().getDocumentsCount(getSolrServer(), queryMap, "2010-02-17", "2017-02-18");
+		long result=pssService.getDocumentsCount(getSolrServer(), queryMap, "2010-02-17", "2017-02-18");
 		assertEquals(2, result);
 		//
 		queryMap.put("uid", null);
 		queryMap.put("oid", "40288a625668a0f6015668a151940002");
 		queryMap.put("did", null);
-		assertEquals(1, getSolrService().getDocumentsCount(getSolrServer(), queryMap, "2010-02-17", "2017-02-18"));
+		assertEquals(1, pssService.getDocumentsCount(getSolrServer(), queryMap, "2010-02-17", "2017-02-18"));
 		
 		queryMap.put("uid", null);
 		queryMap.put("oid", null);
 		queryMap.put("did", null);
-		assertEquals(1, getSolrService().getDocumentsCount(getSolrServer(), queryMap, "2010-01-25", "2017-01-25"));
-		assertEquals(0, getSolrService().getDocumentsCount(getSolrServer(), queryMap, "2010-01-25", "2011-01-25"));
+		assertEquals(1, pssService.getDocumentsCount(getSolrServer(), queryMap, "2010-01-25", "2017-01-25"));
+		assertEquals(0, pssService.getDocumentsCount(getSolrServer(), queryMap, "2010-01-25", "2011-01-25"));
+	}
+	/**
+	 * 测试返回vo对象
+	 */
+	@Test
+	public void testGetVo(){
+		Map<String, String> queryMap=new HashMap<>();
+		queryMap.put("personstoreAll", "男");
+		List<PersonStoreVo> voList = pssService.getDocuementsVO(getSolrServer(), queryMap, "2010-02-17", "2017-02-18", 0, 50, null);
+		System.err.println(voList.size());
+		for (PersonStoreVo personStoreVo : voList) {
+			System.err.println(personStoreVo.toString());
+		}
+		//再查询
+		queryMap.put(SolrQueryUtils.QUERY_AGAIN, "董昊");
+		List<PersonStoreVo> voList2 = pssService.getDocuementsVO(getSolrServer(), queryMap, "2010-02-17", "2017-02-18", 0, 50, null);
+		System.err.println(voList2.size());
+		for (PersonStoreVo personStoreVo : voList2) {
+			System.err.println(personStoreVo.toString());
+		}
 	}
 
 	private ISolrService<PersonStore> getSolrService() {

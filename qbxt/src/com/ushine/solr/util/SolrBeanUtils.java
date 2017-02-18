@@ -96,7 +96,7 @@ public class SolrBeanUtils {
 		PersonStoreVo vo = new PersonStoreVo();
 		// 复制id属性
 		BeanUtils.copyProperty(vo, "id", getStringValue(psSolr.getPersonId()));
-		String[] properties = {"personName", "nameUsedBefore", "englishName", "sex", "bebornTime", "presentAddress", "workUnit", "registerAddress"};
+		String[] properties = {"personName", "nameUsedBefore","infoType","englishName", "sex", "bebornTime", "presentAddress", "workUnit", "registerAddress"};
 		for (String string : properties) {
 			String value = getStringValue(PropertyUtils.getSimpleProperty(psSolr, string));
 			BeanUtils.copyProperty(vo, string, value);

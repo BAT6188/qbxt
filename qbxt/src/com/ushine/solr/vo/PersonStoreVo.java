@@ -53,6 +53,12 @@ public class PersonStoreVo {
 	public void setWorkUnit(String workUnit) {
 		this.workUnit = workUnit;
 	}
+	public String getInfoType() {
+		return infoType;
+	}
+	public void setInfoType(String infoType) {
+		this.infoType = infoType;
+	}
 	private String id;
 	private String personName;
 	private String nameUsedBefore;
@@ -63,11 +69,15 @@ public class PersonStoreVo {
 	private String workUnit;
 	private String createDate;
 	private String registerAddress;
+	private String infoType;
 	
 	public PersonStoreVo(){
 		
 	}
-	public PersonStoreVo(String id, String personName, String nameUsedBefore, String englishName, String sex, String bebornTime, String presentAddress, String registerAddress,String workUnit,String createDate) {
+	
+	public PersonStoreVo(String id, String personName, String nameUsedBefore, String englishName, String sex,
+			String bebornTime, String presentAddress, String workUnit, String createDate, String registerAddress,
+			String infoType) {
 		super();
 		this.id = id;
 		this.personName = personName;
@@ -77,8 +87,9 @@ public class PersonStoreVo {
 		this.bebornTime = bebornTime;
 		this.presentAddress = presentAddress;
 		this.workUnit = workUnit;
-		this.createDate=createDate;
-		this.registerAddress=registerAddress;
+		this.createDate = createDate;
+		this.registerAddress = registerAddress;
+		this.infoType = infoType;
 	}
 	public String getRegisterAddress() {
 		return registerAddress;
@@ -94,8 +105,9 @@ public class PersonStoreVo {
 	}
 	@Override
 	public String toString() {
-		return "PersonStoreVo [id=" + id + ", personName=" + personName + ", nameUsedBefore=" + nameUsedBefore + ", englishName=" + englishName + ", sex=" + sex + ", bebornTime=" + bebornTime
-				+ ", presentAddress=" + presentAddress + ", workUnit=" + workUnit + "]";
+		return "PersonStoreVo [id=" + id + ", personName=" + personName + ", nameUsedBefore=" + nameUsedBefore
+				+ ", englishName=" + englishName + ", sex=" + sex + ", bebornTime=" + bebornTime + ", presentAddress="
+				+ presentAddress + ", workUnit=" + workUnit + ", createDate=" + createDate + ", registerAddress="
+				+ registerAddress + ", infoType=" + infoType + "]";
 	}
-	
 }
