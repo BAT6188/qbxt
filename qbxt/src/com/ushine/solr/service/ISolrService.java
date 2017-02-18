@@ -4,10 +4,16 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
+import org.apache.solr.client.solrj.util.ClientUtils;
+
+import com.ushine.solr.solrbean.QueryBean;
 /**
  * 操作solr索引的通用接口<br>
  * 1:solr中要查询必须要进行分词<br>
- * 2:solr中的高亮直接取document没有效果，需要通过下面的方式：<br>
+ * 2：""在一个字段中就是精确查询，不是包含关系，通配符才算是包含；<br>
+ * 3：配置了copyField字段的不足就是高亮、查询包含是用""号，和我自己想的不太一样<br>
+ * 4:处理转义字符，比如ClientUtils.escapeQueryChars("{")<br>
+ * 5:solr中的高亮直接取document没有效果，需要通过下面的方式：<br>
  * Map<String, Map<String, List<String>>> highlighting = response.getHighlighting();
 		//对应的id的值
 		Map<String, List<String>> map=highlighting.get("4028318158b444400158b49746570001");
@@ -59,6 +65,16 @@ public interface ISolrService<T> {
 	void deleteAll(HttpSolrServer server);
 
 	void updateDocumentByStore(HttpSolrServer server, String id, T daoStore);
-	
-	long getDocumentsCount(HttpSolrServer server,Map<String, String> queryMap,String startDate,String endDate);
+	/**
+	 * 获得符合条件的数量
+	 * @param server HttpSolrServer
+	 * @param QueryBean 查询语句bean
+	 * @return long型
+	 */
+	long getDocumentsCount(HttpSolrServer server,QueryBean queryBean);
+	/**
+	 * 关闭server
+	 * @param server
+	 */
+	void closeServer(HttpSolrServer server);
 }

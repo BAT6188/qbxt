@@ -40,6 +40,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.dom4j.Element;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.DetachedCriteria;
@@ -61,6 +62,8 @@ import com.ushine.core.verify.session.UserSessionMgr;
 import com.ushine.dao.IBaseDao;
 import com.ushine.luceneindex.index.PersonStoreNRTSearch;
 import com.ushine.luceneindex.index.StoreIndexQuery;
+import com.ushine.solr.factory.SolrServerFactory;
+import com.ushine.solr.service.IPersonStoreSolrService;
 import com.ushine.storesinfo.model.CertificatesStore;
 import com.ushine.storesinfo.model.InfoType;
 import com.ushine.storesinfo.model.NetworkAccountStore;
@@ -84,27 +87,20 @@ public class PersonStoreServiceImpl implements IPersonStoreService{
 	@Autowired private IBaseDao iBaseDao;
 	@Autowired private IBaseDao personNamesDao;
 	@Autowired private IInfoTypeService infoTypeService;
-	private PersonStoreNRTSearch personStoreNRTSearch=PersonStoreNRTSearch.getInstance();
+	@Autowired private IPersonStoreSolrService solrService;
+	// 单例的solr server
+	private HttpSolrServer server = SolrServerFactory.getPSSolrServerInstance();
+	//private PersonStoreNRTSearch personStoreNRTSearch=PersonStoreNRTSearch.getInstance();
 	public boolean savePersonStore(PersonStore personStore) throws Exception {
 		//新增人员
 		baseDao.save(personStore);
-		//添加索引
-		personStoreNRTSearch.addIndex(personStore);
-		//IBaseLuceneDao personStoreDao=new PersonStoreIndexImpl();
-		//personStoreDao.saveIndex(personStore);
+		//solr添加索引
+		solrService.addDocumentByStore(server, personStore);
 		return true;
 	}
 	public PersonStore findPersonStoreById(String personStoreId)
 			throws Exception {
-		// TODO Auto-generated method stub
 		return baseDao.findById(PersonStore.class, personStoreId);
-	}
-	@SuppressWarnings("unchecked")
-	public String findPersonStore(String field, String fieldValue,
-			String startTime, String endTime, int nextPage, int size,
-			String uid, String oid, String did) throws Exception {
-		logger.debug("筛选人员库信息,field:"+field+",fieldValue:"+fieldValue+",startTime:"+startTime+"endTime:"+endTime+"");
-		return null;	
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -120,6 +116,7 @@ public class PersonStoreServiceImpl implements IPersonStoreService{
 		PagingObject<PersonStore> vo=StoreIndexQuery.findStore(field, fieldValue, 
 				startTime, endTime, nextPage, size, uid, oid, did, sortField,dir,
 				PersonStore.class);
+		//
 		return StoreIndexQuery.personStoreVoToJson(vo, hasValue);		
 	}
 	
@@ -210,7 +207,7 @@ public class PersonStoreServiceImpl implements IPersonStoreService{
 			// 执行删除
 			baseDao.executeHql(hql);
 			// 删除索引
-			personStoreNRTSearch.deleteIndex(personStoreIds);
+			solrService.deleteDocumentByIds(server, personStoreIds);
 			return new ViewObject(ViewObject.RET_SUCCEED, "删除人员信息成功").toJSon();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -223,61 +220,16 @@ public class PersonStoreServiceImpl implements IPersonStoreService{
 		try {
 			String id=personStore.getId();
 			baseDao.update(personStore);
-			//更新索引
-			//personStoreNRTSearch.updateIndex(id, personStore);
-			personStoreNRTSearch.deleteIndex(id);
-			personStoreNRTSearch.addIndex(personStore);
-			return new ViewObject(ViewObject.RET_FAILURE, "更新信息成功").toJSon();
+			//更新solr索引
+			solrService.updateDocumentByStore(server, id, personStore);
+			return new ViewObject(ViewObject.RET_SUCCEED, "更新信息成功").toJSon();
 		} catch (Exception e) {
 			logger.debug("更新人员信息异常"+e.getMessage());
 			e.printStackTrace();
 			return new ViewObject(ViewObject.RET_FAILURE, "异常：更新信息失败").toJSon();
 		}
 	}
-
-	public PagingObject<PersonStore> findPersonStoreByIsEnable(String field, String fieldValue, String startTime,String endTime,int nextPage,
-			int size, String uid, String oid, String did) throws Exception {
-		DetachedCriteria criteria = DetachedCriteria
-				.forClass(PersonStore.class);
-		//时间倒序排序
-				criteria.addOrder(Order.desc("createDate"));
-		criteria.add(Restrictions.eq("isEnable", "2"));
-		if (!StringUtil.isNull(did)) {
-			criteria.add(Restrictions.eq("did", did));
-		}
-		if (!StringUtil.isNull(uid)) {
-			criteria.add(Restrictions.eq("uid", uid));
-		}
-		if (!StringUtil.isNull(oid)) {
-			criteria.add(Restrictions.eq("oid", oid));
-		}
-		if(!StringUtil.isNull(field) && !StringUtil.isNull(fieldValue)){
-			//人员类别不能直接设置值
-			criteria.add(Restrictions.like(field, "%"+fieldValue+"%"));
-		}
-		if(!StringUtil.isNull(startTime) && startTime.length() >=10){
-			startTime = startTime.substring(0,10)+ " 00:00:00";
-			criteria.add(Restrictions.ge("createDate", startTime));
-		}
-		if(!StringUtil.isNull(endTime) && endTime.length()>=10){
-			endTime = endTime.substring(0,10)+" 23:59:59";
-			criteria.add(Restrictions.le("createDate", endTime));
-		}
-		int rowCount = baseDao.getRowCount(criteria);
-		Paging paging = new Paging(size, nextPage, rowCount);
-		logger.debug("分页信息：" + JSONObject.fromObject(paging));
-
-		criteria.setProjection(null);
-		criteria.setResultTransformer(CriteriaSpecification.ROOT_ENTITY);
-
-		List<PersonStore> list = baseDao.findPagingByCriteria(criteria, size,
-				paging.getStartRecord());
-		PagingObject<PersonStore> vo = new PagingObject<PersonStore>();
-		vo.setPaging(paging);
-		vo.setArray(list);
-		return vo;
-	}
-
+	
 	public void updatePersonStoreIsEnableStart(String[] ids) throws Exception {
 		// 设置成启用
 		for (String id : ids) {
@@ -305,8 +257,7 @@ public class PersonStoreServiceImpl implements IPersonStoreService{
 		}
 		return false;
 	}
-
-
+	
 	@Override
 	public String canBeSaved(String personName, String infoType, String bebornTime, String sex) throws Exception {
 		//验证人员信息是否合理
@@ -332,7 +283,6 @@ public class PersonStoreServiceImpl implements IPersonStoreService{
 			if (list.get(0)<=0) {
 				buffer.append("人员类别"+infoType+"不存在"+" ");
 			}
-			//String sql=" select count(id) from t_info_type where TYPE_NAME='"+infoType+"' and TABLE_TYPE_NAME='"+StoreFinal.PERSON_STORE+"'";
 			//日期不合法
 			SimpleDateFormat format=new SimpleDateFormat("yyyy-MM-dd");
 			try {
@@ -372,32 +322,11 @@ public class PersonStoreServiceImpl implements IPersonStoreService{
 			if (restus) {
 				buffer.append("姓名"+personName+"已经存在"+" ");
 			}
-			
-			/*if (StringUtil.isEmty(sex)) {
-				buffer.append("性别为空"+" ");
-			}
-			if (!StringUtil.isEmty(sex)&&!sex.trim().equals("男")&&!sex.trim().equals("女")) {
-				buffer.append("性别"+sex+"不合法"+" ");
-			}*/
 			String hql="select count(id) from InfoType where typeName='"+infoType+"' and tableTypeName='"+StoreFinal.PERSON_STORE+"'";
 			List<Long> list=iBaseDao.findByHql(hql);
 			if (list.get(0)<=0) {
 				buffer.append("人员类别"+infoType+"不存在"+" ");
 			}
-			//String sql=" select count(id) from t_info_type where TYPE_NAME='"+infoType+"' and TABLE_TYPE_NAME='"+StoreFinal.PERSON_STORE+"'";
-			/*//日期不合法
-			SimpleDateFormat format=new SimpleDateFormat("yyyy-MM-dd");
-			try {
-				Date date=format.parse(bebornTime);
-				long realValue=date.getTime();
-				long todayValue=new Date().getTime();
-				//时间大于今天
-				if (realValue>=todayValue) {
-					buffer.append("出生日期不合法"+" ");
-				}
-			} catch (Exception e) {
-				buffer.append("出生日期不合法"+" ");
-			}*/
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -545,7 +474,7 @@ public class PersonStoreServiceImpl implements IPersonStoreService{
 			//保存多条数据
 			baseDao.save(personStores);
 			//保存索引
-			personStoreNRTSearch.addIndex(personStores);
+			solrService.addDocumentByStores(server, personStores);
 		} catch (Exception e) {
 			msg="新增人员异常";
 			e.printStackTrace();
@@ -813,98 +742,7 @@ public class PersonStoreServiceImpl implements IPersonStoreService{
 				}
 				
 				 fos=new FileOutputStream(new File(filePath));
-		         doc.write(fos);
-				
-				/*for (int i=0;i<properties.length;i++) {
-					//设置内容
-			        XWPFParagraph property = document.createParagraph();
-			        //property.setSpacingAfter(100);
-			        property.setSpacingAfterLines(25);
-			        XWPFRun propertyRun=property.createRun();
-			        propertyRun.setFontFamily(fontFamily);
-			        propertyRun.setFontSize(12);
-					String string=properties[i];
-					if(string.equals("infoType")){
-						//直接利用PropertyUtils获得属性值
-						InfoType infoType=(InfoType) PropertyUtils.getSimpleProperty(store, string);
-						propertyRun.setText(chinese_properties[i]+"："+infoType.getTypeName());
-					}else{
-						propertyRun.setText(chinese_properties[i]+"："+PropertyUtils.getSimpleProperty(store, string));
-					}
-				}
-				//证件账号表格
-				List<InfoType> list=infoTypeService.findInfoTypeByTypeName("CertificatesStore");
-				XWPFParagraph cTitle = document.createParagraph();
-				cTitle.setAlignment(ParagraphAlignment.CENTER);
-		        XWPFRun cTitleRun = cTitle.createRun();
-		        cTitleRun.setFontFamily(fontFamily);
-		        cTitleRun.setText("证件列表：");
-		        cTitleRun.setFontSize(fontSize);
-				XWPFTable cTable=document.createTable(list.size()+1,2);//2列
-				cTable.setWidth(500);
-				cTable.setCellMargins(20, 20, 20, 20);
-				// 表格属性
-				CTTblPr tablePr = cTable.getCTTbl().addNewTblPr();
-				// 表格宽度
-				CTTblWidth width = tablePr.addNewTblW();
-				width.setW(BigInteger.valueOf(8000));
-				//表头
-				List<XWPFTableCell> row0Cells = cTable.getRow(0).getTableCells();
-				row0Cells.get(0).setText("证件类型");
-				row0Cells.get(1).setText("证件号");
-				for(int i=0;i<list.size();i++){
-					InfoType infoType=list.get(i);
-					List<XWPFTableCell> tableCells = cTable.getRow(i+1).getTableCells();
-					tableCells.get(0).setText(infoType.getTypeName());
-					DetachedCriteria criteria=DetachedCriteria.forClass(CertificatesStore.class);
-					//用DetachedCriteria的关联查询就可
-					criteria.createAlias("personStore", "p").add(Restrictions.eq("p.id", id));
-					criteria.createAlias("infoType", "i").add(Restrictions.eq("i.id", infoType.getId()));
-					StringBuffer number=new StringBuffer();
-					List<CertificatesStore> cList=iBaseDao.findByCriteria(criteria);
-					for (CertificatesStore certificatesStore : cList) {
-						number.append(certificatesStore.getCertificatesNumber()+",");
-					}
-					tableCells.get(1).setText(number.toString());
-				}
-				//网络账号表格
-				List<InfoType> list2=infoTypeService.findInfoTypeByTypeName(NetworkAccountStore.class.getSimpleName());
-				XWPFParagraph nTitle = document.createParagraph();
-				nTitle.setAlignment(ParagraphAlignment.CENTER);
-		        XWPFRun nTitleRun = nTitle.createRun();
-		        nTitleRun.setFontFamily(fontFamily);
-		        nTitleRun.setText("账号列表：");
-		        nTitleRun.setFontSize(fontSize);
-				XWPFTable nTable=document.createTable(list2.size()+1,2);//2列
-				nTable.setWidth(500);
-				nTable.setCellMargins(20, 20, 20, 20);
-				// 表格属性
-				CTTblPr tablePr2 = nTable.getCTTbl().addNewTblPr();
-				// 表格宽度
-				CTTblWidth width2 = tablePr2.addNewTblW();
-				width2.setW(BigInteger.valueOf(8000));
-				//表头
-				List<XWPFTableCell> row1Cells = nTable.getRow(0).getTableCells();
-				row1Cells.get(0).setText("账号类型");
-				row1Cells.get(1).setText("账号");
-				for(int i=0;i<list2.size();i++){
-					InfoType infoType=list2.get(i);
-					List<XWPFTableCell> tableCells = nTable.getRow(i+1).getTableCells();
-					tableCells.get(0).setText(infoType.getTypeName());
-					DetachedCriteria criteria=DetachedCriteria.forClass(NetworkAccountStore.class);
-					//用DetachedCriteria的关联查询就可
-					criteria.createAlias("personStore", "p").add(Restrictions.eq("p.id", id));
-					criteria.createAlias("infoType", "i").add(Restrictions.eq("i.id", infoType.getId()));
-					StringBuffer number=new StringBuffer();
-					List<NetworkAccountStore> cList=iBaseDao.findByCriteria(criteria);
-					for (NetworkAccountStore networkAccountStore : cList) {
-						number.append(networkAccountStore.getNetworkNumber()+",");
-					}
-					tableCells.get(1).setText(number.toString());
-				}
-				//输出的word
-				fos = new FileOutputStream(new File(filePath));
-				document.write(fos);*/
+				 doc.write(fos);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

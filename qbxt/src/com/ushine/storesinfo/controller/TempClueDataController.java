@@ -160,7 +160,7 @@ public class TempClueDataController {
 			@RequestParam("type") String type){
 		try {
 			// 汉字关键字搜索
-			fieldValue = new String(fieldValue.getBytes("ISO-8859-1"), "UTF-8");
+			/*fieldValue = new String(fieldValue.getBytes("ISO-8859-1"), "UTF-8");
 			if("personStore".equals(type)){   //人员库
 				//System.out.println("===type==="+type);
 				PagingObject<PersonStore> pagingObject = personStoreService.findPersonStoreByIsEnable(field,fieldValue,startTime,endTime,nextPage, size,null,null,null);
@@ -171,7 +171,7 @@ public class TempClueDataController {
 			}else if("websiteJournalStore".equals(type)){  //媒体网站库
 				PagingObject<WebsiteJournalStore> pagingObject = websiteJournalStoreService.findWebsiteJournalStoreByIsEnable(field,fieldValue,startTime,endTime,nextPage, size);
 				return WebsiteJournalStoreVoToJSon(pagingObject);
-			}
+			}*/
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();

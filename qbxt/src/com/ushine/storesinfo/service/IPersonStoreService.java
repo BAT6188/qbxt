@@ -71,7 +71,7 @@ public interface IPersonStoreService {
 	 * @return
 	 * @throws Exception
 	 */
-	public PagingObject<PersonStore> findPersonStoreByIsEnable(String field, String fieldValue, String startTime,String endTime,int nextPage, int size, String uid, String oid, String did)throws Exception;
+	//public PagingObject<PersonStore> findPersonStoreByIsEnable(String field, String fieldValue, String startTime,String endTime,int nextPage, int size, String uid, String oid, String did)throws Exception;
 	/**
 	 * 设置启用
 	 * @param ids 人员id数组

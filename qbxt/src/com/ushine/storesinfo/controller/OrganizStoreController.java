@@ -642,7 +642,7 @@ public class OrganizStoreController {
 			//
 			// 判断当前用户是否有权限查询组织库信息
 			if (list != null && list.size() > 0) {
-				if ("1x0001".equals(list.get(0))) {// 读取全部
+				/*if ("1x0001".equals(list.get(0))) {// 读取全部
 					PagingObject<PersonStore> pagingObject = personStoreService
 							.findPersonStoreByIsEnable(null,null,null,null,nextPage, size, null,
 									null, null);
@@ -665,7 +665,7 @@ public class OrganizStoreController {
 				} else {// 禁止读取
 					return new ViewObject(ViewObject.RET_FAILURE, "没有权限读取")
 							.toJSon();
-				}
+				}*/
 			}
 			return new ViewObject(ViewObject.RET_FAILURE, "组织选择人员库信息失败，没有权限")
 					.toJSon();

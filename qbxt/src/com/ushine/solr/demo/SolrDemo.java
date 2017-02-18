@@ -58,29 +58,22 @@ public class SolrDemo {
 	protected SolrDocumentList getListByCondition(String condition) throws SolrServerException{
 		SolrDocumentList sdList=null;
 		SolrQuery query = new SolrQuery();
-		/*// 分页查询
-		query.setStart(0).setRows(50)
-			.setSort("createDate",ORDER.asc);
-		query.setHighlight(true);
-		query.addHighlightField("infoType");
-		query.setHighlightSimplePre("<span color='red'>");  
-		query.setHighlightSimplePost("</span>");  */
-		
 		query.setQuery(condition);  
         query.setHighlight(true);                //开启高亮  
+        query.setHighlightSimplePre("<aa>");    //后缀 
         query.setHighlightSimplePost("</aa>");    //前缀  
-        query.setHighlightSimplePre("<aa>");    //后缀  
         query.addHighlightField("sex");      //高亮字段  
         
 		QueryResponse response = solrServer.query(query);
 		
-		/*Map<String, Map<String, List<String>>> highlighting = response.getHighlighting();
+		Map<String, Map<String, List<String>>> highlighting = response.getHighlighting();
 		
 		Map<String, List<String>> map=highlighting.get("4028318158b444400158b49746570001");
 		List<String> list=map.get("sex");
 		for (String string : list) {
 			System.err.println(string);
-		}*/
+		}
+		
 		/*Map<String, List<String>> map=highlighting.get("personId");
 		List<String> list = map.get("infoType");
 		for (String string : list) {

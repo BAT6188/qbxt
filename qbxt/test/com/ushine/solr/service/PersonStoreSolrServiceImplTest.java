@@ -23,7 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ushine.common.utils.SpringUtils;
 import com.ushine.dao.IBaseDao;
 import com.ushine.solr.factory.SolrServerFactory;
-import com.ushine.solr.util.SolrQueryUtils;
+import com.ushine.solr.solrbean.QueryBean;
 import com.ushine.solr.vo.PersonStoreVo;
 import com.ushine.storesinfo.model.PersonStore;
 
@@ -68,7 +68,7 @@ public class PersonStoreSolrServiceImplTest {
 	 * @throws Exception
 	 */
 	@Test
-	@Ignore
+	//@Ignore
 	public void testAddDocumentByStores() throws Exception {
 		solrService = getSolrService();
 		HttpSolrServer server = getSolrServer();
@@ -119,39 +119,35 @@ public class PersonStoreSolrServiceImplTest {
 	@Test
 	public void testGetCount(){
 		Map<String, String> queryMap=new HashMap<>();
-		queryMap.put("personstoreAll", "*");
-		queryMap.put("uid", "40288a625668a0f6015668a151a00004");
-		queryMap.put("oid", null);
-		queryMap.put("did", null);
-		long result=pssService.getDocumentsCount(getSolrServer(), queryMap, "2010-02-17", "2017-02-18");
+		
+		QueryBean bean=new QueryBean("40288a625668a0f6015668a151a00004", null, null, 
+				null, null, null, null, null, "2010-02-17", "2017-02-18");
+		long result=pssService.getDocumentsCount(getSolrServer(), bean );
 		assertEquals(2, result);
 		//
-		queryMap.put("uid", null);
-		queryMap.put("oid", "40288a625668a0f6015668a151940002");
-		queryMap.put("did", null);
-		assertEquals(1, pssService.getDocumentsCount(getSolrServer(), queryMap, "2010-02-17", "2017-02-18"));
+		QueryBean bean2=new QueryBean(null, "40288a625668a0f6015668a151940002", null, null, null, 
+				null, null, null, "2010-02-17", "2017-02-18");
+		assertEquals(1, pssService.getDocumentsCount(getSolrServer(), bean2));
 		
-		queryMap.put("uid", null);
-		queryMap.put("oid", null);
-		queryMap.put("did", null);
-		assertEquals(1, pssService.getDocumentsCount(getSolrServer(), queryMap, "2010-01-25", "2017-01-25"));
-		assertEquals(0, pssService.getDocumentsCount(getSolrServer(), queryMap, "2010-01-25", "2011-01-25"));
+		QueryBean bean3=new QueryBean(null, null, null, null, null, 
+				null, null, null, "2010-01-25", "2017-01-25");
+		assertEquals(1, pssService.getDocumentsCount(getSolrServer(), bean3));
+		//assertEquals(0, pssService.getDocumentsCount(getSolrServer(), queryMap, "2010-01-25", "2011-01-25"));
 	}
 	/**
 	 * 测试返回vo对象
 	 */
 	@Test
 	public void testGetVo(){
-		Map<String, String> queryMap=new HashMap<>();
-		queryMap.put("personstoreAll", "男");
-		List<PersonStoreVo> voList = pssService.getDocuementsVO(getSolrServer(), queryMap, "2010-02-17", "2017-02-18", 0, 50, null);
+		QueryBean bean=new QueryBean(null, null, null, null, "公安部第三", null, null, null, "2010-02-19", "2017-02-19");
+		List<PersonStoreVo> voList = pssService.getDocuementsVO(getSolrServer(), bean , 0, 50);
 		System.err.println(voList.size());
 		for (PersonStoreVo personStoreVo : voList) {
 			System.err.println(personStoreVo.toString());
 		}
 		//再查询
-		queryMap.put(SolrQueryUtils.QUERY_AGAIN, "董昊");
-		List<PersonStoreVo> voList2 = pssService.getDocuementsVO(getSolrServer(), queryMap, "2010-02-17", "2017-02-18", 0, 50, null);
+		QueryBean bean2=new QueryBean(null, null, null, null, "公安部第三", null, "研究所", null, "2010-02-17", "2017-02-19");
+		List<PersonStoreVo> voList2 = pssService.getDocuementsVO(getSolrServer(), bean2,0,50);
 		System.err.println(voList2.size());
 		for (PersonStoreVo personStoreVo : voList2) {
 			System.err.println(personStoreVo.toString());

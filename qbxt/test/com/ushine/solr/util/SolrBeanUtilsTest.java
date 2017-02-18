@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 import org.junit.Test;
 
 import com.ushine.solr.solrbean.PersonStoreSolr;
+import com.ushine.solr.solrbean.QueryBean;
 import com.ushine.solr.vo.PersonStoreVo;
 import com.ushine.storesinfo.model.CertificatesStore;
 import com.ushine.storesinfo.model.InfoType;
@@ -76,5 +77,18 @@ public class SolrBeanUtilsTest {
 		vo=SolrBeanUtils.convertPersonStoreSolrToVo(psSolr);
 		assertEquals("1901-01-01", vo.getBebornTime());
 		assertEquals("", vo.getNameUsedBefore());
+	}
+	
+	@Test
+	public void testHighlightVo() throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException{
+		PersonStoreVo vo=new PersonStoreVo();
+		String value1="网络";
+		vo.setInfoType(value1);
+		String value2="网络董昊网络";
+		vo.setPersonName(value2);
+		PersonStoreVo highlightVo = (PersonStoreVo) SolrBeanUtils.highlightVo(vo, PersonStoreVo.class, value1);
+		System.err.println(highlightVo.getInfoType());
+		System.err.println(highlightVo.getPersonName());
+		//assertEquals(QueryBean.HIGHLIGHT_PRE+value1+QueryBean.HIGHLIGHT_POST, highlightVo.getInfoType());
 	}
 }

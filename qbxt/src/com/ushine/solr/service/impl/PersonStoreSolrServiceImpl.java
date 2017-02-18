@@ -5,31 +5,22 @@ import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.TermQuery;
-import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.solr.client.solrj.SolrQuery;
-import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.beans.DocumentObjectBinder;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocumentList;
-import org.apache.solr.common.util.NamedList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ushine.dao.IBaseDao;
-import com.ushine.solr.factory.SolrServerFactory;
 import com.ushine.solr.service.IPersonStoreSolrService;
-import com.ushine.solr.service.ISolrService;
 import com.ushine.solr.solrbean.PersonStoreSolr;
+import com.ushine.solr.solrbean.QueryBean;
 import com.ushine.solr.util.SolrBeanUtils;
-import com.ushine.solr.util.SolrDateUtils;
-import com.ushine.solr.util.SolrQueryUtils;
 import com.ushine.solr.vo.PersonStoreVo;
 import com.ushine.storesinfo.model.PersonStore;
 
@@ -37,11 +28,6 @@ import com.ushine.storesinfo.model.PersonStore;
 public class PersonStoreSolrServiceImpl implements IPersonStoreSolrService {
 
 	private Logger logger = Logger.getLogger(PersonStoreSolrServiceImpl.class);
-	// 单例的solr server
-	private HttpSolrServer server = SolrServerFactory.getPSSolrServerInstance();
-	
-	
-
 	@Autowired
 	private IBaseDao<PersonStore, Serializable> baseDao;
 
@@ -123,7 +109,7 @@ public class PersonStoreSolrServiceImpl implements IPersonStoreSolrService {
 	@Override
 	public void deleteAll(HttpSolrServer server) {
 		try {
-			server.deleteByQuery(SolrQueryUtils.PERSON_ID + ":*");
+			server.deleteByQuery(QueryBean.PERSON_ID + ":*");
 			server.commit();
 			logger.info("清空solr索引库成功");
 		} catch (SolrServerException | IOException e) {
@@ -149,9 +135,9 @@ public class PersonStoreSolrServiceImpl implements IPersonStoreSolrService {
 	}
 
 	@Override
-	public long getDocumentsCount(HttpSolrServer server, Map<String, String> queryMap, String startDate, String endDate) {
+	public long getDocumentsCount(HttpSolrServer server, QueryBean queryBean) {
 		try {
-			QueryResponse response = server.query(getQuery(queryMap, startDate, endDate));
+			QueryResponse response = server.query(queryBean.getSolrQuery(PersonStore.class));
 			long result=response.getResults().getNumFound();
 			logger.info("查询符合条件的数量为："+result);
 			return result;
@@ -163,29 +149,21 @@ public class PersonStoreSolrServiceImpl implements IPersonStoreSolrService {
 	}
 
 	@Override
-	public List<PersonStoreVo> getDocuementsVO(HttpSolrServer server, Map<String, String> queryMap, String startDate,
-			String endDate, int start, int rows, String sortField) {
+	public List<PersonStoreVo> getDocuementsVO(HttpSolrServer server,QueryBean bean, int start, int rows) {
 		List<PersonStoreVo> psvList=new ArrayList<>();
 		try {
-			SolrQuery query=getQuery(queryMap, startDate, endDate);
+			SolrQuery query=bean.getSolrQuery(PersonStore.class);
 			//分页
 			query.setStart(start).setRows(rows);
-			//高亮
+			/*//高亮
 			query.setHighlight(true);
 			// 高亮字段  
-			query.addHighlightField(SolrQueryUtils.PERSONSTOREALL);
+			query.addHighlightField(QueryBean.PERSONSTOREALL);
 			//前缀 后缀
-			query.setHighlightSimplePre(SolrQueryUtils.HIGHLIGHT_PRE);
-			query.setHighlightSimplePost(SolrQueryUtils.HIGHLIGHT_POST);
-			//排序字段 默认createDate
-			if(null==sortField||SolrQueryUtils.CREATEDATE.equals(sortField)){
-				//降序
-				query.addSort(SolrQueryUtils.CREATEDATE, ORDER.desc);
-			}else {
-				query.addSort(sortField, ORDER.desc);
-			}
-			QueryResponse response = server.query(query);
+			query.setHighlightSimplePre(QueryBean.HIGHLIGHT_PRE);
+			query.setHighlightSimplePost(QueryBean.HIGHLIGHT_POST);*/
 			
+			QueryResponse response = server.query(query);
 			//转成solr bean对象PersonStoreSolr
 			SolrDocumentList sdList = response.getResults();
 			DocumentObjectBinder binder=new DocumentObjectBinder();
@@ -201,31 +179,12 @@ public class PersonStoreSolrServiceImpl implements IPersonStoreSolrService {
 		}
 		return psvList;
 	}
-	/**
-	 * 拼接SolrQuery查询条件
-	 * @param queryMap 查询条件的map
-	 * @param startDate 开始日期
-	 * @param endDate 结束日期
-	 * @return SolrQuery
-	 */
-	private SolrQuery getQuery(Map<String, String> queryMap, String startDate,String endDate){
-		startDate+=" 00:00:00";
-		endDate+=" 23:59:59";
-		//开始和结束时间
-		long startTime=SolrDateUtils.getTimeMillis(startDate);
-		long endTime=SolrDateUtils.getTimeMillis(endDate);
-		//获得map中的值personstoreAll
-		String personstoreAll=queryMap.get(SolrQueryUtils.PERSONSTOREALL);
-		String condition=String.format(SolrQueryUtils.PERSONSTOREALL+":%s AND %s:[%s TO %s]", personstoreAll,SolrQueryUtils.CREATEDATE,startTime,endTime);
-		//再次查询的关键字
-		String queryAgain=queryMap.get(SolrQueryUtils.QUERY_AGAIN);
-		if (null!=queryAgain) {
-			//再增加一个查询条件
-			condition=String.format(SolrQueryUtils.PERSONSTOREALL +":%s AND "+SolrQueryUtils.PERSONSTOREALL+":%s AND %s:[%s TO %s]", 
-					personstoreAll,queryAgain,SolrQueryUtils.CREATEDATE,startTime,endTime);
+
+	@Override
+	public void closeServer(HttpSolrServer server) {
+		//在程序关闭时执行
+		if (null!=server) {
+			server.shutdown();
 		}
-		//拼接查询语句，时间范围
-		logger.info("查询语句为："+condition);
-		return SolrQueryUtils.getQuery(condition, queryMap);
 	}
 }

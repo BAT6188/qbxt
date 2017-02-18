@@ -1,16 +1,17 @@
 package com.ushine.solr.util;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Set;
-
-import oracle.net.aso.s;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
+import com.ctc.wstx.util.StringUtil;
 import com.ushine.solr.solrbean.PersonStoreSolr;
+import com.ushine.solr.solrbean.QueryBean;
 import com.ushine.solr.vo.PersonStoreVo;
 import com.ushine.storesinfo.model.CertificatesStore;
 import com.ushine.storesinfo.model.InfoType;
@@ -121,5 +122,39 @@ public class SolrBeanUtils {
 			buffer.append(propertyValue);
 		}
 		return buffer.toString();
+	}
+	
+	public static Object highlightVo(Object object,Class clazz,String searchString) 
+			throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException{
+		Object newInstance=clazz.newInstance();
+		//获得所有声明的属性
+		Field[] fields = clazz.getDeclaredFields();
+		//拼接
+		String replacement=QueryBean.HIGHLIGHT_PRE+searchString+QueryBean.HIGHLIGHT_POST;
+		for (Field field : fields) {
+			if (getStringTypeProperty(field)) {
+				//替换
+				String value=getStringValue(PropertyUtils.getSimpleProperty(object, field.getName()));
+				value=StringUtils.replace(value, searchString, replacement, -1);
+				PropertyUtils.setSimpleProperty(newInstance, field.getName(), value);
+			}
+		}
+		return newInstance;
+	}
+	/**
+	 * 不是id、createDate而且必须是String类型的属性
+	 * @param field
+	 * @return 满足以上条件为true
+	 */
+	protected static boolean getStringTypeProperty(Field field){
+		try {
+			if (!field.getName().equals("id")&&!field.getName().equals(QueryBean.CREAT_EDATE)
+					&&field.getType().getName()=="java.lang.String") {
+				return true;
+			}
+		} catch (Exception e) {
+			logger.info("获得属性类型失败");
+		}
+		return false;
 	}
 }
