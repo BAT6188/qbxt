@@ -86,7 +86,7 @@ public class PersonStoreSolrServiceImplTest {
 	 * 测试创建新的
 	 */
 	@Test
-	@Ignore
+	//@Ignore
 	public void testCreateNewIndexByStores() {
 		getSolrService().createNewIndexByStores(getSolrServer());
 	}
@@ -119,13 +119,19 @@ public class PersonStoreSolrServiceImplTest {
 		queryMap.put("uid", "40288a625668a0f6015668a151a00004");
 		queryMap.put("oid", null);
 		queryMap.put("did", null);
-		long result=getSolrService().getDocumentsCount(getSolrServer(), queryMap, "2010-02-17", "2017-02-17");
+		long result=getSolrService().getDocumentsCount(getSolrServer(), queryMap, "2010-02-17", "2017-02-18");
 		assertEquals(2, result);
 		//
 		queryMap.put("uid", null);
 		queryMap.put("oid", "40288a625668a0f6015668a151940002");
 		queryMap.put("did", null);
-		assertEquals(1, getSolrService().getDocumentsCount(getSolrServer(), queryMap, "2010-02-17", "2017-02-17"));
+		assertEquals(1, getSolrService().getDocumentsCount(getSolrServer(), queryMap, "2010-02-17", "2017-02-18"));
+		
+		queryMap.put("uid", null);
+		queryMap.put("oid", null);
+		queryMap.put("did", null);
+		assertEquals(1, getSolrService().getDocumentsCount(getSolrServer(), queryMap, "2010-01-25", "2017-01-25"));
+		assertEquals(0, getSolrService().getDocumentsCount(getSolrServer(), queryMap, "2010-01-25", "2011-01-25"));
 	}
 
 	private ISolrService<PersonStore> getSolrService() {

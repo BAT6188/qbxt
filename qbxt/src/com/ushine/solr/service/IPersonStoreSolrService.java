@@ -4,27 +4,25 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
-/**
- * 操作solr索引的通用接口<br>
- * 1:solr中要查询必须要进行分词
- * @author ococat
- * @param <T>
- */
-public interface ISolrService<T> {
+
+import com.ushine.solr.vo.PersonStoreVo;
+import com.ushine.storesinfo.model.PersonStore;
+
+public interface IPersonStoreSolrService {
 	/**
 	 * 添加solr索引
 	 * @param server HttpSolrServer
 	 * @param daoStore dao层的bean模型
 	 * @return 成功0，失败-1
 	 */
-	int addDocumentByStore(HttpSolrServer server, T daoStore);
+	int addDocumentByStore(HttpSolrServer server, PersonStore store);
 	/**
 	 * 添加索引集合
 	 * @param server HttpSolrServer
 	 * @param daoStore daoStore的List
 	 * @return 成功返回list的size，失败-1
 	 */
-	int addDocumentByStores(HttpSolrServer server, List<T> daoStore);
+	int addDocumentByStores(HttpSolrServer server, List<PersonStore> stores);
 	/**
 	 * 创建新的solr索引
 	 * @param server HttpSolrServer
@@ -48,18 +46,9 @@ public interface ISolrService<T> {
 	 */
 	void deleteAll(HttpSolrServer server);
 
-	void updateDocumentByStore(HttpSolrServer server, String id, T daoStore);
+	void updateDocumentByStore(HttpSolrServer server, String id, PersonStore store);
 	
 	long getDocumentsCount(HttpSolrServer server,Map<String, String> queryMap,String startDate,String endDate);
-	/**
-	 * @param server
-	 * @param query
-	 * @param startDate
-	 * @param endDate
-	 * @param start
-	 * @param rows
-	 * @param sortField
-	 * @return
-	 */
-	List<T> getDocuementsStores(HttpSolrServer server,Map<String, String> queryMap,String startDate,String endDate,int start,int rows,String sortField);
+	
+	List<PersonStoreVo> getDocuementsVO(HttpSolrServer server,Map<String, String> queryMap,String startDate,String endDate,int start,int rows,String sortField);
 }
