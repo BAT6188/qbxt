@@ -1,4 +1,4 @@
-package com.ushine.storesinfo.test;
+package com.ushine.storesinfo;
 
 import org.apache.log4j.Logger;
 import org.junit.Test;
