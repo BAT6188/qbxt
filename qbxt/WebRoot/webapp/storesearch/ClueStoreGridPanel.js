@@ -64,7 +64,7 @@ Ext.define('Ushine.storesearch.ClueStoreGridPanel', {
 			        	Ext.getCmp('content_frame').add(new Ushine.cluesInfo.CluePerson(data.id,fieldValue,
 			        			dataSearch,configFieldValue));
 		            }
-	             },{
+	             }/*,{
 			        icon: 'images/briefcase.png',
 			        iconCls:'personStore',
 			        tooltip: '组织对象',
@@ -90,7 +90,7 @@ Ext.define('Ushine.storesearch.ClueStoreGridPanel', {
 			    	       Ext.getCmp('content_frame').add(new Ushine.cluesInfo.ClueMediaNetworkBook(data.id,
 			    	    		   fieldValue,dataSearch,configFieldValue));
 				      }
-			     }],
+			     }*/],
 	             menuDisabled:true,
 	             renderer:function(value){
 	            	 var self = this;
@@ -105,7 +105,7 @@ Ext.define('Ushine.storesearch.ClueStoreGridPanel', {
 	            			 self.items[0].icon ="images/user-red1.png";
 	            		 }
 	            		 
-	            		 //显示线索涉及对象组织图标
+	            		 /*//显示线索涉及对象组织图标
 	            		 c = icon[1].split(":");
 	            		 if(c[1]=='true'){
 	            			self.items[1].icon ="images/briefcase.png";
@@ -118,7 +118,7 @@ Ext.define('Ushine.storesearch.ClueStoreGridPanel', {
 	            			self.items[2].icon ="images/inbox-document-text.png";
 	            		 }else{
 	            			 self.items[2].icon ="images/inbox-document-text1.png";
-	            		 }
+	            		 }*/
 		        }
 		    },
 		    {text: '下载',sortable: false,align:'center',flex:0.5,xtype:'actioncolumn',

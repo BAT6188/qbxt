@@ -29,9 +29,9 @@
 	showStoresCount:function(data,gridPanel,createGridPanel,parentPanel,htmlId,fieldValue){
 		//总数
 		var dataCount=data.dataCount;		
+		console.log(dataCount);
 		//具体数据
 		var datas=data.datas.datas;
-		//console.log(data);
 		//console.log(fieldValue);
 		//设置文本
 		var panel=Ext.getCmp(gridPanel);
@@ -103,12 +103,6 @@
 						//人员的
 						self.showStoresCount(self.searchDataPostion(data,'PersonStore'),'storesearch_persongridpanel',
 							'Ushine.storesearch.PersonStoreGridPanel','personstorespanel','#personstorecount');
-						//组织的
-						self.showStoresCount(self.searchDataPostion(data,'OrganizStore'),'storesearch_organizgridpanel',
-							'Ushine.storesearch.OrganizStoreGridPanel','organizstorespanel','#organizstorecount');
-						//媒体的
-						self.showStoresCount(self.searchDataPostion(data,'WebsiteJournalStore'),'storesearch_websitegridpanel',
-							'Ushine.storesearch.WebsiteJournalStoreGridPanel','websitestorespanel','#websitestorecount');
 						//线索
 						var fieldValue=Ext.getCmp('fieldValue').getValue();
 						self.showStoresCount(self.searchDataPostion(data,'ClueStore'),'storesearch_cluegridpanel',
@@ -209,7 +203,7 @@
 					//重点人员库：<span style='color:red'>0条</span>
 					html:"<span id='personstorecount'></span>"
 				}]
-			},{
+			},/*{
 				//组织
 				margin:'5 0 0 0',
 				xtype:'panel',
@@ -226,7 +220,7 @@
 					//重点组织库：<span style='color:red'>0条</span>
 					html:"<span id='organizstorecount'></span>"
 				}]
-			},{
+			}*/,{
 				//业务文档
 				margin:'5 0 0 0',
 				xtype:'panel',
@@ -277,7 +271,7 @@
 					//领导讲话库：<span style='color:red'>0条</span>
 					html:"<span id='leadspeakstorecount'></span>"
 				}]
-			},{
+			},/*{
 				//媒体刊物
 				margin:'5 0 0 0',
 				xtype:'panel',
@@ -294,7 +288,7 @@
 					//媒体网站刊物库：<span style='color:red'>0条</span>
 					html:"<span id='websitestorecount'></span>"
 				}]
-			},{
+			},*/{
 				//线索
 				margin:'5 0 0 0',
 				xtype:'panel',

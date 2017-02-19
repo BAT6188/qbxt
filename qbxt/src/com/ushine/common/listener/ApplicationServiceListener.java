@@ -118,7 +118,7 @@ public class ApplicationServiceListener implements ServletContextListener {
 				clueStoreNRTSearch.createIndex(baseDao.findByCriteria(clueCriteria));
 				logger.info("线索库创建索引成功");
 			}
-			if(StoreIndexPath.isCreateIndex("createOrganizStoreIndex")){
+			/*if(StoreIndexPath.isCreateIndex("createOrganizStoreIndex")){
 				//组织
 				DetachedCriteria organizCriteria=DetachedCriteria.forClass(OrganizStore.class);
 				organizCriteria.add(Restrictions.ne("action","3"));
@@ -131,7 +131,7 @@ public class ApplicationServiceListener implements ServletContextListener {
 				websiteCriteria.add(Restrictions.ne("action","3"));
 				websiteJournalStoreNRTSearch.createIndex(baseDao.findByCriteria(websiteCriteria));
 				logger.info("媒体网站刊物库创建索引成功");
-			}
+			}*/
 			if(StoreIndexPath.isCreateIndex("createVocationalWorkStoreIndex")){
 				//业务文档
 				DetachedCriteria vocationalCriteria=DetachedCriteria.forClass(VocationalWorkStore.class);

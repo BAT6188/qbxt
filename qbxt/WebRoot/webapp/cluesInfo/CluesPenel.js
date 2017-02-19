@@ -729,8 +729,8 @@ Ext.define('SaveCluesForm',{
 		            		    fields: ['text', 'value'],
 		            		    data : [
 		            		        {"text":"人员库信息", "value":"personStore"},
-		            		        {"text":"组织库信息", "value":"organizStore"},
-		            		        {"text":"媒体网站库信息", "value":"websiteJournalStore"}
+		            		        //{"text":"组织库信息", "value":"organizStore"},
+		            		        //{"text":"媒体网站库信息", "value":"websiteJournalStore"}
 		            		    ]
 		            		}),
 		            		value:'personStore',

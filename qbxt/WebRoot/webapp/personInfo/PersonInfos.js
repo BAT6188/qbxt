@@ -26,8 +26,8 @@ Ext.define('Ushine.personInfo.PersonInfos', {
 			        expanded: true,
 					children:[
 					   {"id":"4028b881524485a101524485ab5e001f","text":"重点人员","url":"","className":"Ushine.personInfo.PersonInfoManage","iconCls":"","leaf":true,"expanded":false},
-					   {"id":"4028b881524485a101524485ab5e001g","text":"重点组织","url":"","className":"Ushine.personInfo.OrganizeInfoManage","iconCls":"","leaf":true,"expanded":false},
-					   {"id":"26818283525ce64b01525ce654e8008b","text":"媒体网站刊物","url":"","className":"Ushine.docInfo.MediaNetworkBook","iconCls":"","leaf":true,"expanded":false},
+					   //{"id":"4028b881524485a101524485ab5e001g","text":"重点组织","url":"","className":"Ushine.personInfo.OrganizeInfoManage","iconCls":"","leaf":true,"expanded":false},
+					   //{"id":"26818283525ce64b01525ce654e8008b","text":"媒体网站刊物","url":"","className":"Ushine.docInfo.MediaNetworkBook","iconCls":"","leaf":true,"expanded":false},
 					   ]
 				}
 		    }),

@@ -39,7 +39,7 @@ Ext.define('Ushine.personInfo.PersonInfoManage',{
 					height: 41,
 					baseCls: 'panel-body',
 					items:[
-							Ext.create('Ushine.buttons.IconButton', {
+							/*Ext.create('Ushine.buttons.IconButton', {
 								   border: false,
 								   id: 'importNewBtn',
 								   //width:80,
@@ -49,7 +49,7 @@ Ext.define('Ushine.personInfo.PersonInfoManage',{
 								   	   //导入Excel
 									   self.importPersonInfo();
 								   }
-							}),
+							}),*/
 					       Ext.create('Ushine.buttons.IconButton', {
 					    	   border: false,
 					    	   id: 'createNewBtn',
