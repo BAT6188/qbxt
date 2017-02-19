@@ -1,25 +1,13 @@
 package com.ushine.storeInfo.service.impl;
 
 import java.io.InputStream;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-
-import org.apache.lucene.document.Document;
-import org.apache.lucene.search.PhraseQuery;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
@@ -29,21 +17,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ushine.common.utils.SpringUtils;
 import com.ushine.dao.IBaseDao;
-import com.ushine.store.index.IStoreNRTSearch;
 import com.ushine.store.index.LeadSpeakStoreNRTSearch;
-import com.ushine.store.index.OrganizStoreNRTSearch;
 import com.ushine.store.index.OutsideDocStoreNRTSearch;
 import com.ushine.store.index.PersonStoreNRTSearch;
-import com.ushine.store.index.StoreIndexQuery;
 import com.ushine.store.index.VocationalWorkStoreNRTSearch;
 import com.ushine.store.index.WebsiteJournalStoreNRTSearch;
 import com.ushine.storeInfo.model.CertificatesStore;
 import com.ushine.storeInfo.model.InfoType;
 import com.ushine.storeInfo.model.LeadSpeakStore;
 import com.ushine.storeInfo.model.NetworkAccountStore;
-import com.ushine.storeInfo.model.OrganizStore;
 import com.ushine.storeInfo.model.OutsideDocStore;
 import com.ushine.storeInfo.model.PersonStore;
 import com.ushine.storeInfo.model.VocationalWorkStore;
@@ -51,6 +34,9 @@ import com.ushine.storeInfo.model.WebsiteJournalStore;
 import com.ushine.storeInfo.service.IInfoTypeService;
 import com.ushine.storeInfo.service.ILeadSpeakStoreService;
 import com.ushine.util.XMLHandler;
+
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 /**
  * 信息类别接口实现
@@ -99,7 +85,7 @@ public class InfoTypeServiceImpl implements IInfoTypeService {
 				//新加
 				personStoreNRTSearch.addIndex(newList);
 			}
-			if ("OrganizStore".equals(storeName)) {
+			/*if ("OrganizStore".equals(storeName)) {
 				OrganizStoreNRTSearch organizStoreNRTSearch = OrganizStoreNRTSearch.getInstance();
 				// 查询aciton不为3的
 				DetachedCriteria criteria = DetachedCriteria.forClass(OrganizStore.class);
@@ -121,7 +107,7 @@ public class InfoTypeServiceImpl implements IInfoTypeService {
 				organizStoreNRTSearch.deleteIndex(ids);
 				//添加新索引
 				organizStoreNRTSearch.addIndex(newList);
-			}
+			}*/
 			if ("WebsiteJournalStore".equals(storeName)) {
 				WebsiteJournalStoreNRTSearch websiteJournalStoreNRTSearch=WebsiteJournalStoreNRTSearch.getInstance();
 				DetachedCriteria criteria = DetachedCriteria.forClass(WebsiteJournalStore.class);
@@ -395,9 +381,9 @@ public class InfoTypeServiceImpl implements IInfoTypeService {
 		// TODO Auto-generated method stub
 		if ("PersonStore".equals(tableTypeName)) {
 			return personStoreCount(tableTypeName);
-		} else if ("OrganizStore".equals(tableTypeName)) {
+		} /*else if ("OrganizStore".equals(tableTypeName)) {
 			return organizStoreCount(tableTypeName);
-		} else if ("WebsiteJournalStore".equals(tableTypeName)) {
+		}*/ else if ("WebsiteJournalStore".equals(tableTypeName)) {
 			return websiteJournalStoreCount(tableTypeName);
 		} else if ("VocationalWorkStore".equals(tableTypeName)) {
 			return vocationalWorkStoreCount(tableTypeName);
@@ -436,7 +422,7 @@ public class InfoTypeServiceImpl implements IInfoTypeService {
 		return array.toString();
 	}
 
-	// 组织类别统计
+	/*// 组织类别统计
 	public String organizStoreCount(String tableTypeName) throws Exception {
 		// 得到指定类别下的名称集合
 		List<InfoType> infoTypes = baseDao.findByProperty(InfoType.class, "tableTypeName", tableTypeName);
@@ -454,7 +440,7 @@ public class InfoTypeServiceImpl implements IInfoTypeService {
 
 		}
 		return array.toString();
-	}
+	}*/
 
 	// 媒体刊物类别统计
 	public String websiteJournalStoreCount(String tableTypeName) throws Exception {

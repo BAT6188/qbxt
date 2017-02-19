@@ -1,29 +1,19 @@
 package com.ushine.dao.impl;
 
 import java.io.Serializable;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.connection.ConnectionProvider;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
-import org.hibernate.engine.SessionFactoryImplementor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.ushine.common.utils.DateUtils;
 import com.ushine.common.utils.HibernateUtils;
-import com.ushine.core.po.Person;
 import com.ushine.dao.IBaseDao;
-import com.ushine.storeInfo.model.OrganizStore;
 import com.ushine.storeInfo.model.PersonStore;
 import com.ushine.storeInfo.model.WebsiteJournalStore;
 
@@ -274,12 +264,6 @@ public class HibernateDaoImpl<T> implements IBaseDao<T, Serializable> {
 	}
 
 	public List findBySqlAnPersonStore(String sql, Class<PersonStore> class1,
-			int sizePage, int startRecord) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public List findBySqlAnOrganizStore(String sql, Class<OrganizStore> class1,
 			int sizePage, int startRecord) throws Exception {
 		// TODO Auto-generated method stub
 		return null;

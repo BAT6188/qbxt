@@ -9,9 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.httpclient.util.DateUtil;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
@@ -41,13 +39,11 @@ import com.ushine.common.utils.SpringUtils;
 import com.ushine.common.vo.Paging;
 import com.ushine.common.vo.PagingObject;
 import com.ushine.dao.IBaseDao;
-import com.ushine.store.vo.MyQueryCondition;
 import com.ushine.storeInfo.model.CertificatesStore;
 import com.ushine.storeInfo.model.ClueRelationship;
 import com.ushine.storeInfo.model.ClueStore;
 import com.ushine.storeInfo.model.LeadSpeakStore;
 import com.ushine.storeInfo.model.NetworkAccountStore;
-import com.ushine.storeInfo.model.OrganizStore;
 import com.ushine.storeInfo.model.OutsideDocStore;
 import com.ushine.storeInfo.model.PersonStore;
 import com.ushine.storeInfo.model.VocationalWorkStore;
@@ -263,7 +259,7 @@ public class StoreIndexQuery {
 					dataSearchQuery.add(new WildcardQuery(new Term("establishTime", "*" + againValue + "*")), Occur.SHOULD);
 				}
 				break;
-			// 重点组织
+			/*// 重点组织
 			case "OrganizStore":
 				nrtSearch = OrganizStoreNRTSearch.getInstance();
 				storeList = new ArrayList<OrganizStore>();
@@ -285,7 +281,7 @@ public class StoreIndexQuery {
 				}
 				// 时间范围
 				query = new TermRangeQuery("createDate", lowerTerm, upperTerm, true, true);
-				break;
+				break;*/
 			// 线索库
 			case "ClueStore":
 				nrtSearch = ClueStoreNRTSearch.getInstance();
@@ -552,7 +548,7 @@ public class StoreIndexQuery {
 					dataSearchQuery.add(new WildcardQuery(new Term("establishTime", "*" + againValue + "*")), Occur.SHOULD);
 				}
 				break;
-			// 重点组织
+			/*// 重点组织
 			case "OrganizStore":
 				nrtSearch = OrganizStoreNRTSearch.getInstance();
 				storeList = new ArrayList<OrganizStore>();
@@ -573,7 +569,7 @@ public class StoreIndexQuery {
 				}
 				// 时间范围
 				query = new TermRangeQuery("createDate", lowerTerm, upperTerm, true, true);
-				break;
+				break;*/
 			// 线索库
 			case "ClueStore":
 				nrtSearch = ClueStoreNRTSearch.getInstance();
@@ -643,7 +639,7 @@ public class StoreIndexQuery {
 	 */
 	public static String countToJson(String fieldValue,String uid,String oid,String did) {
 		//七个库
-		Class[] classes={PersonStore.class,OrganizStore.class,WebsiteJournalStore.class,
+		Class[] classes={PersonStore.class,WebsiteJournalStore.class,
 				VocationalWorkStore.class,OutsideDocStore.class,LeadSpeakStore.class,ClueStore.class};
 		JSONArray array=new JSONArray();
 		for (Class clazz : classes) {
@@ -655,9 +651,7 @@ public class StoreIndexQuery {
 				//权限
 				dataType="重点人员库";
 			}
-			if (storeName.equals("OrganizStore")) {
-				dataType="重点组织库";
-			}
+			
 			if (storeName.equals("WebsiteJournalStore")) {
 				dataType="媒体网站刊物库";
 			}
@@ -844,64 +838,7 @@ public class StoreIndexQuery {
 	 * @param hasValue
 	 * @return json 
 	 */
-	public static String organizStoreVoToJson(PagingObject<OrganizStore> vo,boolean hasValue){
-		JSONObject root = new JSONObject();
-		root.element("paging", vo.getPaging());
-		JSONArray array = new JSONArray();
-		for (OrganizStore or : vo.getArray()) {
-			if (null!=or) {
-				JSONObject obj = new JSONObject();
-				obj.put("id", or.getId());
-				if (null!=or.getIsEnable()) {
-					obj.put("isEnable",or.getIsEnable());
-				}else{
-					obj.put("isEnable","1");
-				}
-				obj.put("createDate", or.getCreateDate());
-				Document document=documentHashMap.get(or.getId());
-				Query query=queryHashMap.get(or.getId());
-				if(hasValue){
-					//高亮
-					obj.put("organizName", highlighterFiled(document, query, "organizName"));
-					obj.put("orgHeadOfName", highlighterFiled(document, query, "orgHeadOfName"));
-					//为空的条件
-					if(or.getInfoType()!=null){
-						
-						obj.put("infoType", highlighterFiled(document, query, "infoType"));
-						obj.put("infoTypeId", or.getInfoType().getId());
-					}
-					obj.put("websiteURL", highlighterFiled(document, query, "websiteURL"));
-					obj.put("organizPublicActionNames", highlighterFiled(document, query, "organizPublicActionNames"));
-					obj.put("organizPersonNames",highlighterFiled(document, query, "organizPersonNames"));
-					obj.put("organizBranchesNames", highlighterFiled(document, query, "organizBranchesNames"));
-					obj.put("foundTime", highlighterFiled(document, query, "foundTime"));
-					obj.put("degreeOfLatitude",highlighterFiled(document, query, "degreeOfLatitude"));
-					obj.put("basicCondition",highlighterFiled(document, query, "basicCondition"));
-					obj.put("activityCondition",highlighterFiled(document, query, "activityCondition"));
-				}else{
-					obj.put("organizName", or.getOrganizName());
-					obj.put("orgHeadOfName", or.getOrgHeadOfName());
-					//为空的条件
-					if(or.getInfoType()!=null){
-						
-						obj.put("infoType", or.getInfoType().getTypeName());
-						obj.put("infoTypeId", or.getInfoType().getId());
-					}
-					obj.put("websiteURL", or.getWebsiteURL());
-					obj.put("organizPublicActionNames", or.getOrganizPublicActionNames());
-					obj.put("organizPersonNames",or.getOrganizPersonNames());
-					obj.put("organizBranchesNames", or.getOrganizBranchesNames());
-					obj.put("foundTime", or.getFoundTime());
-					obj.put("degreeOfLatitude", or.getDegreeOfLatitude());
-					obj.put("basicCondition",or.getBasicCondition());
-					obj.put("activityCondition",or.getActivityCondition());
-				}
-				array.add(obj);
-			}
-		}
-		root.element("datas", array);
-		return root.toString();
-	}
+	
 	/**
 	 * 高亮显示WebsiteJournalStore
 	 * @param vo PagingObject封装的WebsiteJournalStore集合

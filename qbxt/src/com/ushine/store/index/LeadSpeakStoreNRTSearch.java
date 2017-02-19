@@ -7,7 +7,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.locks.Lock;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -15,7 +14,6 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.Field.Index;
 import org.apache.lucene.document.Field.Store;
-import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
@@ -32,16 +30,11 @@ import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.wltea.analyzer.lucene.IKAnalyzer;
 
-import com.ushine.common.utils.SpringUtils;
 import com.ushine.dao.IBaseDao;
-import com.ushine.storeInfo.model.Attaches;
 import com.ushine.storeInfo.model.LeadSpeakStore;
-import com.ushine.storeInfo.model.WebsiteJournalStore;
 
 /**
  * 领导讲话库索引读写

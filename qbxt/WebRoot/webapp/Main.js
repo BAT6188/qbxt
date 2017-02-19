@@ -48,7 +48,7 @@ Ext.require([
 	'Ushine.docInfo.ServiceDocStoreFileGridPanel',
 	'Ushine.personInfo.PersonInfoGridPanel',
 	'Ushine.cluesInfo.CluesPenel',
-	
+	'Ushine.utils.SelectExistingDataGridPanel',
 	'Ushine.cluesInfo.CluesGridPanel',
 	'Ushine.dataSearch.DataSearchPenel',
 	'Ushine.dataSearch.DataSearchPenelGridPanel',

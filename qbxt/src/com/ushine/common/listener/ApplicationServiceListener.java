@@ -16,19 +16,15 @@ import com.ushine.common.utils.SpringUtils;
 import com.ushine.dao.IBaseDao;
 import com.ushine.store.index.ClueStoreNRTSearch;
 import com.ushine.store.index.LeadSpeakStoreNRTSearch;
-import com.ushine.store.index.OrganizStoreNRTSearch;
 import com.ushine.store.index.OutsideDocStoreNRTSearch;
 import com.ushine.store.index.PersonStoreNRTSearch;
 import com.ushine.store.index.StoreIndexPath;
 import com.ushine.store.index.VocationalWorkStoreNRTSearch;
-import com.ushine.store.index.WebsiteJournalStoreNRTSearch;
 import com.ushine.storeInfo.model.ClueStore;
 import com.ushine.storeInfo.model.LeadSpeakStore;
-import com.ushine.storeInfo.model.OrganizStore;
 import com.ushine.storeInfo.model.OutsideDocStore;
 import com.ushine.storeInfo.model.PersonStore;
 import com.ushine.storeInfo.model.VocationalWorkStore;
-import com.ushine.storeInfo.model.WebsiteJournalStore;
 
 /**
  * 应用服务监听器, 在程序启动与停止时，执行初始化和注销方法。
@@ -91,8 +87,6 @@ public class ApplicationServiceListener implements ServletContextListener {
 	 * 应用程序启动时执行
 	 */
 	PersonStoreNRTSearch personStoreNRTSearch=PersonStoreNRTSearch.getInstance();
-	OrganizStoreNRTSearch organizStoreNRTSearch=OrganizStoreNRTSearch.getInstance();
-	WebsiteJournalStoreNRTSearch websiteJournalStoreNRTSearch=WebsiteJournalStoreNRTSearch.getInstance();
 	OutsideDocStoreNRTSearch outsideDocStoreNRTSearch=OutsideDocStoreNRTSearch.getInstance();
 	ClueStoreNRTSearch clueStoreNRTSearch=ClueStoreNRTSearch.getInstance();
 	VocationalWorkStoreNRTSearch vocationalWorkStoreNRTSearch=VocationalWorkStoreNRTSearch.getInstance();
@@ -182,8 +176,6 @@ public class ApplicationServiceListener implements ServletContextListener {
 		try {
 			//应用程序关闭时主动关闭索引库
 			personStoreNRTSearch.closeManager();
-			organizStoreNRTSearch.closeManager();
-			websiteJournalStoreNRTSearch.closeManager();
 			clueStoreNRTSearch.closeManager();
 			outsideDocStoreNRTSearch.closeManager();
 			vocationalWorkStoreNRTSearch.closeManager();

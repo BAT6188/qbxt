@@ -27,11 +27,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ushine.common.vo.PagingObject;
 import com.ushine.common.vo.ViewObject;
-import com.ushine.storeInfo.model.OrganizStore;
 import com.ushine.storeInfo.model.PersonStore;
 import com.ushine.storeInfo.model.TempClueData;
 import com.ushine.storeInfo.model.WebsiteJournalStore;
-import com.ushine.storeInfo.service.IOrganizStoreService;
 import com.ushine.storeInfo.service.IPersonStoreService;
 import com.ushine.storeInfo.service.ITempClueDataService;
 import com.ushine.storeInfo.service.IWebsiteJournalStoreService;
@@ -49,8 +47,6 @@ public class TempClueDataController {
 	private ITempClueDataService clueDataService;
 	@Autowired
 	private IPersonStoreService personStoreService;
-	@Autowired
-	private IOrganizStoreService organizStoreService;
 	@Autowired
 	private IWebsiteJournalStoreService websiteJournalStoreService;
 	/**
@@ -165,9 +161,6 @@ public class TempClueDataController {
 				//System.out.println("===type==="+type);
 				PagingObject<PersonStore> pagingObject = personStoreService.findPersonStoreByIsEnable(field,fieldValue,startTime,endTime,nextPage, size,null,null,null);
 			   return personStoreVoToJSon(pagingObject);
-			}else if("organizStore".equals(type)){   //组织库
-				PagingObject<OrganizStore> pagingObject = organizStoreService.findOrganizStoreByIsEnable(field,fieldValue,startTime,endTime,nextPage, size);
-				return organizStoreVoToJSon(pagingObject);
 			}else if("websiteJournalStore".equals(type)){  //媒体网站库
 				PagingObject<WebsiteJournalStore> pagingObject = websiteJournalStoreService.findWebsiteJournalStoreByIsEnable(field,fieldValue,startTime,endTime,nextPage, size);
 				return WebsiteJournalStoreVoToJSon(pagingObject);
@@ -206,24 +199,7 @@ public class TempClueDataController {
 	 * @param list
 	 * @return
 	 */
-	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public String organizStoreVoToJSon(PagingObject<OrganizStore> vo) {
-		JSONObject root = new JSONObject();
-		root.element("paging", vo.getPaging());
-		JSONArray array = new JSONArray();
-		for (OrganizStore o : vo.getArray()) {
-			JSONObject obj = new JSONObject();
-			obj.put("id", o.getId());
-			obj.put("name", o.getOrganizName());
-			if(o.getInfoType()!=null){
-				//类别不能为空
-				obj.put("type", o.getInfoType().getTypeName());
-			}
-			array.add(obj);
-		}
-		root.element("datas", array);
-		return root.toString();
-	}
+	
 	/**
 	 * 将特定的数据转换成json格式
 	 * @param list

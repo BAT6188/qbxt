@@ -32,13 +32,11 @@ import com.ushine.storeInfo.model.CertificatesStore;
 import com.ushine.storeInfo.model.ClueRelationship;
 import com.ushine.storeInfo.model.ClueStore;
 import com.ushine.storeInfo.model.NetworkAccountStore;
-import com.ushine.storeInfo.model.OrganizStore;
 import com.ushine.storeInfo.model.PersonStore;
 import com.ushine.storeInfo.model.TempClueData;
 import com.ushine.storeInfo.model.WebsiteJournalStore;
 import com.ushine.storeInfo.service.IClueRelationshipService;
 import com.ushine.storeInfo.service.IClueStoreService;
-import com.ushine.storeInfo.service.IOrganizStoreService;
 import com.ushine.storeInfo.service.IPersonStoreService;
 import com.ushine.storeInfo.service.ITempClueDataService;
 import com.ushine.storeInfo.service.IWebsiteJournalStoreService;
@@ -66,8 +64,6 @@ public class ClueStoreController {
 	private IClueRelationshipService clueRelationshipService;
 	@Autowired
 	private IPersonStoreService personStoreService;
-	@Autowired
-	private IOrganizStoreService organizStoreService;
 	@Autowired
 	private IWebsiteJournalStoreService websiteJournalStoreService;
 	/**
@@ -593,7 +589,7 @@ public class ClueStoreController {
 			@RequestParam("page") int nextPage,
 			@RequestParam("limit") int size,
 			@RequestParam("clueId") String clueId) {
-		try {
+		/*try {
 			// 汉字关键字搜索
 			fieldValue = new String(fieldValue.getBytes("ISO-8859-1"), "UTF-8");
 			PagingObject<OrganizStore> pagingObject = clueStoreService
@@ -605,42 +601,11 @@ public class ClueStoreController {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
 		return null;
 	}
 
-	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public String findClueOrganizVoToJson(PagingObject<OrganizStore> vo,
-			String clueName) {
-		JSONObject root = new JSONObject();
-		root.element("paging", vo.getPaging());
-		JSONArray array = new JSONArray();
-		for (OrganizStore or : vo.getArray()) {
-			JSONObject obj = new JSONObject();
-			obj.put("id", or.getId());
-			obj.put("organizName", or.getOrganizName());
-			obj.put("orgHeadOfName", or.getOrgHeadOfName());
-			if(or.getInfoType()!=null){
-				//关联类别不为空
-				obj.put("infoType", or.getInfoType().getTypeName());
-			}
-			obj.put("websiteURL", or.getWebsiteURL());
-			obj.put("organizPublicActionNames",
-					or.getOrganizPublicActionNames());
-			obj.put("organizPersonNames", or.getOrganizPersonNames());
-			obj.put("organizBranchesNames", or.getOrganizBranchesNames());
-			obj.put("foundTime", or.getFoundTime());
-			obj.put("clueName", clueName);
-			obj.put("degreeOfLatitude", or.getDegreeOfLatitude());
-			obj.put("basicCondition", or.getBasicCondition());
-			obj.put("activityCondition", or.getActivityCondition());
-			obj.put("createDate", or.getCreateDate());
-			obj.put("isToStorage", or.getIsToStorage());
-			array.add(obj);
-		}
-		root.element("datas", array);
-		return root.toString();
-	}
+	
 
 	/**
 	 * 选择线索数据

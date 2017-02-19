@@ -5,9 +5,7 @@ import java.util.List;
 
 import org.hibernate.criterion.DetachedCriteria;
 
-import com.ushine.storeInfo.model.OrganizStore;
 import com.ushine.storeInfo.model.PersonStore;
-import com.ushine.storeInfo.model.WebsiteJournalStore;
 
 /**
  * 基础DAO支持接口v3.0,所有程序数据的CRUD都通过该接口操作（替换IBaseDaoSupport接口操作）
@@ -170,26 +168,6 @@ public interface IBaseDao<T, id extends Serializable> {
 	 * @throws Exception
 	 */
 	public List findBySqlAnPersonStore(String sql,Class<PersonStore> class1, final int sizePage, final int startRecord) throws Exception;
-	/**
-	 * 根据线索id查询组织数据
-	 * @param sql
-	 * @param class1
-	 * @param sizePage
-	 * @param startRecord
-	 * @return
-	 * @throws Exception
-	 */
-	public List findBySqlAnOrganizStore(String sql,Class<OrganizStore> class1, final int sizePage, final int startRecord) throws Exception;
-	/**
-	 * 根据线索id查询媒体网站数据
-	 * @param sql
-	 * @param class1
-	 * @param sizePage
-	 * @param startRecord
-	 * @return
-	 * @throws Exception
-	 */
-	public List findBySqlAnWebsiteJournalStore(String sql,Class<WebsiteJournalStore> class1, final int sizePage, final int startRecord) throws Exception;
 	
 	/**
 	 * 分页查询指定类型的数据

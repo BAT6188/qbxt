@@ -3,7 +3,6 @@ package com.ushine.storeInfo.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.cxf.ws.addressing.v200403.Relationship;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,16 +13,13 @@ import com.ushine.dao.IBaseDao;
 import com.ushine.store.index.ClueStoreNRTSearch;
 import com.ushine.storeInfo.model.ClueRelationship;
 import com.ushine.storeInfo.model.ClueStore;
-import com.ushine.storeInfo.model.OrganizStore;
 import com.ushine.storeInfo.model.PersonStore;
 import com.ushine.storeInfo.model.TempClueData;
 import com.ushine.storeInfo.model.WebsiteJournalStore;
 import com.ushine.storeInfo.service.IClueRelationshipService;
 import com.ushine.storeInfo.service.IClueStoreService;
-import com.ushine.storeInfo.service.IOrganizStoreService;
 import com.ushine.storeInfo.service.IPersonStoreService;
 import com.ushine.storeInfo.service.IWebsiteJournalStoreService;
-import com.ushine.util.StringUtil;
 /**
  * 线索基础库关系接口实现类
  * @author wangbailin
@@ -37,8 +33,6 @@ public class ClueRelationshipServiceImpl implements IClueRelationshipService{
 	private IBaseDao<ClueRelationship, String> baseDao;
 	@Autowired
 	private IPersonStoreService personStoreService;
-	@Autowired
-	IOrganizStoreService organizStoreService;
 	@Autowired
 	private IWebsiteJournalStoreService websiteJournalStoreService;
 	@Autowired
@@ -90,7 +84,7 @@ public class ClueRelationshipServiceImpl implements IClueRelationshipService{
 					relationship.setDataType(tempClueData.getType());
 					relationship.setLibraryId(store.getId());
 					baseDao.save(relationship);
-				}else if("organizStore".equals(tempClueData.getType())){
+				}/*else if("organizStore".equals(tempClueData.getType())){
 					OrganizStore store = new OrganizStore();
 					store.setOrganizName(tempClueData.getName());
 					store.setIsToStorage("2");
@@ -101,7 +95,7 @@ public class ClueRelationshipServiceImpl implements IClueRelationshipService{
 					relationship.setDataType(tempClueData.getType());
 					relationship.setLibraryId(store.getId());
 					baseDao.save(relationship);
-				}else if("websiteJournalStore".equals(tempClueData.getType())){
+				}*/else if("websiteJournalStore".equals(tempClueData.getType())){
 					WebsiteJournalStore store = new WebsiteJournalStore();
 					store.setName(tempClueData.getName());
 					store.setIsToStorage("2");

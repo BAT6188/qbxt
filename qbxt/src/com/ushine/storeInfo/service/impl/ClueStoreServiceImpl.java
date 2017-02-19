@@ -5,8 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.List;
 
-import net.sf.json.JSONObject;
-
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -16,9 +14,6 @@ import org.apache.poi.hwpf.usermodel.Paragraph;
 import org.apache.poi.hwpf.usermodel.ParagraphProperties;
 import org.apache.poi.hwpf.usermodel.Range;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
-import org.apache.poi.xwpf.usermodel.XWPFParagraph;
-import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
@@ -37,12 +32,12 @@ import com.ushine.store.index.ClueStoreNRTSearch;
 import com.ushine.store.index.StoreIndexQuery;
 import com.ushine.storeInfo.model.ClueStore;
 import com.ushine.storeInfo.model.InfoType;
-import com.ushine.storeInfo.model.OrganizStore;
 import com.ushine.storeInfo.model.PersonStore;
 import com.ushine.storeInfo.model.WebsiteJournalStore;
 import com.ushine.storeInfo.service.IClueStoreService;
-import com.ushine.util.CustomXWPFDocument;
 import com.ushine.util.StringUtil;
+
+import net.sf.json.JSONObject;
 /**
  * 线索库接口实现类
  * @author wangbailin
@@ -199,7 +194,7 @@ public class ClueStoreServiceImpl implements IClueStoreService{
 		return vo;
 	}
 	
-	public PagingObject<OrganizStore> findClueOrganizStore(String clueId,
+	/*public PagingObject<OrganizStore> findClueOrganizStore(String clueId,
 			String field, String fieldValue,String startTime,String endTime, int nextPage, int size)
 			throws Exception {
 		String checkArr = organizCheckArr(field,fieldValue,startTime,endTime);
@@ -226,8 +221,8 @@ public class ClueStoreServiceImpl implements IClueStoreService{
 		vo.setArray(list);
 		vo.setPaging(paging);
 		return vo;
-	}
-	public PagingObject<WebsiteJournalStore> findClueWebsiteJournalStore(
+	}*/
+	/*public PagingObject<WebsiteJournalStore> findClueWebsiteJournalStore(
 			String clueId, String field, String fieldValue,String startTime,String endTime, int nextPage,
 			int size) throws Exception {
 		String checkArr = websiteJournalCheckArr(field,fieldValue,startTime,endTime);
@@ -253,7 +248,7 @@ public class ClueStoreServiceImpl implements IClueStoreService{
 		vo.setArray(list);
 		vo.setPaging(paging);
 		return vo;
-	}
+	}*/
 	//根据需要查询的字段名称返回数据库对应的字段名称
 	private String personCheckArr(String field,String fieldValue,String startTime,String endTime) {
 		StringBuffer sb = new StringBuffer();
@@ -390,7 +385,7 @@ public class ClueStoreServiceImpl implements IClueStoreService{
 			List<PersonStore> list = baseDao.findBySqlAnPersonStore(sb.toString(), PersonStore.class, 1000, 0);
 			return list;
 		}
-		public List<OrganizStore> findOrganizStoreByClueId(String clueId)
+		/*public List<OrganizStore> findOrganizStoreByClueId(String clueId)
 				throws Exception {
 			StringBuffer sb = new StringBuffer();
 			sb.append("SELECT * FROM T_ORGANIZ_STORE  O ");
@@ -409,7 +404,7 @@ public class ClueStoreServiceImpl implements IClueStoreService{
 			sb.append(" WHERE C.`ID`= '"+clueId+"' ");
 			List<WebsiteJournalStore> list = baseDao.findBySqlAnWebsiteJournalStore(sb.toString(), WebsiteJournalStore.class, 1000, 0);
 			return list;
-		}
+		}*/
 		public boolean updateClueStoreIsEnableStart(String[] clueIds)
 				throws Exception {
 			for (String id : clueIds) {
@@ -521,6 +516,28 @@ public class ClueStoreServiceImpl implements IClueStoreService{
 				e.printStackTrace();
 			}
 			return result;
+		}
+		/*@Override
+		public PagingObject<OrganizStore> findClueOrganizStore(String clueId, String field, String fieldValue,
+				String startTime, String endTime, int nextPage, int size) throws Exception {
+			// TODO Auto-generated method stub
+			return null;
+		}*/
+		@Override
+		public PagingObject<WebsiteJournalStore> findClueWebsiteJournalStore(String clueId, String field,
+				String fieldValue, String startTime, String endTime, int nextPage, int size) throws Exception {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		/*@Override
+		public List<OrganizStore> findOrganizStoreByClueId(String clueId) throws Exception {
+			// TODO Auto-generated method stub
+			return null;
+		}*/
+		@Override
+		public List<WebsiteJournalStore> findWebsiteJournalStoreByClueId(String clueId) throws Exception {
+			// TODO Auto-generated method stub
+			return null;
 		}
 		
 }

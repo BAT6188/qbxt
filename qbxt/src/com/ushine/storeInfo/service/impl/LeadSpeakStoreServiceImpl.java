@@ -1,10 +1,5 @@
 package com.ushine.storeInfo.service.impl;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.criterion.DetachedCriteria;
@@ -15,16 +10,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
 import com.ushine.common.vo.PagingObject;
 import com.ushine.dao.IBaseDao;
 import com.ushine.store.index.LeadSpeakStoreNRTSearch;
 import com.ushine.store.index.StoreIndexQuery;
-import com.ushine.storeInfo.model.Attaches;
 import com.ushine.storeInfo.model.LeadSpeakStore;
-import com.ushine.storeInfo.model.OutsideDocStore;
 import com.ushine.storeInfo.service.ILeadSpeakStoreService;
-import com.ushine.util.ReadAttachUtil;
 import com.ushine.util.StringUtil;
+
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 /**
  * 领导讲话接口类
  * 
@@ -38,8 +34,6 @@ public class LeadSpeakStoreServiceImpl implements ILeadSpeakStoreService {
 			.getLogger(LeadSpeakStoreServiceImpl.class);
 	@Autowired
 	private IBaseDao<LeadSpeakStore, String> baseDao;
-	@Autowired
-	private IBaseDao<Attaches, String> baseDaoAttaches;
 	//
 	private LeadSpeakStoreNRTSearch leadSpeakStoreNRTSearch=LeadSpeakStoreNRTSearch.getInstance();
 	public void saveLeadSpeakStore(LeadSpeakStore leadSpeakStore)

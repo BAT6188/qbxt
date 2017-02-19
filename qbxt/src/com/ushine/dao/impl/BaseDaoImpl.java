@@ -3,6 +3,7 @@ package com.ushine.dao.impl;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.List;
+
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -11,11 +12,9 @@ import org.hibernate.criterion.Projections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.orm.hibernate3.HibernateCallback;
-import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
 import com.ushine.dao.IBaseDao;
-import com.ushine.storeInfo.model.OrganizStore;
 import com.ushine.storeInfo.model.PersonStore;
 import com.ushine.storeInfo.model.WebsiteJournalStore;
 
@@ -187,16 +186,6 @@ public class BaseDaoImpl<T> extends HibernateDaoSupport implements
 		});
 	}
 	@SuppressWarnings("unchecked")
-	public List findBySqlAnOrganizStore(final String sql,final Class<OrganizStore> entityClass, final int sizePage, final int startRecord)
-			throws Exception {
-		logger.debug("SQL语句查询(" + sql + ").");
-		return (List) getHibernateTemplate().execute(new HibernateCallback<Object>() {
-			public Object doInHibernate(Session session) throws HibernateException, SQLException {
-				return session.createSQLQuery(sql).addEntity(entityClass).setFirstResult(startRecord).setMaxResults(sizePage).list();
-			}
-		});
-	}
-	@SuppressWarnings("unchecked")
 	public List findBySqlAnWebsiteJournalStore(final String sql,final Class<WebsiteJournalStore> entityClass, final int sizePage, final int startRecord)
 			throws Exception {
 		logger.debug("SQL语句查询(" + sql + ").");
@@ -279,4 +268,5 @@ public class BaseDaoImpl<T> extends HibernateDaoSupport implements
 			}
 		});
 	}
+
 }

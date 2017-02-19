@@ -2,11 +2,8 @@ package com.ushine.storeInfo.service;
 
 import java.util.List;
 
-import org.springframework.web.bind.annotation.RequestParam;
-
 import com.ushine.common.vo.PagingObject;
 import com.ushine.storeInfo.model.ClueStore;
-import com.ushine.storeInfo.model.OrganizStore;
 import com.ushine.storeInfo.model.PersonStore;
 import com.ushine.storeInfo.model.WebsiteJournalStore;
 
@@ -82,7 +79,6 @@ public interface IClueStoreService {
 		 * @return
 		 * @throws Exception
 		 */
-		public PagingObject<OrganizStore> findClueOrganizStore(String clueId,String field,String fieldValue,String startTime,String endTime,int nextPage,int size)throws Exception;
 		/**
 		 * 根据线索的id和媒体网站的参数值查询媒体网站信息
 		 * @param id
@@ -106,7 +102,6 @@ public interface IClueStoreService {
 		 */
 		public PagingObject<ClueStore> findClueStore(int nextPage,int size,String uid,String oid,String did)throws Exception;
 		public List<PersonStore> findPersonStoreByClueId(String clueId)throws Exception;
-		public List<OrganizStore> findOrganizStoreByClueId(String clueId)throws Exception;
 		public List<WebsiteJournalStore> findWebsiteJournalStoreByClueId(String clueId)throws Exception;
 		/**
 		 * 修改线索库信息为启用

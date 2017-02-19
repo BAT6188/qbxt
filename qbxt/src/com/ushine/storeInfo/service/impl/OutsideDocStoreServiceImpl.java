@@ -31,7 +31,6 @@ import com.ushine.core.verify.session.UserSessionMgr;
 import com.ushine.dao.IBaseDao;
 import com.ushine.store.index.OutsideDocStoreNRTSearch;
 import com.ushine.store.index.StoreIndexQuery;
-import com.ushine.storeInfo.model.Attaches;
 import com.ushine.storeInfo.model.InfoType;
 import com.ushine.storeInfo.model.OutsideDocStore;
 import com.ushine.storeInfo.service.IInfoTypeService;
@@ -58,8 +57,6 @@ public class OutsideDocStoreServiceImpl implements IOutsideDocStoreService {
 	private Logger logger = LoggerFactory.getLogger(OutsideDocStoreServiceImpl.class);
 	@Autowired
 	private IBaseDao<OutsideDocStore, Serializable> baseDao;
-	@Autowired
-	private IBaseDao<Attaches, Serializable> baseDaoAttaches;
 	@Autowired
 	private IInfoTypeService infoTypeService;
 	//
