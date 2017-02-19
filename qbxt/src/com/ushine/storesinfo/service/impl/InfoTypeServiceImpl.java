@@ -296,7 +296,7 @@ public class InfoTypeServiceImpl implements IInfoTypeService {
 			for (VocationalWorkStore vocationalWorkStore : vwsList) {
 				vwsids[k]=vocationalWorkStore.getId();
 				k++;
-				vocationalWorkStore.setInvolvedInTheField(destInfoType);
+				//vocationalWorkStore.setInvolvedInTheField(destInfoType);
 				vwsNewList.add(vocationalWorkStore);
 			}
 			//删除

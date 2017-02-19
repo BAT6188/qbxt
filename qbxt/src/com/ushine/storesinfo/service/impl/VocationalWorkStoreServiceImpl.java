@@ -160,7 +160,7 @@ public class VocationalWorkStoreServiceImpl implements IVocationalWorkStoreServi
 				// 设置类别
 				store.setInfoType(docInfoType);
 				// 设置涉及领域
-				store.setInvolvedInTheField(involvedInTheField);
+				//store.setInvolvedInTheField(involvedInTheField);
 				// copy文件到vocationalWorkStoreAttachment文件夹中
 				FileUtils.copyFileToDirectory(new File(filePath), new File(directory));
 				String attaches = vocationalWorkStoreAttachment + File.separator + FilenameUtils.getName(filePath);
@@ -296,7 +296,7 @@ public class VocationalWorkStoreServiceImpl implements IVocationalWorkStoreServi
 				// 设置类别
 				store.setInfoType(docInfoType);
 				// 设置涉及领域
-				store.setInvolvedInTheField(involvedInTheField);
+				//store.setInvolvedInTheField(involvedInTheField);
 				// copy文件到vocationalWorkStoreAttachment文件夹中
 				FileUtils.copyFileToDirectory(new File(filePath), new File(directory));
 				String attaches = vocationalWorkStoreAttachment + File.separator + FilenameUtils.getName(filePath);
@@ -522,10 +522,10 @@ public class VocationalWorkStoreServiceImpl implements IVocationalWorkStoreServi
 			// obj.put("infoType", infoTypeMap.get(store.getId()));
 			// 涉及领域
 			// obj.put("involvedInTheField", fieldMap.get(store.getId()));
-			if (store.getInvolvedInTheField() != null) {
+			/*if (store.getInvolvedInTheField() != null) {
 				// 不为空
 				obj.put("involvedInTheField", store.getInvolvedInTheField().getTypeName());
-			}
+			}*/
 			// 类别不为空
 			if (store.getInfoType() != null) {
 				obj.put("infoType", store.getInfoType().getTypeName());

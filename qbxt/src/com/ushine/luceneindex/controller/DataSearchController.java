@@ -59,10 +59,6 @@ public class DataSearchController {
 	@Autowired
 	private IPersonStoreService personStoreService;
 	@Autowired
-	private IOrganizStoreService organizStoreService;
-	@Autowired
-	private IWebsiteJournalStoreService websiteJournalStoreService;
-	@Autowired
 	private IClueStoreService clueStoreService;
 	@Autowired
 	private IVocationalWorkStoreService vocationalWorkStoreService;
@@ -86,12 +82,6 @@ public class DataSearchController {
 				//获得10条数据
 				case "PersonStore":
 					datas=personStoreService.findPersonStore("anyField", fieldValue, startTime, endTime, 1, size, uid, oid, did,null,null);
-					break;
-				case "OrganizStore":
-					datas=organizStoreService.findOrganizStore("anyField", fieldValue, startTime, endTime, 1, size, uid, oid, did,null,null);
-					break;
-				case "WebsiteJournalStore":
-					datas=websiteJournalStoreService.findWebsiteJournalStore("anyField", fieldValue, startTime, endTime, 1, size, uid, oid, did,null,null);
 					break;
 				case "ClueStore":
 					datas=clueStoreService.findClueStore("anyField", fieldValue, startTime, endTime, 1, size, uid, oid, did,null,null);
@@ -205,8 +195,6 @@ public class DataSearchController {
 				roleId=roleId.substring(1, roleId.length()-1);
 				//资源id
 				String personStoreResId=getResourceCode("查询人员");
-				String organizStoreResId=getResourceCode("查询组织");
-				String websiteStoreResId=getResourceCode("查询媒体网站刊物");
 				String clueStoreResId=getResourceCode("查询线索");
 				String outsideDocStoreResId=getResourceCode("查询外来文档");
 				String vocationalStoreResId=getResourceCode("查询业务文档");
@@ -214,10 +202,6 @@ public class DataSearchController {
 				/////七个库的操作权限代号
 				//人员库的
 				String personCode=getPermitCode(personStoreResId, roleId);
-				//组织库的
-				String organizCode=getPermitCode(organizStoreResId, roleId);
-				//媒体网站刊物库
-				String websiteCode=getPermitCode(websiteStoreResId, roleId);
 				//线索库
 				String clueCode=getPermitCode(clueStoreResId, roleId);
 				//外来文档库
@@ -227,15 +211,15 @@ public class DataSearchController {
 				//领导讲话
 				String leadStoreCode=getPermitCode(leadSpeakStoreResId, roleId);
 				
-				String[] resourceCodes=new String[]{personCode,organizCode,websiteCode,clueCode,
+				String[] resourceCodes=new String[]{personCode,clueCode,
 						outsideDocCode,voStoreCode,leadStoreCode};
-				String[] dataTypes=new String[]{"重点人员库","重点组织库","媒体网站刊物库","线索库",
+				String[] dataTypes=new String[]{"重点人员库","线索库",
 						"外来文档库","业务文档库","领导讲话库"};
 				
-				String[] storeNames=new String[]{"PersonStore","OrganizStore","WebsiteJournalStore",
+				String[] storeNames=new String[]{"PersonStore",
 						"ClueStore","OutsideDocStore","VocationalWorkStore","LeadSpeakStore"};
 				
-				Class[]classes=new Class[]{PersonStore.class,OrganizStore.class,WebsiteJournalStore.class,
+				Class[]classes=new Class[]{PersonStore.class,
 						ClueStore.class,OutsideDocStore.class,VocationalWorkStore.class,LeadSpeakStore.class};
 				
 				MyJsonObject[] myJsonObjects=new MyJsonObject[classes.length];
@@ -257,6 +241,7 @@ public class DataSearchController {
 		}finally {
 			log.log(loginfo);
 		}
+		logger.info("查询所有库的结果集合：\r\n"+array.toString());
 		return array.toString();
 	}
 	/**

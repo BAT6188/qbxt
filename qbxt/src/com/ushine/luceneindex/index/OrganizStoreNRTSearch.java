@@ -56,8 +56,7 @@ public class OrganizStoreNRTSearch implements IStoreNRTSearch {
 	private OrganizStoreNRTSearch() {
 
 	}
-	
-	private static String path = StoreIndexPath.ORGANIZSTORE_INDEXPATH;
+	private static String path = null;
 	private static Logger logger = LoggerFactory.getLogger(OrganizStoreNRTSearch.class);
 	private static NRTManagerReopenThread thread ;
 

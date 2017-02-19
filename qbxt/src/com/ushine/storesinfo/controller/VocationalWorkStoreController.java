@@ -354,7 +354,7 @@ public class VocationalWorkStoreController {
 						store.setTime(time);
 						store.setTheOriginal(theOriginal);
 						store.setCreateDate(StringUtil.dates());
-						store.setInvolvedInTheField(infoTypeService.findInfoTypeById(involvedInTheField));
+						//store.setInvolvedInTheField(infoTypeService.findInfoTypeById(involvedInTheField));
 						// 设置类别
 						InfoType type = infoTypeService.findInfoTypeById(infoType);
 						store.setInfoType(type);
@@ -498,8 +498,8 @@ public class VocationalWorkStoreController {
 					store.setDocNumber(docNumber);
 					store.setTime(time);
 					store.setTheOriginal(theOriginal);
-					store.setInvolvedInTheField(infoTypeService.findInfoTypeByTypeNameAndTableName(involvedInTheField,
-							StoreFinal.INVOLVED_IN_THE_FIELD));
+					/*store.setInvolvedInTheField(infoTypeService.findInfoTypeByTypeNameAndTableName(involvedInTheField,
+							StoreFinal.INVOLVED_IN_THE_FIELD));*/
 					// 设置类别
 					InfoType type = infoTypeService.findInfoTypeByTypeNameAndTableName(infoType,
 							StoreFinal.VOCATIONALWORK_STORE);

@@ -55,8 +55,7 @@ public class LeadSpeakStoreNRTSearch implements IStoreNRTSearch {
 	private LeadSpeakStoreNRTSearch(){
 	}
 	private static Logger logger = Logger.getLogger(LeadSpeakStoreNRTSearch.class);
-	private static String path =  StoreIndexPath.LEADSPEAKSTORE_INDEXPATH;
-	
+	private static String path = null;	
 	/**
 	 * 返回LeadSpeakStoreNRTSearch实例,单例
 	 * @return

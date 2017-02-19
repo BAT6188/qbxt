@@ -241,51 +241,6 @@ public class StoreIndexQuery {
 					dataSearchQuery.add(new WildcardQuery(new Term("time", "*" + againValue + "*")), Occur.SHOULD);
 				}
 				break;
-			// 媒体网站刊物库
-			case "WebsiteJournalStore":
-				nrtSearch = WebsiteJournalStoreNRTSearch.getInstance();
-				storeList = new ArrayList<WebsiteJournalStore>();
-				vo = new PagingObject<WebsiteJournalStore>();
-				String[]wjsFields={"infoType","name", "websiteURL","serverAddress","establishAddress",
-						"mainWholesaleAddress","establishPerson","basicCondition"};
-				for (String string : wjsFields) {
-					anyFieldQuery.add(getPhraseQuery(string,fieldValue), Occur.SHOULD);
-					//再查询
-					if (againValue.length()>0) {
-						dataSearchQuery.add(getPhraseQuery(string, againValue), Occur.SHOULD);
-					}
-				}
-				//anyFieldQuery.add(new WildcardQuery(new Term("createDate", "*" + fieldValue + "*")), Occur.SHOULD);
-				anyFieldQuery.add(new WildcardQuery(new Term("establishTime", "*" + fieldValue + "*")), Occur.SHOULD);
-				// 时间
-				query = new TermRangeQuery("createDate", lowerTerm, upperTerm, true, true);
-				if (againValue.length()>0) {
-					dataSearchQuery.add(new WildcardQuery(new Term("establishTime", "*" + againValue + "*")), Occur.SHOULD);
-				}
-				break;
-			// 重点组织
-			case "OrganizStore":
-				nrtSearch = OrganizStoreNRTSearch.getInstance();
-				storeList = new ArrayList<OrganizStore>();
-				vo = new PagingObject<OrganizStore>();
-				String []osFields={"infoType","organizName","websiteURL","degreeOfLatitude","basicCondition",
-						"activityCondition","orgHeadOfName", "organizBranchesNames","organizPersonNames",
-						"organizPublicActionNames"};
-				for (String string : osFields) {
-					anyFieldQuery.add(getPhraseQuery(string, fieldValue), Occur.SHOULD);
-					//再查询
-					if (againValue.length()>0) {
-						dataSearchQuery.add(getPhraseQuery(string, againValue), Occur.SHOULD);
-					}
-				}
-				//anyFieldQuery.add(new WildcardQuery(new Term("createDate", "*" + fieldValue + "*")), Occur.SHOULD);
-				anyFieldQuery.add(new WildcardQuery(new Term("foundTime", "*" + fieldValue + "*")), Occur.SHOULD);
-				if (againValue.length()>0) {
-					dataSearchQuery.add(new WildcardQuery(new Term("foundTime", "*" + againValue + "*")), Occur.SHOULD);
-				}
-				// 时间范围
-				query = new TermRangeQuery("createDate", lowerTerm, upperTerm, true, true);
-				break;
 			// 线索库
 			case "ClueStore":
 				nrtSearch = ClueStoreNRTSearch.getInstance();
@@ -531,49 +486,7 @@ public class StoreIndexQuery {
 					dataSearchQuery.add(new WildcardQuery(new Term("time", "*" + againValue + "*")), Occur.SHOULD);
 				}
 				break;
-			// 媒体网站刊物库
-			case "WebsiteJournalStore":
-				nrtSearch = WebsiteJournalStoreNRTSearch.getInstance();
-				storeList = new ArrayList<WebsiteJournalStore>();
-				String[]wjsFields={"infoType","name", "websiteURL","serverAddress","establishAddress",
-						"mainWholesaleAddress","establishPerson","basicCondition"};
-				for (String string : wjsFields) {
-					anyFieldQuery.add(getPhraseQuery(string,fieldValue), Occur.SHOULD);
-					//再查询
-					if (againValue.length()>0) {
-						dataSearchQuery.add(getPhraseQuery(string, againValue), Occur.SHOULD);
-					}
-				}
-				//anyFieldQuery.add(new WildcardQuery(new Term("createDate", "*" + fieldValue + "*")), Occur.SHOULD);
-				anyFieldQuery.add(new WildcardQuery(new Term("establishTime", "*" + fieldValue + "*")), Occur.SHOULD);
-				// 时间
-				query = new TermRangeQuery("createDate", lowerTerm, upperTerm, true, true);
-				if (againValue.length()>0) {
-					dataSearchQuery.add(new WildcardQuery(new Term("establishTime", "*" + againValue + "*")), Occur.SHOULD);
-				}
-				break;
-			// 重点组织
-			case "OrganizStore":
-				nrtSearch = OrganizStoreNRTSearch.getInstance();
-				storeList = new ArrayList<OrganizStore>();
-				String []osFields={"infoType","organizName","websiteURL","degreeOfLatitude","basicCondition",
-						"activityCondition","orgHeadOfName", "organizBranchesNames","organizPersonNames",
-						"organizPublicActionNames"};
-				for (String string : osFields) {
-					anyFieldQuery.add(getPhraseQuery(string, fieldValue), Occur.SHOULD);
-					//再查询
-					if (againValue.length()>0) {
-						dataSearchQuery.add(getPhraseQuery(string, againValue), Occur.SHOULD);
-					}
-				}
-				//anyFieldQuery.add(new WildcardQuery(new Term("createDate", "*" + fieldValue + "*")), Occur.SHOULD);
-				anyFieldQuery.add(new WildcardQuery(new Term("foundTime", "*" + fieldValue + "*")), Occur.SHOULD);
-				if (againValue.length()>0) {
-					dataSearchQuery.add(new WildcardQuery(new Term("foundTime", "*" + againValue + "*")), Occur.SHOULD);
-				}
-				// 时间范围
-				query = new TermRangeQuery("createDate", lowerTerm, upperTerm, true, true);
-				break;
+				
 			// 线索库
 			case "ClueStore":
 				nrtSearch = ClueStoreNRTSearch.getInstance();
@@ -1098,10 +1011,10 @@ public class StoreIndexQuery {
 					obj.put("docNumber", highlighterFiled(document,query,"docNumber"));
 					obj.put("time", highlighterFiled(document,query,"time"));
 					//obj.put("theOriginal", highlighterFiled(document,query,"theOriginal"));
-					if (store.getInvolvedInTheField() != null) {
+					/*if (store.getInvolvedInTheField() != null) {
 						// 不为空
 						obj.put("involvedInTheField", highlighterFiled(document,query,"involvedInTheField"));
-					}
+					}*/
 					// 类别不为空
 					if (store.getInfoType() != null) {
 						obj.put("infoType", highlighterFiled(document,query,"infoType"));
@@ -1112,10 +1025,10 @@ public class StoreIndexQuery {
 					obj.put("docNumber", store.getDocNumber());
 					obj.put("time", store.getTime());
 					
-					if (store.getInvolvedInTheField() != null) {
+					/*if (store.getInvolvedInTheField() != null) {
 						// 不为空
 						obj.put("involvedInTheField", store.getInvolvedInTheField().getTypeName());
-					}
+					}*/
 					// 类别不为空
 					if (store.getInfoType() != null) {
 						obj.put("infoType", store.getInfoType().getTypeName());

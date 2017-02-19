@@ -54,7 +54,7 @@ Ext.define('Ushine.docInfo.ServiceDocument', {
 								   }
 							}),*/
 							
-					 		Ext.create('Ushine.buttons.IconButton', {
+					 		/*Ext.create('Ushine.buttons.IconButton', {
 					    	   border: false,
 					    	   id: 'importNewBtn',
 					    	   //width:80,
@@ -74,13 +74,13 @@ Ext.define('Ushine.docInfo.ServiceDocument', {
 					    	   handler: function() {
 					    	   	   self.uploadServiceDoc();
 					    	   }
-					       }),
+					       }),*/
 					       Ext.create('Ushine.buttons.IconButton', {
 					    	   border: false,
 					    	   id: 'createNewBtn',
 					    	   //width:80,
 					    	   btnText: '新增文档', 
-					    	   //baseCls: 't-btn-red',
+					    	   baseCls: 't-btn-red',
 					    	   handler: function() {
 					    	   	   //弹出新增业务文档
 					    		   self.saveServiceDoc();

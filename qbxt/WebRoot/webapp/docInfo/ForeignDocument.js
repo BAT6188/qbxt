@@ -34,7 +34,7 @@ Ext.define('Ushine.docInfo.ForeignDocument', {
 					height: 41,
 					baseCls: 'panel-body',
 					items:[
-					       Ext.create('Ushine.buttons.IconButton', {
+					      /* Ext.create('Ushine.buttons.IconButton', {
 					    	   border: false,
 					    	   id: 'importNewBtn',
 					    	   //width:100,
@@ -54,7 +54,7 @@ Ext.define('Ushine.docInfo.ForeignDocument', {
 					    	   handler: function() {
 					    	   	   self.uploadForeignDoc();
 					    	   }
-					       }),
+					       }),*/
 					       Ext.create('Ushine.buttons.IconButton', {
 					    	   border: false,
 					    	   id: 'createNewBtn',

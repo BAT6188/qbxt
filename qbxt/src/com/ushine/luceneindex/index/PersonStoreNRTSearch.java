@@ -69,8 +69,7 @@ public class PersonStoreNRTSearch implements IStoreNRTSearch{
 	}
 	private static Logger logger = Logger.getLogger(PersonStoreNRTSearch.class);
 	//获得人员库索引根路径
-	private static String path = StoreIndexPath.PERSONSTORE_INDEXPATH;
-	
+	private static String path = null;
 	private	static NRTManagerReopenThread thread;
 	/**
 	 * 初始化加载

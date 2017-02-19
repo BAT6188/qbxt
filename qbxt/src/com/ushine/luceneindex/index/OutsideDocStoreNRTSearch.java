@@ -54,8 +54,8 @@ public class OutsideDocStoreNRTSearch implements IStoreNRTSearch {
 	private static IndexReader reader;
 	private static Directory directory;
 	private static NRTManagerReopenThread thread;
-	private static String path = StoreIndexPath.OUTSIDEDOCSTORE_INDEXPATH;
 	private static Logger logger = LoggerFactory.getLogger(OutsideDocStoreNRTSearch.class);
+	private static String path = null;
 
 	/**
 	 * 构造函数私有

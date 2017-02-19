@@ -52,7 +52,7 @@ public class WebsiteJournalStoreNRTSearch implements IStoreNRTSearch{
 	private static IndexReader reader;
 	private static Directory directory;
 	private static NRTManagerReopenThread thread ;
-	private static String path =StoreIndexPath.WEBSITEJOURNALSTORE_INDEXPATH;
+	private static String path = null;
 	private static Logger logger=LoggerFactory.getLogger(VocationalWorkStoreNRTSearch.class);
 	private WebsiteJournalStoreNRTSearch(){
 		//私有化构造函数

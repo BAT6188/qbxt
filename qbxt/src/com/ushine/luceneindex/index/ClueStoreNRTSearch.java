@@ -59,7 +59,7 @@ public class ClueStoreNRTSearch implements IStoreNRTSearch {
 	private static Directory directory;
 	private static ClueStoreNRTSearch clueStoreNRTSearch = null;
 	private static Logger logger = Logger.getLogger(ClueStoreNRTSearch.class);
-	private static String path = StoreIndexPath.CLUESTORE_INDEXPATH;
+	private static String path = null;
 	private static NRTManagerReopenThread thread;
 
 	private ClueStoreNRTSearch() {

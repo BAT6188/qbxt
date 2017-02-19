@@ -6,33 +6,15 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.ushine.common.utils.PathUtils;
 import com.ushine.common.utils.PropertiesUtils;
 import com.ushine.common.utils.SpringUtils;
-import com.ushine.dao.IBaseDao;
-import com.ushine.luceneindex.index.ClueStoreNRTSearch;
-import com.ushine.luceneindex.index.LeadSpeakStoreNRTSearch;
-import com.ushine.luceneindex.index.OrganizStoreNRTSearch;
-import com.ushine.luceneindex.index.OutsideDocStoreNRTSearch;
-import com.ushine.luceneindex.index.PersonStoreNRTSearch;
-import com.ushine.luceneindex.index.StoreIndexPath;
-import com.ushine.luceneindex.index.VocationalWorkStoreNRTSearch;
-import com.ushine.luceneindex.index.WebsiteJournalStoreNRTSearch;
 import com.ushine.solr.factory.SolrServerFactory;
 import com.ushine.solr.service.IPersonStoreSolrService;
-import com.ushine.storesinfo.model.ClueStore;
-import com.ushine.storesinfo.model.LeadSpeakStore;
-import com.ushine.storesinfo.model.OrganizStore;
-import com.ushine.storesinfo.model.OutsideDocStore;
-import com.ushine.storesinfo.model.PersonStore;
-import com.ushine.storesinfo.model.VocationalWorkStore;
-import com.ushine.storesinfo.model.WebsiteJournalStore;
+import com.ushine.solr.util.SolrIndexUtils;
 
 /**
  * 应用服务监听器, 在程序启动与停止时，执行初始化和注销方法。
@@ -100,38 +82,28 @@ public class ApplicationServiceListener implements ServletContextListener {
 		logger.info("应用程序初始化启动.");
 		try {
 			// 是否为每个库重新建立索引
-			if (StoreIndexPath.isCreateIndex("createPersonStoreIndex")) {
+			if (SolrIndexUtils.createNewIndex("createPersonStoreIndex")) {
 				// 人员
 				IPersonStoreSolrService personStoreSolrService = (IPersonStoreSolrService) SpringUtils
 						.getBean("personStoreSolrServiceImpl");
 				personStoreSolrService.createNewIndexByStores(psServer);
 				logger.info("人员库索引创建成功");
 			}
-			if (StoreIndexPath.isCreateIndex("createClueStoreIndex")) {
+			if (SolrIndexUtils.createNewIndex("createClueStoreIndex")) {
 				// 线索
 				logger.info("线索库创建索引成功");
 			}
-			if (StoreIndexPath.isCreateIndex("createOrganizStoreIndex")) {
-				// 组织
-
-				logger.info("组织库创建索引成功");
-			}
-			if (StoreIndexPath.isCreateIndex("createWebsiteJournalStoreIndex")) {
-				// 媒体网站
-
-				logger.info("媒体网站刊物库创建索引成功");
-			}
-			if (StoreIndexPath.isCreateIndex("createVocationalWorkStoreIndex")) {
+			if (SolrIndexUtils.createNewIndex("createVocationalWorkStoreIndex")) {
 				// 业务文档
 
 				logger.info("业务文档库创建索引成功");
 			}
-			if (StoreIndexPath.isCreateIndex("createOutsideDocStoreIndex")) {
+			if (SolrIndexUtils.createNewIndex("createOutsideDocStoreIndex")) {
 				// 外来文档
 
 				logger.info("外来文档库创建索引成功");
 			}
-			if (StoreIndexPath.isCreateIndex("createLeadSpeakStoreIndex")) {
+			if (SolrIndexUtils.createNewIndex("createLeadSpeakStoreIndex")) {
 				// 领导讲话
 
 				logger.info("领导讲话库创建索引成功");

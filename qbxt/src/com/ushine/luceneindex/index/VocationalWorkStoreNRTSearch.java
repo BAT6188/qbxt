@@ -57,7 +57,7 @@ public class VocationalWorkStoreNRTSearch implements IStoreNRTSearch {
 	private static Directory directory ;
 	private static Object lock=new Object();
 	private static NRTManagerReopenThread thread;
-	private static String path = StoreIndexPath.VOCATIONALWORKSTORE_INDEXPATH;
+	private static String path = null;
 	private static Logger logger=LoggerFactory.getLogger(VocationalWorkStoreNRTSearch.class);
 	
 	/**
@@ -129,9 +129,9 @@ public class VocationalWorkStoreNRTSearch implements IStoreNRTSearch {
 			if(null!=store.getInfoType()){
 				document.add(new Field("infoType",store.getInfoType().getTypeName(),Store.YES,Index.ANALYZED));
 			}
-			if(null!=store.getInvolvedInTheField()){
+			/*if(null!=store.getInvolvedInTheField()){
 				document.add(new Field("involvedInTheField",store.getInvolvedInTheField().getTypeName(),Store.YES,Index.ANALYZED));
-			}
+			}*/
 			if(null!=store.getUid()){
 				document.add(new Field("uid", store.getUid(), Store.YES, Index.NOT_ANALYZED));
 			}
