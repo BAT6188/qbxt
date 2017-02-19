@@ -146,11 +146,7 @@ Ext.define('Ushine.base.TopFrame', {
 		});
 		win.show();
     },
-    PDFStyleSetUp:function(url){
-    	Ext.getCmp('content_frame').removeAll();
-		Ext.getCmp('content_frame').add(new Ushine.pDFStyleSetUp.PDFStyleSetUp("",url));
-	
-    }
+    /**/
 });
 
 Ext.define('Ushine.base.PasPanel', {

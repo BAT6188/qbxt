@@ -70,7 +70,7 @@ public class OutsideDocStoreNRTSearch implements IStoreNRTSearch {
 	 * @return OutsideDocStoreNRTSearch
 	 */
 	static{
-		try {
+		/*try {
 			outsideDocStoreNRTSearch = new OutsideDocStoreNRTSearch();
 			directory = FSDirectory.open(new File(path));
 			// IKAnalyzer分词,用短语拼接查询PhraseQuery
@@ -94,7 +94,7 @@ public class OutsideDocStoreNRTSearch implements IStoreNRTSearch {
 		} catch (Exception e) {
 			logger.info("外来文档库索引创建失败");
 			e.printStackTrace();
-		}
+		}*/
 	}
 	public static OutsideDocStoreNRTSearch getInstance() {
 		return outsideDocStoreNRTSearch;

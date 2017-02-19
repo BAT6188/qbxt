@@ -85,7 +85,7 @@ Ext.define('Ushine.cluesInfo.CluesGridPanel',{
 		            	//var fieldValue=Ext.getCmp('fieldValue1').getValue();
 			        	Ext.getCmp('content_frame').add(new Ushine.cluesInfo.CluePerson(data.id,fieldValue));
 		            }
-	             },{
+	             }/*,{
 			        icon: 'images/briefcase.png',
 			        iconCls:'personStore',
 			        tooltip: '组织对象',
@@ -105,7 +105,7 @@ Ext.define('Ushine.cluesInfo.CluesGridPanel',{
 				    	   Ext.getCmp('content_frame').removeAll();
 			    	       Ext.getCmp('content_frame').add(new Ushine.cluesInfo.ClueMediaNetworkBook(data.id,fieldValue));
 				      }
-			     }],
+			     }*/],
 	             menuDisabled:true,
 	             renderer:function(value){
 	            	 var self = this;

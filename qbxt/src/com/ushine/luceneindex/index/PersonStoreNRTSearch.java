@@ -76,7 +76,7 @@ public class PersonStoreNRTSearch implements IStoreNRTSearch{
 	 * 初始化加载
 	 */
 	static{
-		try {
+		/*try {
 			personStoreNRTSearch = new PersonStoreNRTSearch();
 			directory = FSDirectory.open(new File(path));
 			IndexWriterConfig conf = new IndexWriterConfig(Version.LUCENE_35, new IKAnalyzer(true));
@@ -98,7 +98,7 @@ public class PersonStoreNRTSearch implements IStoreNRTSearch{
 		} catch (Exception e) {
 			logger.info("人员库创建索引异常！！！");
 			e.printStackTrace();
-		}
+		}*/
 	}
 	/**
 	 * 判断值是否为空

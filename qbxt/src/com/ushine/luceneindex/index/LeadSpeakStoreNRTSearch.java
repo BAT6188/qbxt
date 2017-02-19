@@ -62,7 +62,7 @@ public class LeadSpeakStoreNRTSearch implements IStoreNRTSearch {
 	 * @return
 	 */
 	static{
-		try {
+		/*try {
 			leadSpeakStoreNRTSearch = new LeadSpeakStoreNRTSearch();
 			directory = FSDirectory.open(new File(path));
 			//为了达到精确匹配,不分词,用通配符,这种方式高亮效果不好
@@ -86,7 +86,7 @@ public class LeadSpeakStoreNRTSearch implements IStoreNRTSearch {
 		} catch (Exception e) {
 			logger.error("领导讲话库索引创建异常");
 			e.printStackTrace();
-		}
+		}*/
 	}
 	public static LeadSpeakStoreNRTSearch getInstance() {
 		return leadSpeakStoreNRTSearch;

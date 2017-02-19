@@ -16,11 +16,6 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
-import net.sf.ezmorph.bean.MorphDynaBean;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-import net.sf.json.JSONSerializer;
-
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -42,9 +37,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.dom4j.Element;
-import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,10 +53,11 @@ import com.ushine.common.vo.PagingObject;
 import com.ushine.common.vo.ViewObject;
 import com.ushine.core.verify.session.UserSessionMgr;
 import com.ushine.dao.IBaseDao;
-import com.ushine.luceneindex.index.PersonStoreNRTSearch;
-import com.ushine.luceneindex.index.StoreIndexQuery;
 import com.ushine.solr.factory.SolrServerFactory;
 import com.ushine.solr.service.IPersonStoreSolrService;
+import com.ushine.solr.solrbean.QueryBean;
+import com.ushine.solr.util.SolrBeanUtils;
+import com.ushine.solr.vo.PersonStoreVo;
 import com.ushine.storesinfo.model.CertificatesStore;
 import com.ushine.storesinfo.model.InfoType;
 import com.ushine.storesinfo.model.NetworkAccountStore;
@@ -74,6 +68,11 @@ import com.ushine.storesinfo.storefinal.StoreFinal;
 import com.ushine.util.CustomXWPFDocument;
 import com.ushine.util.StringUtil;
 import com.ushine.util.XmlUtils;
+
+import net.sf.ezmorph.bean.MorphDynaBean;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+import net.sf.json.JSONSerializer;
 /**
  * 人员库接口实现类
  * @author wangbailin
@@ -88,6 +87,7 @@ public class PersonStoreServiceImpl implements IPersonStoreService{
 	@Autowired private IBaseDao personNamesDao;
 	@Autowired private IInfoTypeService infoTypeService;
 	@Autowired private IPersonStoreSolrService solrService;
+	@Autowired IPersonStoreSolrService personStoreSolrService;
 	// 单例的solr server
 	private HttpSolrServer server = SolrServerFactory.getPSSolrServerInstance();
 	//private PersonStoreNRTSearch personStoreNRTSearch=PersonStoreNRTSearch.getInstance();
@@ -107,17 +107,38 @@ public class PersonStoreServiceImpl implements IPersonStoreService{
 	public String findPersonStore(String field, String fieldValue,
 			String startTime, String endTime, int nextPage, int size,
 			String uid, String oid, String did,String sortField,String dir) throws Exception {
-		logger.debug("筛选人员库信息,field:"+field+",fieldValue:"+fieldValue+",startTime:"+startTime+"endTime:"+endTime+"");
+		logger.info("筛选人员库信息,field:"+field+",fieldValue:"+fieldValue+",startTime:"+startTime+"endTime:"+startTime+"");
 		//查询
-		boolean hasValue=false;
-		if(!StringUtil.isEmty(fieldValue)){
-			hasValue=true;
+		if (StringUtils.equals(field, "anyField")) {
+			//任意字段查询
+			field=QueryBean.PERSONSTOREALL;
 		}
-		PagingObject<PersonStore> vo=StoreIndexQuery.findStore(field, fieldValue, 
-				startTime, endTime, nextPage, size, uid, oid, did, sortField,dir,
-				PersonStore.class);
-		//
-		return StoreIndexQuery.personStoreVoToJson(vo, hasValue);		
+		QueryBean queryBean=new QueryBean(uid, oid, did, field, fieldValue, null, null, sortField, startTime, endTime);
+		//查询总数
+		long totalRecord = personStoreSolrService.getDocumentsCount(server, queryBean);
+		Paging paging=new Paging(size, nextPage, totalRecord);
+		PagingObject<PersonStoreVo> vo=new PagingObject<>();
+		vo.setPaging(paging);
+		//集合
+		//nextPage从1开始
+		List<PersonStoreVo> array=personStoreSolrService.getDocuementsVO(server, queryBean, (nextPage-1)*size, size);
+		//有关键字要高亮
+		if(StringUtils.isNotBlank(fieldValue)){
+			List<PersonStoreVo> highlightArray=SolrBeanUtils.highlightVoList(array, PersonStoreVo.class, fieldValue);
+			vo.setArray(highlightArray);
+		}else {
+			vo.setArray(array);
+		}
+		return convertPersonStoreVoToJson(vo);		
+	}
+	
+	private String convertPersonStoreVoToJson(PagingObject<PersonStoreVo> vo){
+		JSONObject root = new JSONObject();
+		root.element("paging", vo.getPaging());
+		//转json
+		String datas=JSONArray.fromObject(vo.getArray()).toString();
+		root.element("datas", datas);
+		return root.toString();
 	}
 	
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)

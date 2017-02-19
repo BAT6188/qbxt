@@ -36,14 +36,7 @@ public class QueryBean {
 	 * 高亮后缀
 	 */
 	public static String HIGHLIGHT_POST="</span>";
-	/**
-	 * 开始时间
-	 */
-	public static String START_TIME=" 00:00:00";
-	/**
-	 * 结束时间
-	 */
-	public static String END_TIME=" 23:59:59";
+	
 	/**
 	 * 双引号，精确查询使用
 	 */
@@ -207,8 +200,8 @@ public class QueryBean {
 	public String initQuery(Class clazz){
 		StringBuffer queryBuffer=null;
 		//开始和结束时间
-		long startTime=SolrDateUtils.getTimeMillis(startDate+START_TIME);
-		long endTime=SolrDateUtils.getTimeMillis(endDate+END_TIME);
+		long startTime=SolrDateUtils.getStartTimeMillis(startDate);
+		long endTime=SolrDateUtils.getEndTimeMillis(endDate);
 		//String.format
 		//空串
 		switch (ClassUtils.getShortClassName(clazz)) {

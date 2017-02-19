@@ -67,18 +67,14 @@ Ext.require([
 	'Ushine.personInfo.OrganizSubordinatesNetworkBook',
 	'Ushine.personInfo.OrganizSubordinatesNetworkGridPanel',
 	'Ushine.utils.SelectClueDataGridPanel',
-	'Ushine.pDFStyleSetUp.PDFStyleSetUp',
-	'Ushine.utils.PDFStyleSetUpTheUtils',
-	'Ushine.pDFStyleSetUp.CluePDFStyleManage',
-	'Ushine.pDFStyleSetUp.OrganizPDFStyleManage',
-	'Ushine.pDFStyleSetUp.PersonPDFStyleManage',
-	'Ushine.pDFStyleSetUp.WebsiteJounalPDFStyleManage',
 	'Ushine.cluesInfo.CluesGridPanel',
 	'Ushine.personInfo.OrganizeInfoGridPanel',
-	'Ushine.personInfo.PersonAtHigherLevelOrganizeInfoManage',
+	
+	/*'Ushine.personInfo.PersonAtHigherLevelOrganizeInfoManage',
 	'Ushine.personInfo.PersonAtHigherLevelOrganizeInfoGridPanel',
 	'Ushine.personInfo.NetworkAtHigherLevelOrganizeInfoManage',
-	'Ushine.personInfo.NetworkAtHigherLevelOrganizeInfoGridPanel',
+	'Ushine.personInfo.NetworkAtHigherLevelOrganizeInfoGridPanel',*/
+	
 	'Ushine.dataSearch.DataSearchPenel',
 	'Ushine.dataSearch.DataSearchPenelGridPanel',
 	'Ushine.dataSearch.PersonStoreSearch',

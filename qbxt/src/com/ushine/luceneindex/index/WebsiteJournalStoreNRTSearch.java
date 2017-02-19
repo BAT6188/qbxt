@@ -58,7 +58,7 @@ public class WebsiteJournalStoreNRTSearch implements IStoreNRTSearch{
 		//私有化构造函数
 	}
 	static{
-		try {
+		/*try {
 			websiteJournalStoreNRTSearch=new WebsiteJournalStoreNRTSearch();
 			directory = FSDirectory.open(new File(path));
 			//IKAnalyzer分词
@@ -81,7 +81,7 @@ public class WebsiteJournalStoreNRTSearch implements IStoreNRTSearch{
 		} catch (Exception e) {
 			logger.info("媒体网站刊物库索引创建失败");
 			e.printStackTrace();
-		}
+		}*/
 	}
 	/**
 	 * 获得单例对象

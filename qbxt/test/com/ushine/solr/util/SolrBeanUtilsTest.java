@@ -3,7 +3,9 @@ import static org.junit.Assert.assertEquals;
 
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.ArrayUtils;
@@ -16,6 +18,8 @@ import com.ushine.solr.vo.PersonStoreVo;
 import com.ushine.storesinfo.model.CertificatesStore;
 import com.ushine.storesinfo.model.InfoType;
 import com.ushine.storesinfo.model.PersonStore;
+
+import net.sf.json.JSONArray;
 
 public class SolrBeanUtilsTest {
 	/**
@@ -90,5 +94,15 @@ public class SolrBeanUtilsTest {
 		System.err.println(highlightVo.getInfoType());
 		System.err.println(highlightVo.getPersonName());
 		//assertEquals(QueryBean.HIGHLIGHT_PRE+value1+QueryBean.HIGHLIGHT_POST, highlightVo.getInfoType());
+	}
+	
+	@Test
+	public void test(){
+		List<PersonStoreVo> list=new ArrayList<>();
+		PersonStoreVo vo1=new PersonStoreVo("1", "vo1", "vo1", "vo1", "vo1", "vo1", "vo1", "vo1", "vo1", "vo1", "vo1");
+		PersonStoreVo vo2=new PersonStoreVo("2", "vo2", "vo2", "vo2", "vo2", "vo2", "vo2", "vo2", "vo2", "vo2", "vo2");
+		list.add(vo1);
+		list.add(vo2);
+		System.err.println(JSONArray.fromObject(list).toString());
 	}
 }

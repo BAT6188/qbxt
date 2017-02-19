@@ -2,6 +2,8 @@ package com.ushine.solr.util;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.beanutils.BeanUtils;
@@ -123,7 +125,17 @@ public class SolrBeanUtils {
 		}
 		return buffer.toString();
 	}
-	
+	/**
+	 * 手动做高量处理
+	 * @param object vo层对象
+	 * @param clazz Class
+	 * @param searchString 搜索关键字
+	 * @return 高亮后的vo层对象
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 * @throws InvocationTargetException
+	 * @throws NoSuchMethodException
+	 */
 	public static Object highlightVo(Object object,Class clazz,String searchString) 
 			throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException{
 		Object newInstance=clazz.newInstance();
@@ -140,6 +152,24 @@ public class SolrBeanUtils {
 			}
 		}
 		return newInstance;
+	}
+	/**
+	 * 高亮集合
+	 * @param list
+	 * @param clazz
+	 * @param searchString
+	 * @return
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 * @throws InvocationTargetException
+	 * @throws NoSuchMethodException
+	 */
+	public static List highlightVoList(List list,Class clazz,String searchString) throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException{
+		List newList=new ArrayList<>();
+		for (Object object : list) {
+			newList.add(highlightVo(object, clazz, searchString));
+		}
+		return newList;
 	}
 	/**
 	 * 不是id、createDate而且必须是String类型的属性

@@ -31,6 +31,16 @@ public class QueryBeanTest {
 		System.err.println(bean3.initQuery(PersonStore.class));
 		System.err.println(bean3.getSolrQuery(PersonStore.class));
 	}
+	
+	@Test
+	public void testInitQuery(){
+		QueryBean bean=new QueryBean(null, null, null, null, null, null, null, null, "2011-01-01", "2011-01-01");
+		bean.initQuery(PersonStore.class);
+		QueryBean bean2=new QueryBean(null, null, null, null, null, null, null, null, "2001-01-01", "2011-01-01");
+		bean2.initQuery(PersonStore.class);
+		QueryBean bean3=new QueryBean(null, null, null, null, null, null, null, null, "1970-01-01", "2011-01-01");
+		bean3.initQuery(PersonStore.class);
+	}
 	/**
 	 * 转义字符
 	 */

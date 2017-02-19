@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +25,7 @@ import com.ushine.common.utils.SpringUtils;
 import com.ushine.dao.IBaseDao;
 import com.ushine.solr.factory.SolrServerFactory;
 import com.ushine.solr.solrbean.QueryBean;
+import com.ushine.solr.util.SolrBeanUtils;
 import com.ushine.solr.vo.PersonStoreVo;
 import com.ushine.storesinfo.model.PersonStore;
 
@@ -136,22 +138,31 @@ public class PersonStoreSolrServiceImplTest {
 	}
 	/**
 	 * 测试返回vo对象
+	 * @throws NoSuchMethodException 
+	 * @throws InvocationTargetException 
+	 * @throws IllegalAccessException 
+	 * @throws InstantiationException 
 	 */
 	@Test
-	public void testGetVo(){
-		QueryBean bean=new QueryBean(null, null, null, null, "公安部第三", null, null, null, "2010-02-19", "2017-02-19");
+	public void testGetVo() throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException{
+		QueryBean bean=new QueryBean(null, null, null, null, "第三研究所", null, null, null, "2010-02-19", "2017-02-19");
 		List<PersonStoreVo> voList = pssService.getDocuementsVO(getSolrServer(), bean , 0, 50);
 		System.err.println(voList.size());
 		for (PersonStoreVo personStoreVo : voList) {
 			System.err.println(personStoreVo.toString());
 		}
-		//再查询
+		System.err.println("-----高亮化后-----");
+		for (PersonStoreVo personStoreVo : voList) {
+			PersonStoreVo highlightVo = (PersonStoreVo) SolrBeanUtils.highlightVo(personStoreVo, PersonStoreVo.class, "第三研究所");
+			System.err.println(highlightVo.toString());
+		}
+		/*//再查询
 		QueryBean bean2=new QueryBean(null, null, null, null, "公安部第三", null, "研究所", null, "2010-02-17", "2017-02-19");
 		List<PersonStoreVo> voList2 = pssService.getDocuementsVO(getSolrServer(), bean2,0,50);
 		System.err.println(voList2.size());
 		for (PersonStoreVo personStoreVo : voList2) {
 			System.err.println(personStoreVo.toString());
-		}
+		}*/
 	}
 
 	private ISolrService<PersonStore> getSolrService() {

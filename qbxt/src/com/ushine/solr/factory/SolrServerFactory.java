@@ -21,14 +21,16 @@ public class SolrServerFactory {
 	private final static String VWSSOLRURL = Configured.getInstance().get("vocationalWorkStoreUrl");
 	private static HttpSolrServer vwsSolrServer=null;
 	
+	static{
+		psSolrServer=new HttpSolrServer(PSSOLRURL);
+		vwsSolrServer=new HttpSolrServer(VWSSOLRURL);
+	}
+	
 	/**
 	 * 创建人员库的单例SolrServer
 	 * @return
 	 */
 	public static HttpSolrServer getPSSolrServerInstance(){
-		if(psSolrServer==null){
-			psSolrServer=new HttpSolrServer(PSSOLRURL);
-		}
 		return psSolrServer;
 	}
 	/**
@@ -36,9 +38,6 @@ public class SolrServerFactory {
 	 * @return
 	 */
 	public static HttpSolrServer getVWSSolrServerInstance(){
-		if(vwsSolrServer==null){
-			vwsSolrServer=new HttpSolrServer(VWSSOLRURL);
-		}
 		return vwsSolrServer;
 	}
 }

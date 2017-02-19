@@ -65,7 +65,7 @@ public class VocationalWorkStoreNRTSearch implements IStoreNRTSearch {
 	 * @return
 	 */
 	static{
-		try {
+		/*try {
 			vocationalWorkStoreNRTSearch=new VocationalWorkStoreNRTSearch();
 			directory = FSDirectory.open(new File(path));
 			//IKAnalyzer分词,用短语拼接查询PhraseQuery最合适
@@ -91,7 +91,7 @@ public class VocationalWorkStoreNRTSearch implements IStoreNRTSearch {
 		} catch (Exception e) {
 			logger.info("业务文档库索引创建失败");
 			e.printStackTrace();
-		}
+		}*/
 	}
 	public static VocationalWorkStoreNRTSearch getInstance() {
 		return vocationalWorkStoreNRTSearch;

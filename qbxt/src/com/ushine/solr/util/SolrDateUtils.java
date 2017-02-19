@@ -8,6 +8,8 @@ import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
 
+import com.ushine.solr.solrbean.QueryBean;
+
 /**
  * 处理timedamp的应用类
  * 
@@ -21,6 +23,17 @@ public class SolrDateUtils {
 	 */
 	private static final String DATE_PATTERNS = "yyyy-MM-dd HH:mm:ss";
 
+	private static final String YMD_PATTERNS = "yyyy-MM-dd";
+
+	/**
+	 * 开始时间
+	 */
+	public static String START_TIME = " 00:00:00";
+	/**
+	 * 结束时间
+	 */
+	public static String END_TIME = " 23:59:59";
+
 	/**
 	 * 将给定的日期按规定格式转成long型
 	 * 
@@ -30,38 +43,79 @@ public class SolrDateUtils {
 	 */
 	public static long getTimeMillis(String date) {
 		try {
-			//先截取成标准的格式
-			date=StringUtils.substring(date, 0, DATE_PATTERNS.length());
+			// 先截取成标准的格式
+			date = StringUtils.substring(date, 0, DATE_PATTERNS.length());
 			Date parseDate = DateUtils.parseDate(date, new String[] { DATE_PATTERNS });
 			return com.ushine.common.utils.DateUtils.getMillis(parseDate);
 		} catch (Exception e) {
-			logger.error("日期" + date + "转成long型失败");
+			logger.error("日期" + (date) + "转成long型失败");
 			return 0;
 		}
 	}
 
-	public static String getDate(long timeMillis) {
-		String date=new String();
+	public static long getTimeMillis(String date, String time) {
 		try {
-			date=DateFormatUtils.format(timeMillis, DATE_PATTERNS);
+			// 先截取成标准的格式
+			date = StringUtils.substring(date + time, 0, DATE_PATTERNS.length());
+			Date parseDate = DateUtils.parseDate(date, new String[] { DATE_PATTERNS });
+			return com.ushine.common.utils.DateUtils.getMillis(parseDate);
+		} catch (Exception e) {
+			logger.error("日期" + (date + time) + "转成long型失败");
+			return 0;
+		}
+	}
+
+	/**
+	 * 获得开始时间的long
+	 * 
+	 * @param startDate
+	 *            开始日期
+	 * @return
+	 */
+	public static long getStartTimeMillis(String startDate) {
+		// 先截取成标准的格式
+		startDate = StringUtils.substring(startDate, 0, YMD_PATTERNS.length());
+		return getTimeMillis(startDate, START_TIME);
+	}
+
+	/**
+	 * 获得结束时间的long
+	 * 
+	 * @param endDate
+	 *            结束日期
+	 * @return
+	 */
+	public static long getEndTimeMillis(String endDate) {
+		// 先截取成标准的格式
+		endDate = StringUtils.substring(endDate, 0, YMD_PATTERNS.length());
+		return getTimeMillis(endDate, END_TIME);
+	}
+
+	public static String getDate(long timeMillis) {
+		String date = new String();
+		try {
+			date = DateFormatUtils.format(timeMillis, DATE_PATTERNS);
 		} catch (Exception e) {
 			// 异常统一处理
-			logger.error("日期" + timeMillis + "转成"+DATE_PATTERNS+"型失败");
+			logger.error("日期" + timeMillis + "转成" + DATE_PATTERNS + "型失败");
 		}
 		return date;
 	}
 
 	/**
 	 * 比较输入的日期时间字符串和开始、结束的日期时间比较
+	 * 
 	 * @param startDateStr
 	 * @param endDateStr
 	 * @param compareDateStr
 	 * @return
 	 * @throws ParseException
 	 */
-	public static boolean compareDate(String startDateStr, String endDateStr, String compareDateStr) throws ParseException {
+	public static boolean compareDate(String startDateStr, String endDateStr, String compareDateStr)
+			throws ParseException {
 
-		Date parseDate = org.apache.commons.lang.time.DateUtils.parseDate(compareDateStr, new String[] { DATE_PATTERNS });
+		Date parseDate = org.apache.commons.lang.time.DateUtils.parseDate(compareDateStr,
+				new String[] { DATE_PATTERNS });
 		long dateLong = com.ushine.common.utils.DateUtils.getMillis(parseDate);
 		startDateStr += " 00:00:00";
 		endDateStr += " 23:59:59";

@@ -400,7 +400,7 @@ public class ClueStoreNRTSearch implements IStoreNRTSearch {
 	 * @return ClueStoreNRTSearch
 	 */
 	static{
-		try {
+		/*try {
 			clueStoreNRTSearch = new ClueStoreNRTSearch();
 			directory = FSDirectory.open(new File(path));
 			IndexWriterConfig conf = new IndexWriterConfig(Version.LUCENE_35, new IKAnalyzer(true));
@@ -423,7 +423,7 @@ public class ClueStoreNRTSearch implements IStoreNRTSearch {
 		} catch (Exception e) {
 			logger.info("线索库创建索引异常");
 			e.printStackTrace();
-		}
+		}*/
 	}
 	public static ClueStoreNRTSearch getInstance() {
 		return clueStoreNRTSearch;

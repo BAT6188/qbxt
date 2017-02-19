@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
@@ -13,6 +15,8 @@ import org.apache.solr.client.solrj.beans.DocumentObjectBinder;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocumentList;
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,18 +26,74 @@ import com.ushine.solr.solrbean.PersonStoreSolr;
 import com.ushine.solr.solrbean.QueryBean;
 import com.ushine.solr.util.SolrBeanUtils;
 import com.ushine.solr.vo.PersonStoreVo;
+import com.ushine.storesinfo.model.CertificatesStore;
+import com.ushine.storesinfo.model.NetworkAccountStore;
 import com.ushine.storesinfo.model.PersonStore;
-
+/**
+ * 
+ * @author Administrator
+ *
+ */
 @Service(value = "personStoreSolrServiceImpl")
 public class PersonStoreSolrServiceImpl implements IPersonStoreSolrService {
 
 	private Logger logger = Logger.getLogger(PersonStoreSolrServiceImpl.class);
-	@Autowired
-	private IBaseDao<PersonStore, Serializable> baseDao;
+	@Autowired private IBaseDao<PersonStore, Serializable> baseDao;
+	@Autowired private IBaseDao<CertificatesStore, Serializable> csDao;
+	@Autowired private IBaseDao<NetworkAccountStore, Serializable> nasDao;
+	/**
+	 * 添加证件结合
+	 * @param personStore
+	 */
+	private void setCertificatesStore(PersonStore personStore) {
+		DetachedCriteria criteria = DetachedCriteria.forClass(CertificatesStore.class);
+		// 用DetachedCriteria的关联查询就可
+		criteria.createAlias("personStore", "p").add(Restrictions.eq("p.id", personStore.getId()));
+		List<CertificatesStore> list;
+		try {
+			list = csDao.findByCriteria(criteria);
+			Set<CertificatesStore> cs = new HashSet<>();
+			for (CertificatesStore certificatesStore : list) {
+				cs.add(certificatesStore);
+			}
+			personStore.setCertificatesStores(cs);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	/**
+	 * 设置网络账号集合
+	 * @param personStore
+	 */
+	private void setNetworkAccountStore(PersonStore personStore){
+		DetachedCriteria criteria = DetachedCriteria.forClass(NetworkAccountStore.class);
+		// 用DetachedCriteria的关联查询就可
+		criteria.createAlias("personStore", "p").add(Restrictions.eq("p.id", personStore.getId()));
+		List<NetworkAccountStore> list;
+		try {
+			list = nasDao.findByCriteria(criteria);
+			Set<NetworkAccountStore> cs = new HashSet<>();
+			for (NetworkAccountStore networkAccountStore : list) {
+				cs.add(networkAccountStore);
+			}
+			personStore.setNetworkAccountStores(cs);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	/**
+	 * 给store添加集合的属性，防止懒加载的出现
+	 * @param personStore
+	 */
+	private void addSetProperty(PersonStore personStore){
+		this.setCertificatesStore(personStore);
+		this.setNetworkAccountStore(personStore);
+	}
 
 	@Override
 	public int addDocumentByStore(HttpSolrServer server, PersonStore daoStore) {
 		try {
+			addSetProperty(daoStore);
 			PersonStoreSolr bean = SolrBeanUtils.convertPersonStoreToSolrBean(daoStore);
 			server.addBean(bean);
 			server.commit();
@@ -49,9 +109,11 @@ public class PersonStoreSolrServiceImpl implements IPersonStoreSolrService {
 
 	@Override
 	public int addDocumentByStores(HttpSolrServer server, List<PersonStore> daoStore) {
+		//出现了懒加载
 		List<PersonStoreSolr> pStoreSolrs = new ArrayList<>();
 		try {
 			for (PersonStore personStore : daoStore) {
+				addSetProperty(personStore);
 				PersonStoreSolr solrBean = SolrBeanUtils.convertPersonStoreToSolrBean(personStore);
 				// 添加到集合中
 				pStoreSolrs.add(solrBean);
@@ -122,6 +184,7 @@ public class PersonStoreSolrServiceImpl implements IPersonStoreSolrService {
 	public void updateDocumentByStore(HttpSolrServer server, String id, PersonStore daoStore) {
 		try {
 			daoStore.setId(id);
+			this.addSetProperty(daoStore);
 			PersonStoreSolr solrBean = SolrBeanUtils.convertPersonStoreToSolrBean(daoStore);
 			server.addBean(solrBean);
 			server.commit();

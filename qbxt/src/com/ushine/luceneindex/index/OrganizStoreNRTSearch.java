@@ -63,7 +63,7 @@ public class OrganizStoreNRTSearch implements IStoreNRTSearch {
 
 	
 	static{
-		try {
+		/*try {
 			organizStoreNRTSearch = new OrganizStoreNRTSearch();
 			directory = FSDirectory.open(new File(path));
 			// IKAnalyzer分词
@@ -86,7 +86,7 @@ public class OrganizStoreNRTSearch implements IStoreNRTSearch {
 		} catch (Exception e) {
 			logger.info("组织库索引创建失败");
 			e.printStackTrace();
-		}
+		}*/
 	}
 	/**
 	 * 获得单例对象
