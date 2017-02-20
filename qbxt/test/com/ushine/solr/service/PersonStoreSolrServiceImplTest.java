@@ -123,16 +123,16 @@ public class PersonStoreSolrServiceImplTest {
 		Map<String, String> queryMap=new HashMap<>();
 		
 		QueryBean bean=new QueryBean("40288a625668a0f6015668a151a00004", null, null, 
-				null, null, null, null, null, "2010-02-17", "2017-02-18");
+				null, null, null, null,"asc", null, "2010-02-17", "2017-02-18");
 		long result=pssService.getDocumentsCount(getSolrServer(), bean );
 		assertEquals(2, result);
 		//
 		QueryBean bean2=new QueryBean(null, "40288a625668a0f6015668a151940002", null, null, null, 
-				null, null, null, "2010-02-17", "2017-02-18");
+				null, null, null,null, "2010-02-17", "2017-02-18");
 		assertEquals(1, pssService.getDocumentsCount(getSolrServer(), bean2));
 		
 		QueryBean bean3=new QueryBean(null, null, null, null, null, 
-				null, null, null, "2010-01-25", "2017-01-25");
+				null, null, null,"desc", "2010-01-25", "2017-01-25");
 		assertEquals(1, pssService.getDocumentsCount(getSolrServer(), bean3));
 		//assertEquals(0, pssService.getDocumentsCount(getSolrServer(), queryMap, "2010-01-25", "2011-01-25"));
 	}
@@ -145,7 +145,7 @@ public class PersonStoreSolrServiceImplTest {
 	 */
 	@Test
 	public void testGetVo() throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException{
-		QueryBean bean=new QueryBean(null, null, null, null, "第三研究所", null, null, null, "2010-02-19", "2017-02-19");
+		QueryBean bean=new QueryBean(null, null, null, null, "男", null, null, "personName","asc", "2010-02-19", "2017-02-20");
 		List<PersonStoreVo> voList = pssService.getDocuementsVO(getSolrServer(), bean , 0, 50);
 		System.err.println(voList.size());
 		for (PersonStoreVo personStoreVo : voList) {

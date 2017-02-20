@@ -113,7 +113,7 @@ public class PersonStoreServiceImpl implements IPersonStoreService{
 			//任意字段查询
 			field=QueryBean.PERSONSTOREALL;
 		}
-		QueryBean queryBean=new QueryBean(uid, oid, did, field, fieldValue, null, null, sortField, startTime, endTime);
+		QueryBean queryBean=new QueryBean(uid, oid, did, field, fieldValue, null, null, sortField,dir, startTime, endTime);
 		//查询总数
 		long totalRecord = personStoreSolrService.getDocumentsCount(server, queryBean);
 		Paging paging=new Paging(size, nextPage, totalRecord);
@@ -138,6 +138,7 @@ public class PersonStoreServiceImpl implements IPersonStoreService{
 		//转json
 		String datas=JSONArray.fromObject(vo.getArray()).toString();
 		root.element("datas", datas);
+		//logger.info("datas:"+datas);
 		return root.toString();
 	}
 	

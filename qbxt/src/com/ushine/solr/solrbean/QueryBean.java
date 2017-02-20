@@ -15,14 +15,24 @@ import com.ushine.solr.util.SolrDateUtils;
  */
 public class QueryBean {
 	private static Logger logger=Logger.getLogger(QueryBean.class);
+	
+	public static final String INFOTYPE="infoType";
 	/**
-	 * 常量personId
+	 * 人员solr的id
 	 */
 	public static final String PERSON_ID = "personId";
 	/**
-	 * 查询字段常量
+	 * 人员默认的查询字段
 	 */
 	public static final String PERSONSTOREALL = "personstoreAll";
+	/**
+	 * 业务文档solr的id
+	 */
+	public static final String VOCATIONALWORK_ID = "vocationalWorkStoreId";
+	/**
+	 * 业务文档库默认的查询字段
+	 */
+	public static final String VOCATIONALWORKSTOREALL = "vocationalWorkStoreAll";
 	
 	/**
 	 * 常量字段createDate
@@ -57,11 +67,12 @@ public class QueryBean {
 	 * @param againQueryField 进行再查询的字段，null为不进行再查询
 	 * @param againQueryFieldValue 再查询字段的值
 	 * @param sortField 待排序字段，null以及默认都是createDate
+	 * @param sortDirection 排序方向，null以及默认都是降序
 	 * @param startDate 开始日期
 	 * @param endDate 结束日期
 	 */
 	public QueryBean(String uid, String oid, String did, String queryField, String queryFieldValue,
-			String againQueryField, String againQueryFieldValue,String sortField, String startDate, String endDate) {
+			String againQueryField, String againQueryFieldValue,String sortField,String sortDirection, String startDate, String endDate) {
 		this.uid = uid;
 		this.oid = oid;
 		this.did = did;
@@ -72,6 +83,7 @@ public class QueryBean {
 		this.startDate = startDate;
 		this.endDate = endDate;
 		this.sortField=sortField;
+		this.sortDirection=sortDirection;
 	}
 	
 	private String uid;
@@ -84,7 +96,14 @@ public class QueryBean {
 	private String startDate;
 	private String endDate;
 	private String sortField;
+	private String sortDirection;
 
+	public String getSortDirection() {
+		return sortDirection;
+	}
+	public void setSortDirection(String sortDirection) {
+		this.sortDirection = sortDirection;
+	}
 	public String getSortField() {
 		return sortField;
 	}
@@ -173,8 +192,14 @@ public class QueryBean {
 		if(null==sortField){
 			sortField=CREAT_EDATE;
 		}
-		//降序
-		query.addSort(sortField, ORDER.desc);
+		
+		if (StringUtils.equalsIgnoreCase(sortDirection, "asc")) {
+			query.addSort(sortField, ORDER.asc);
+		}else {
+			//降序
+			query.addSort(sortField, ORDER.desc);
+		}
+		
 		logger.info(clazz.getSimpleName()+"排序字段："+sortField);
 		//设置过滤条件，针对权限
 		if (null == uid && null == oid && null != did) {

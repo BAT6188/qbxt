@@ -7,6 +7,7 @@ import org.apache.solr.client.solrj.impl.HttpSolrServer;
 
 import com.ushine.solr.service.IVocationalStoreSolrService;
 import com.ushine.solr.solrbean.QueryBean;
+import com.ushine.solr.solrbean.VocationalWorkStoreSolr;
 import com.ushine.solr.vo.VocationalWorkStoreVo;
 import com.ushine.storesinfo.model.VocationalWorkStore;
 
@@ -15,8 +16,17 @@ public class VocationalStoreSolrServiceImpl implements IVocationalStoreSolrServi
 	Logger logger=Logger.getLogger(VocationalStoreSolrServiceImpl.class);
 	@Override
 	public int addDocumentByStore(HttpSolrServer server, VocationalWorkStore daoStore) {
-		
-		return 0;
+		try {
+			//daoStore转成solr bean
+			VocationalWorkStoreSolr solrBean=null;
+			
+			server.addBean(solrBean);
+			return 1;
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("新增业务文档索引失败："+e.getMessage());
+			return -1;
+		}
 	}
 
 	@Override

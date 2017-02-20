@@ -10,6 +10,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.ushine.solr.solrbean.PersonStoreSolr;
@@ -22,6 +23,14 @@ import com.ushine.storesinfo.model.PersonStore;
 import net.sf.json.JSONArray;
 
 public class SolrBeanUtilsTest {
+	
+	/**
+	 * 测试dao转到solr
+	 */
+	@Test
+	public void testConvertDaoBeanToSolrBean(){
+		
+	}
 	/**
 	 * 测试将PersonStore转成对应的SolrBean
 	 * @throws IllegalAccessException
@@ -30,6 +39,7 @@ public class SolrBeanUtilsTest {
 	 * @throws ParseException 
 	 */
 	@Test
+	@Ignore
 	public void testConvertPersonStoreToSolrBean() throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, ParseException{
 		PersonStore ps=new PersonStore();
 		ps.setId("10000");
@@ -72,6 +82,7 @@ public class SolrBeanUtilsTest {
 	 * @throws IllegalAccessException 
 	 */
 	@Test
+	@Ignore
 	public void testConvertPersonStoreSolrToVo() throws IllegalAccessException, InvocationTargetException, NoSuchMethodException{
 		PersonStoreVo vo=null;
 		PersonStoreSolr psSolr=new PersonStoreSolr();
@@ -84,6 +95,7 @@ public class SolrBeanUtilsTest {
 	}
 	
 	@Test
+	@Ignore
 	public void testHighlightVo() throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException{
 		PersonStoreVo vo=new PersonStoreVo();
 		String value1="网络";
@@ -97,6 +109,7 @@ public class SolrBeanUtilsTest {
 	}
 	
 	@Test
+	@Ignore
 	public void test(){
 		List<PersonStoreVo> list=new ArrayList<>();
 		PersonStoreVo vo1=new PersonStoreVo("1", "vo1", "vo1", "vo1", "vo1", "vo1", "vo1", "vo1", "vo1", "vo1", "vo1");
