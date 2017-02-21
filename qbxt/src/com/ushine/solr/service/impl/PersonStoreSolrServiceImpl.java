@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -208,10 +209,8 @@ public class PersonStoreSolrServiceImpl implements IPersonStoreSolrService {
 	@Override
 	public void deleteDocumentByIds(HttpSolrServer server, String[] ids) {
 		List<String> list = new ArrayList<>();
-		for (String id : ids) {
-			list.add(id);
-		}
 		try {
+			CollectionUtils.addAll(list, ids);
 			server.deleteById(list);
 			server.commit();
 			logger.info(String.format("删除 %s 条索引成功", ids.length));
@@ -237,7 +236,8 @@ public class PersonStoreSolrServiceImpl implements IPersonStoreSolrService {
 	public void updateDocumentByStore(HttpSolrServer server, String id, PersonStore daoStore) {
 		try {
 			daoStore.setId(id);
-			this.addSetProperty(daoStore);
+			//设置账号Set属性
+			addSetProperty(daoStore);
 			PersonStoreSolr solrBean = convertPersonStoreToSolrBean(daoStore);
 			server.addBean(solrBean);
 			server.commit();

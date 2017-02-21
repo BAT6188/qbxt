@@ -238,6 +238,10 @@ public class QueryBean {
 		case "PersonStore":
 			queryBuffer=initQueryBuffer(PERSONSTOREALL);
 			break;
+		//业务文档
+		case "VocationalWorkStore":
+			queryBuffer=initQueryBuffer(VOCATIONALWORKSTOREALL);
+			break;
 		}
 		//时间范围
 		queryBuffer.append(" AND ").append(String.format(CREAT_EDATE+":[%s TO %s]", startTime,endTime));
