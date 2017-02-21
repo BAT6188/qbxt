@@ -76,7 +76,7 @@ import net.sf.json.JSONSerializer;
  * @author wangbailin
  * 
  */
-@Controller(value="personStoreController")
+@Controller(value = "personStoreController")
 public class PersonStoreController {
 	private static final Logger logger = LoggerFactory.getLogger(PersonStoreController.class);
 	private ServletContext servletContext;
@@ -104,13 +104,11 @@ public class PersonStoreController {
 	public String findPersonStoreByConditions(@RequestParam(value = "fieldValue", required = false) String fieldValue,
 			@RequestParam(value = "field", required = false) String field,
 			@RequestParam(value = "startTime", required = false) String startTime,
-			@RequestParam(value = "endTime", required = false) String endTime, 
-			@RequestParam("page") int nextPage,
-			@RequestParam("limit") int size, 
-			//排序字段
-			@RequestParam(value ="sort", required = false) String sortField,
-			@RequestParam(value ="dir", required = false) String dir,
-			HttpServletRequest request) {
+			@RequestParam(value = "endTime", required = false) String endTime, @RequestParam("page") int nextPage,
+			@RequestParam("limit") int size,
+			// 排序字段
+			@RequestParam(value = "sort", required = false) String sortField,
+			@RequestParam(value = "dir", required = false) String dir, HttpServletRequest request) {
 		logger.info("查询人员库信息");
 		com.tdcq.common.logging.Logger log = LogFactory.getLogger();
 		LogInfo loginfo = new LogInfo();
@@ -133,20 +131,21 @@ public class PersonStoreController {
 			if (list != null && list.size() > 0) {
 				if ("1x0001".equals(list.get(0))) {
 					// 读取全部
-					String result=personStoreService.findPersonStore(field, fieldValue, startTime, endTime, nextPage, size,
-							null, null, null,sortField,dir);
-					//logger.info("=====查询到的符合条件的人员=====："+result);
+					String result = personStoreService.findPersonStore(field, fieldValue, startTime, endTime, nextPage,
+							size, null, null, null, sortField, dir);
+					// logger.info("=====查询到的符合条件的人员=====："+result);
 					return result;
 				} else if ("1x0010".equals(list.get(0))) { // 所属组织
 					return personStoreService.findPersonStore(field, fieldValue, startTime, endTime, nextPage, size,
-							null, sessionMgr.getUOID(request), null,sortField,dir);
+							null, sessionMgr.getUOID(request), null, sortField, dir);
 				} else if ("1x0011".equals(list.get(0))) { // 所属部门
 					return personStoreService.findPersonStore(field, fieldValue, startTime, endTime, nextPage, size,
-							null, null, sessionMgr.getUDID(request),sortField,dir);
+							null, null, sessionMgr.getUDID(request), sortField, dir);
 				} else if ("1x0100".equals(list.get(0))) { // 个人数据
 					return personStoreService.findPersonStore(field, fieldValue, startTime, endTime, nextPage, size,
-							sessionMgr.getUID(request), null, null,sortField,dir);
-				} else {// 禁止读取
+							sessionMgr.getUID(request), null, null, sortField, dir);
+				} else {
+					// 禁止读取
 					return new ViewObject(ViewObject.RET_FAILURE, "没有权限读取").toJSon();
 				}
 			}
@@ -162,23 +161,25 @@ public class PersonStoreController {
 			log.log(loginfo);
 		}
 	}
+
 	/**
 	 * 判断是否有相同的人名
+	 * 
 	 * @param personName
 	 * @return
 	 */
 	@RequestMapping(value = "/findPersonStoreByPersonName.do", method = RequestMethod.POST)
 	@ResponseBody
-	public String findPersonStoreByPersonName(@RequestParam(value = "personName", required = false) String personName){
-		ViewObject viewObject=null;
+	public String findPersonStoreByPersonName(@RequestParam(value = "personName", required = false) String personName) {
+		ViewObject viewObject = null;
 		try {
 			if (personStoreService.findPersonStoreByPersonName(personName)) {
-				viewObject=new ViewObject(ViewObject.RET_SUCCEED, "exist");
-			}else{
-				viewObject=new ViewObject(ViewObject.RET_SUCCEED, "not_exist");
+				viewObject = new ViewObject(ViewObject.RET_SUCCEED, "exist");
+			} else {
+				viewObject = new ViewObject(ViewObject.RET_SUCCEED, "not_exist");
 			}
 		} catch (Exception e) {
-			viewObject=new ViewObject(ViewObject.RET_ERROR, "后台出现异常");
+			viewObject = new ViewObject(ViewObject.RET_ERROR, "后台出现异常");
 			e.printStackTrace();
 			logger.error("获得人员失败");
 		}
@@ -187,20 +188,26 @@ public class PersonStoreController {
 
 	/**
 	 * 将出生日期转成标准格式yyyy-MM-dd
+	 * 
 	 * @param bebornTime
 	 * @return
 	 */
-	private String setPersonBerBornTime(String bebornTime){
+	private String setPersonBerBornTime(String bebornTime) {
 		try {
-			//读取配置文件中日期的格式
-			String []parsePatterns=Configured.getInstance().get("parsePatterns").split(",");
-			Date date=DateUtils.parseDate(bebornTime, parsePatterns);
-			return DateFormatUtils.format(date, "yyyy-MM-dd");
+			// 读取配置文件中日期的格式
+			String pattern = "yyyy-MM-dd";
+			if (StringUtils.isNotBlank(bebornTime) && StringUtils.length(bebornTime) >= pattern.length()) {
+				bebornTime = StringUtils.substring(bebornTime, 0, pattern.length());
+				logger.info("截取后的日期格式：" + bebornTime);
+				Date date = DateUtils.parseDate(bebornTime, new String[] { pattern });
+				return DateFormatUtils.format(date, pattern);
+			}
 		} catch (Exception e) {
-			return null;
+			logger.error("出生日期转换错误：" + e.getMessage());
 		}
+		return null;
 	}
-	
+
 	/**
 	 * 新增人员库信息控制器 isClue为后添加的,主要是判断是否是添加线索里的
 	 * 
@@ -228,11 +235,11 @@ public class PersonStoreController {
 			@RequestParam(value = "state", required = false) String state,
 			// 线索人员的随机号
 			@RequestParam(value = "cluePersonNum", required = false) String cluePersonNum,
-			//是否是新增多个
+			// 是否是新增多个
 			@RequestParam(value = "multiple", required = false) String multiple,
-			//传过来的多条数据
+			// 传过来的多条数据
 			@RequestParam(value = "datas", required = false) String datas,
-			//开始的行号
+			// 开始的行号
 			@RequestParam(value = "startRowNumber", required = false) Integer startRowNumber) {
 		logger.info("新增人员库信息");
 		com.tdcq.common.logging.Logger log = LogFactory.getLogger();
@@ -249,26 +256,28 @@ public class PersonStoreController {
 			loginfo.setUserName(sessionMgr.getTrueName(request));
 			loginfo.setUserCode(sessionMgr.getCode(request));
 			List<String> list = sessionMgr.getPermitResOperCode(request);
-			//把可以入库的人员添加到list中
-			List<PersonStore> personStoreList=new ArrayList<>();
+			// 把可以入库的人员添加到list中
+			List<PersonStore> personStoreList = new ArrayList<>();
 			// 判断当前用户是否有权限新增人员库信息
 			if (list != null && list.size() > 0) {
 				// 启用
 				if ("0x0001".equals(list.get(0))) {
-					if (null!=multiple&&multiple.equals("multiple")) {
-						
-						//导入Excel的方式新增多条数据
-						String result=personStoreService.saveMuiltiPersonStore(request,startRowNumber,datas);
+					if (null != multiple && multiple.equals("multiple")) {
+
+						// 导入Excel的方式新增多条数据
+						String result = personStoreService.saveMuiltiPersonStore(request, startRowNumber, datas);
 						return new ViewObject(ViewObject.RET_SUCCEED, result).toJSon();
 						/*
 						 * 不要再controller中进行循环查询
-						 * 最后导致hibernate假死,合理的方法是在service层中调用
-						 * for (int i = 0; i < 2000; i++) {
-							System.err.println("第"+i+"条canBeSaved："+personStoreService.canBeSaved("董昊", Double.toString(Math.random()*2016)
-									,  "1989-11-09", "男"));
-						}*/
-						
-					}else{
+						 * 最后导致hibernate假死,合理的方法是在service层中调用 for (int i = 0; i
+						 * < 2000; i++) {
+						 * System.err.println("第"+i+"条canBeSaved："+
+						 * personStoreService.canBeSaved("董昊",
+						 * Double.toString(Math.random()*2016) , "1989-11-09",
+						 * "男")); }
+						 */
+
+					} else {
 						// 判断当前新增人员库数据的人员名称是否存在数据库中，如果存在提示用户是否继续新增，如果不存在直接新增
 						PersonStore store = new PersonStore();
 						// 设置action,新增为1
@@ -287,10 +296,10 @@ public class PersonStoreController {
 						// 生日
 						store.setBebornTime(setPersonBerBornTime(bebornTime));
 						store.setEnglishName(englishName);// 英文名
-						//性别
-						if(StringUtils.equals(sex, "男")||StringUtils.equals(sex, "女")){
+						// 性别
+						if (StringUtils.equals(sex, "男") || StringUtils.equals(sex, "女")) {
 							store.setSex(sex);
-						}else{
+						} else {
 							store.setSex(null);
 						}
 						store.setPersonName(personName);// 名字
@@ -303,7 +312,8 @@ public class PersonStoreController {
 						store.setCreateDate(StringUtil.dates());
 						store.setWorkUnit(workUnit);// 工作单位
 						// 人员类型
-						store.setInfoType(infoTypeService.findInfoTypeByTypeNameAndTableName(infoType, StoreFinal.PERSON_STORE));
+						store.setInfoType(
+								infoTypeService.findInfoTypeByTypeNameAndTableName(infoType, StoreFinal.PERSON_STORE));
 						// 多个证件
 						Set<CertificatesStore> certificatesStores = new HashSet<CertificatesStore>();
 						// 把json转成对象
@@ -393,74 +403,72 @@ public class PersonStoreController {
 			log.log(loginfo);
 		}
 	}
-	
+
 	/**
 	 * 保存未入库的详细信息到txt中
+	 * 
 	 * @param result
 	 * @param date
 	 * @param request
 	 * @param response
 	 * @return
 	 */
-	@RequestMapping(value = "/savePersonStoreDetail.do",method=RequestMethod.POST)
+	@RequestMapping(value = "/savePersonStoreDetail.do", method = RequestMethod.POST)
 	@ResponseBody
-	public String savePersonStoreDetail(
-			@RequestParam("result") String result,
-			@RequestParam("date") String date,
-			HttpServletRequest request,
-			HttpServletResponse response) {
+	public String savePersonStoreDetail(@RequestParam("result") String result, @RequestParam("date") String date,
+			HttpServletRequest request, HttpServletResponse response) {
 		String root = request.getServletContext().getRealPath("/");
-		//文件名
-		String path = root + date+".txt";
+		// 文件名
+		String path = root + date + ".txt";
 		try {
 			// 写入信息
-			String []results=result.split("<br>");
-			StringBuffer buffer=new StringBuffer();
+			String[] results = result.split("<br>");
+			StringBuffer buffer = new StringBuffer();
 			for (String string : results) {
 				buffer.append(StringUtils.substringBefore(string, "<br>")).append("\r\n");
 			}
 			FileUtils.writeStringToFile(new File(path), buffer.toString());
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return new ViewObject(ViewObject.RET_SUCCEED, "success").toJSon();
 	}
+
 	/**
 	 * 下载未保存的信息
+	 * 
 	 * @param date
 	 * @param request
 	 * @param response
 	 * @return
 	 */
-	@RequestMapping(value = "/downloadPersonStoreDetail.do",method=RequestMethod.GET)
+	@RequestMapping(value = "/downloadPersonStoreDetail.do", method = RequestMethod.GET)
 	@ResponseBody
-	public String downloadPersonStoreDetail(
-			@RequestParam("date") String date,
-			HttpServletRequest request,
+	public String downloadPersonStoreDetail(@RequestParam("date") String date, HttpServletRequest request,
 			HttpServletResponse response) {
 		ServletOutputStream out = null;
 		String root = request.getServletContext().getRealPath("/");
-		//文件名
-		String path = root + date+".txt";
+		// 文件名
+		String path = root + date + ".txt";
 		try {
 			// 下载附件
 			// 1.设置文件ContentType类型，这样设置，会自动判断下载文件类型
 			response.setContentType("multipart/form-data");
 			// 2.设置文件头
-			response.setHeader("Content-Disposition", "attachment;fileName=" + date+".txt");
+			response.setHeader("Content-Disposition", "attachment;fileName=" + date + ".txt");
 			// 要下载的文件地址
 			out = response.getOutputStream();
-			//使用IOUtils
-			File file=new File(path);
+			// 使用IOUtils
+			File file = new File(path);
 			IOUtils.write(FileUtils.readFileToByteArray(file), out);
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
-		}finally {
+		} finally {
 			IOUtils.closeQuietly(out);
 			try {
-				//删除
+				// 删除
 				FileUtils.forceDelete(new File(path));
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -524,10 +532,10 @@ public class PersonStoreController {
 			store.setAntecedents(antecedents);// 履历
 			store.setBebornTime(setPersonBerBornTime(bebornTime));
 			store.setEnglishName(englishName);// 英文名
-			//性别
-			if(StringUtils.equals(sex, "男")||StringUtils.equals(sex, "女")){
+			// 性别
+			if (StringUtils.equals(sex, "男") || StringUtils.equals(sex, "女")) {
 				store.setSex(sex);
-			}else{
+			} else {
 				store.setSex(null);
 			}
 			store.setPersonName(personName);// 名字
@@ -652,13 +660,13 @@ public class PersonStoreController {
 					store.setAction("2");
 					store.setActivityCondition(activityCondition);// 活动情况
 					store.setAntecedents(antecedents);// 履历
-					//生日可为空
+					// 生日可为空
 					store.setBebornTime(setPersonBerBornTime(bebornTime));
 					store.setEnglishName(englishName);// 英文名
-					//性别
-					if(StringUtils.equals(sex, "男")||StringUtils.equals(sex, "女")){
+					// 性别
+					if (StringUtils.equals(sex, "男") || StringUtils.equals(sex, "女")) {
 						store.setSex(sex);
-					}else{
+					} else {
 						store.setSex(null);
 					}
 					store.setPersonName(personName);// 名字
@@ -1300,10 +1308,11 @@ public class PersonStoreController {
 
 	/**
 	 * 得到当前上传的图片的路径
+	 * 
 	 * @param number
 	 * @param request
 	 * @param response
-	 * @return 
+	 * @return
 	 */
 	public static String personStoreImagePath(String number, HttpServletRequest request, HttpServletResponse response) {
 		File tempFile[] = null;
@@ -1351,60 +1360,6 @@ public class PersonStoreController {
 			IOUtils.closeQuietly(out);
 		}
 		return null;
-	}
-
-	/**
-	 * 删除文件夹和文件夹里面内容
-	 * 
-	 * @param sPath
-	 * @return
-	 */
-	public static boolean deleteDirectory(String sPath) {
-		boolean flag = false;
-		// 如果sPath不以文件分隔符结尾，自动添加文件分隔符
-		if (!sPath.endsWith(File.separator)) {
-			sPath = sPath + File.separator;
-		}
-		File dirFile = new File(sPath);
-		// 如果dir对应的文件不存在，或者不是一个目录，则退出
-		if (!dirFile.exists() || !dirFile.isDirectory()) {
-			return false;
-		}
-		flag = true;
-		// 删除文件夹下的所有文件(包括子目录)
-		File[] files = dirFile.listFiles();
-		for (int i = 0; i < files.length; i++) {
-			// 删除子文件
-			if (files[i].isFile()) {
-				flag = deleteFile(files[i].getAbsolutePath());
-				if (!flag)
-					break;
-			} // 删除子目录
-			else {
-				flag = deleteDirectory(files[i].getAbsolutePath());
-				if (!flag)
-					break;
-			}
-		}
-		if (!flag)
-			return false;
-		// 删除当前目录
-		if (dirFile.delete()) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	public static boolean deleteFile(String sPath) {
-		boolean flag = false;
-		File file = new File(sPath);
-		// 路径为文件且不为空则进行删除
-		if (file.isFile() && file.exists()) {
-			file.delete();
-			flag = true;
-		}
-		return flag;
 	}
 
 	/**
@@ -1550,58 +1505,11 @@ public class PersonStoreController {
 		return array.toString();
 	}
 
-	/**
-	 * 下载人员信息的PDF文件
-	 * 
-	 * @param request
-	 * @param name
-	 * @param response
-	 * @return
-	 */
-	@RequestMapping(value = "/downloadPersonPDFFile.do")
-	@ResponseBody
-	public String dwonExportData(HttpServletRequest request, 
-			@RequestParam("personId") String personId,
-			HttpServletResponse response) {
-		ServletOutputStream out = null;
-		String root = request.getServletContext().getRealPath("/");
-		//文件名
-		String path = root + personId + ".doc";
-		try {
-			// 获取服务器地址
-			//String path = servletContext.getRealPath("/") + "PDFFilePath/";
-			//生成word
-			personStoreService.outputPersonStoreToWord(personId, path);
-			// 下载附件
-			// 1.设置文件ContentType类型，这样设置，会自动判断下载文件类型
-			response.setContentType("multipart/form-data");
-			// 2.设置文件头
-			response.setHeader("Content-Disposition", "attachment;fileName=" + personId + ".doc");
-			// 要下载的文件地址
-			out = response.getOutputStream();
-			//使用IOUtils
-			File file=new File(path);
-			IOUtils.write(FileUtils.readFileToByteArray(file), out);
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}finally {
-			IOUtils.closeQuietly(out);
-		}
-		return new ViewObject(ViewObject.RET_FAILURE, "下载失败,请联系管理员").toJSon();
-	}
-
-	public void setServletContext(ServletContext servletContext) {
-		this.servletContext = servletContext;
-	}
-
 	// 数据导出到Excel中去
-	@RequestMapping(value="/personToExcel.do",method=RequestMethod.POST)
+	@RequestMapping(value = "/personToExcel.do", method = RequestMethod.POST)
 	@ResponseBody
 	public String personToExcel(@RequestParam("personStoreIds") String personStoreIds,
-			@RequestParam("date") String date, 
-			HttpServletRequest request,
-			HttpServletResponse response) {
+			@RequestParam("date") String date, HttpServletRequest request, HttpServletResponse response) {
 		// personStoreService.
 		logger.info("导出人员库信息");
 		com.tdcq.common.logging.Logger log = LogFactory.getLogger();
@@ -1612,46 +1520,47 @@ public class PersonStoreController {
 		loginfo.setLogTime(new Date());
 		loginfo.setResult("导出人员库信息");
 		loginfo.setOperationType(com.tdcq.common.logging.Logger.LOG_OPERATION_TYPE_UPDATE);
-		String msg="导出人员信息成功,请点击下载";
-		int status=ViewObject.RET_SUCCEED;
+		String msg = "导出人员信息成功,请点击下载";
+		int status = ViewObject.RET_SUCCEED;
 		try {
 			// 获取用户的登录信息
 			UserSessionMgr sessionMgr = UserSessionMgr.getInstance();
 			loginfo.setUserName(sessionMgr.getTrueName(request));
 			loginfo.setUserCode(sessionMgr.getCode(request));
 			// 获得人员的信息写入到excel
-			String []ids=personStoreIds.split(",");
-			logger.info("personStoreIds:"+Arrays.toString(ids));
+			String[] ids = personStoreIds.split(",");
+			logger.info("personStoreIds:" + Arrays.toString(ids));
 			String root = request.getServletContext().getRealPath("/");
-			//文件名
+			// 文件名
 			String path = root + date + ".xls";
-			File file=new File(path);
-			if(!file.exists()){
+			File file = new File(path);
+			if (!file.exists()) {
 				file.createNewFile();
 			}
-			//输出到excel中
+			// 输出到excel中
 			personStoreService.outputPersonStoreToExcel(path, ids);
 		} catch (Exception e) {
 			e.printStackTrace();
-			msg="导出人员信息失败";
-			status=ViewObject.RET_FAILURE;
+			msg = "导出人员信息失败";
+			status = ViewObject.RET_FAILURE;
 			loginfo.setResult("导出人员信息失败" + e.getMessage());
-		} 
-		return  new ViewObject(status, msg).toJSon();
+		}
+		return new ViewObject(status, msg).toJSon();
 	}
+
 	/**
 	 * 下载人员的excel
+	 * 
 	 * @param date
 	 * @param request
 	 * @param response
 	 */
 	@RequestMapping("/downLoadPersonExcel.do")
-	public void downLoadPersonExcel(@RequestParam("date") String date,
-			HttpServletRequest request,
-			HttpServletResponse response){
+	public void downLoadPersonExcel(@RequestParam("date") String date, HttpServletRequest request,
+			HttpServletResponse response) {
 		ServletOutputStream out = null;
 		String root = request.getServletContext().getRealPath("/");
-		//文件名
+		// 文件名
 		String path = root + date + ".xls";
 		try {
 			// 下载附件
@@ -1661,25 +1570,27 @@ public class PersonStoreController {
 			response.setHeader("Content-Disposition", "attachment;fileName=" + date + ".xls");
 			// 要下载的文件地址
 			out = response.getOutputStream();
-			//使用IOUtils
-			File file=new File(path);
+			// 使用IOUtils
+			File file = new File(path);
 			IOUtils.write(FileUtils.readFileToByteArray(file), out);
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
-		}finally {
+		} finally {
 			try {
-				//关闭流
+				// 关闭流
 				IOUtils.closeQuietly(out);
-				//删掉该文件
+				// 删掉该文件
 				FileUtils.forceDelete(new File(path));
 			} catch (Exception e2) {
 				e2.printStackTrace();
 			}
 		}
 	}
+
 	/**
 	 * 上传并识别人员的Excel
+	 * 
 	 * @param number
 	 * @param request
 	 * @param response
@@ -1687,12 +1598,12 @@ public class PersonStoreController {
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/identifyPersonInfoExcel.do", method = RequestMethod.POST)
-	public @ResponseBody String identifyPersonInfoExcel(
-			@RequestParam("number") String number,
+	public @ResponseBody String identifyPersonInfoExcel(@RequestParam("number") String number,
 			HttpServletRequest request, HttpServletResponse response) {
-		String msg= "读取文件内容失败";
-		int status=ViewObject.RET_ERROR;//-1
-		String path = request.getSession().getServletContext().getRealPath(File.separator + "tempPersonInfoExcel" + number);
+		String msg = "读取文件内容失败";
+		int status = ViewObject.RET_ERROR;// -1
+		String path = request.getSession().getServletContext()
+				.getRealPath(File.separator + "tempPersonInfoExcel" + number);
 		// 如果文件夹不存在则创建文件夹
 		File fileT = new File(path);
 		if (!fileT.exists()) {
@@ -1700,35 +1611,35 @@ public class PersonStoreController {
 		}
 		DiskFileItemFactory factory = new DiskFileItemFactory();
 		ServletFileUpload upload = new ServletFileUpload(factory);
-		File file=null;
+		File file = null;
 		try {
 			List<FileItem> list = (List<FileItem>) upload.parseRequest(request);
 			for (FileItem fileItem : list) {
-				//非表单标签
+				// 非表单标签
 				if (!fileItem.isFormField()) {
-					//后缀
+					// 后缀
 					String postfix = FilenameUtils.getExtension(fileItem.getName());
-					String fileName = new UpLoadUtil().getTpTime() + "."+postfix;
+					String fileName = new UpLoadUtil().getTpTime() + "." + postfix;
 					file = new File(path + File.separator + fileName);
 					fileItem.write(file);
 					fileItem.delete();
-					
+
 				}
 			}
-			//读取该Excel文件的内容并返回
-			String result=CreatAndReadExcel.readPersonInfoExcel(file);
-			//result内容不能只为{}
-			if (null!=result&&result.length()>2) {
-				msg=result;
-				status=ViewObject.RET_SUCCEED;
+			// 读取该Excel文件的内容并返回
+			String result = CreatAndReadExcel.readPersonInfoExcel(file);
+			// result内容不能只为{}
+			if (null != result && result.length() > 2) {
+				msg = result;
+				status = ViewObject.RET_SUCCEED;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error(msg + e);
-		}finally{
+		} finally {
 			try {
-				//删除临时上传的文件夹
-				File tempDir=new File(path);
+				// 删除临时上传的文件夹
+				File tempDir = new File(path);
 				FileUtils.deleteDirectory(tempDir);
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -1736,44 +1647,48 @@ public class PersonStoreController {
 		}
 		return new ViewObject(status, msg).toJSon();
 	}
+
 	/**
 	 * 用于获取配置文件中的导入人员表格的标准格式
+	 * 
 	 * @return
 	 */
-	@RequestMapping(value="/getPersonStoreExcelHeader.do",method=RequestMethod.POST)
+	@RequestMapping(value = "/getPersonStoreExcelHeader.do", method = RequestMethod.POST)
 	@ResponseBody
-	public String getPersonStoreExcelHeader(){
-		JSONArray headers=new JSONArray();
+	public String getPersonStoreExcelHeader() {
+		JSONArray headers = new JSONArray();
 		try {
-			String url=PathUtils.getConfigPath(this.getClass())+"person-store-excel.xml";
-			XmlUtils utils=new XmlUtils(url);
-			Element element=utils.getNode("header");
-			List<Element> elements=element.elements();
+			String url = PathUtils.getConfigPath(this.getClass()) + "person-store-excel.xml";
+			XmlUtils utils = new XmlUtils(url);
+			Element element = utils.getNode("header");
+			List<Element> elements = element.elements();
 			for (Element node : elements) {
-				JSONObject header=new JSONObject();
+				JSONObject header = new JSONObject();
 				header.put("text", node.getText());
 				header.put("dataIndex", utils.getNodeAttrVal(node, "name"));
 				headers.add(header);
 			}
 			logger.info(headers.toString());
 		} catch (Exception e) {
-			
+
 			logger.error("获得标准人员表格的表头失败");
 		}
 		return headers.toString();
 	}
+
 	/********************************
 	 * OpenSessionInView导致的一直创建新的session，不关闭最终导致session不足；
 	 * 解决方式是不要在request里面进行循环读取，放到service层里
-	 * *****************************/
-	//@RequestMapping(value="/findPersonTest.do",method=RequestMethod.GET)
-	//@ResponseBody
-	public String findPersonTest(@RequestParam(value="count")int count) {
-		String result="success";
+	 *****************************/
+	// @RequestMapping(value="/findPersonTest.do",method=RequestMethod.GET)
+	// @ResponseBody
+	public String findPersonTest(@RequestParam(value = "count") int count) {
+		String result = "success";
 		try {
 			for (int i = 0; i < count; i++) {
 				personStoreService.findPersonStoreById("40288a625624b632015624b647300005");
-				System.err.println("第"+i+":"+personStoreService.findPersonStoreById("40288a625624b632015624b647300005").getPersonName());
+				System.err.println("第" + i + ":"
+						+ personStoreService.findPersonStoreById("40288a625624b632015624b647300005").getPersonName());
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -2,19 +2,22 @@ package com.ushine.solr.service.impl;
 
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
+import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.beans.DocumentObjectBinder;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.common.SolrDocumentList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ushine.dao.IBaseDao;
 import com.ushine.solr.service.IVocationalStoreSolrService;
+import com.ushine.solr.solrbean.PersonStoreSolr;
 import com.ushine.solr.solrbean.QueryBean;
 import com.ushine.solr.solrbean.VocationalWorkStoreSolr;
 import com.ushine.solr.util.SolrBeanUtils;
@@ -24,7 +27,7 @@ import com.ushine.storesinfo.model.VocationalWorkStore;
 @Service(value = "vocationalStoreSolrServiceImpl")
 public class VocationalStoreSolrServiceImpl implements IVocationalStoreSolrService {
 
-	Logger logger = Logger.getLogger(VocationalStoreSolrServiceImpl.class);
+	Logger logger = Logger.getLogger(VocationalStoreSolrServiceImplTest.class);
 	@Autowired IBaseDao<VocationalWorkStore, Serializable> baseDao;
 	/**
 	 * 将dao层对象转成solr里的bean
@@ -41,8 +44,8 @@ public class VocationalStoreSolrServiceImpl implements IVocationalStoreSolrServi
 	 */
 	private VocationalWorkStoreSolr convertDaoStoreToSolr(VocationalWorkStore store) throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException,
 			NoSuchFieldException, SecurityException {
-		VocationalWorkStoreSolr solr = null;
-		SolrBeanUtils.convertBeanToAnotherBean(store, solr, QueryBean.ID, QueryBean.VOCATIONALWORK_ID);
+		VocationalWorkStoreSolr solr = new VocationalWorkStoreSolr();
+		solr=(VocationalWorkStoreSolr) SolrBeanUtils.convertBeanToAnotherBean(store, solr, QueryBean.ID, QueryBean.VOCATIONALWORK_ID);
 		return solr;
 	}
 
@@ -62,7 +65,7 @@ public class VocationalStoreSolrServiceImpl implements IVocationalStoreSolrServi
 	private VocationalWorkStoreVo convertStoreSolrToVo(VocationalWorkStoreSolr storeSolr) throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException,
 			NoSuchFieldException, SecurityException {
 
-		VocationalWorkStoreVo vo = null;
+		VocationalWorkStoreVo vo = new VocationalWorkStoreVo();
 		vo = (VocationalWorkStoreVo) SolrBeanUtils.convertBeanToAnotherBean(storeSolr, vo, QueryBean.VOCATIONALWORK_ID, QueryBean.ID);
 		return vo;
 	}
@@ -73,6 +76,7 @@ public class VocationalStoreSolrServiceImpl implements IVocationalStoreSolrServi
 			VocationalWorkStoreSolr solrBean = convertDaoStoreToSolr(daoStore);
 			// daoStore转成solr bean
 			server.addBean(solrBean);
+			server.commit();
 			logger.info("新增业务文档索引成功");
 			return 1;
 		} catch (Exception e) {
@@ -131,7 +135,7 @@ public class VocationalStoreSolrServiceImpl implements IVocationalStoreSolrServi
 			server.deleteById(list);
 			// 提交
 			server.commit();
-			logger.info(String.format("删除%条索引成功", ids.length));
+			logger.info(String.format("删除%s条索引成功", ids.length));
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("删除业务文档solr索引失败：" + e.getMessage());
@@ -185,8 +189,26 @@ public class VocationalStoreSolrServiceImpl implements IVocationalStoreSolrServi
 
 	@Override
 	public List<VocationalWorkStoreVo> getDocuementsVO(HttpSolrServer server, QueryBean bean, int start, int rows) {
-		// TODO Auto-generated method stub
-		return null;
+		List<VocationalWorkStoreVo> list=new ArrayList<>();
+		try {
+			SolrQuery query=bean.getSolrQuery(VocationalWorkStore.class);
+			//分页
+			query.setStart(start).setRows(rows);
+			QueryResponse response = server.query(query);
+			//先将solr中的bean转成VocationalWorkStore的bean
+			SolrDocumentList sdList = response.getResults();
+			DocumentObjectBinder binder=new DocumentObjectBinder();
+			List<VocationalWorkStoreSolr> beans = binder.getBeans(VocationalWorkStoreSolr.class, sdList);
+			for (VocationalWorkStoreSolr solrBean : beans) {
+				//转成vo对象
+				VocationalWorkStoreVo vo = convertStoreSolrToVo(solrBean);
+				list.add(vo);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("查询业务文档数据异常："+e.getMessage());
+		}
+		return list;
 	}
 
 }

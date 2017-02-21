@@ -116,7 +116,7 @@ public class SolrBeanUtils {
 			// 如果是string类型，直接付给目标对象
 			propertyValue = getStringValue(PropertyUtils.getSimpleProperty(sourceInstance, QueryBean.INFOTYPE));
 		}
-		logger.info("转换后的infoType属性值："+propertyValue);
+		//logger.info("转换后的infoType属性值："+propertyValue);
 		BeanUtils.copyProperty(targetInstance, QueryBean.INFOTYPE, propertyValue);
 	}
 

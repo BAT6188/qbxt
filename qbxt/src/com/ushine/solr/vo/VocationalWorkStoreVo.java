@@ -6,6 +6,11 @@ package com.ushine.solr.vo;
  */
 public class VocationalWorkStoreVo {
 
+	@Override
+	public String toString() {
+		return "VocationalWorkStoreVo [id=" + id + ", docName=" + docName + ", docNumber=" + docNumber + ", time="
+				+ time + ", infoType=" + infoType + ", createDate=" + createDate + "]";
+	}
 	private String id;
 	private String docName;
 	private String docNumber;
@@ -49,6 +54,4 @@ public class VocationalWorkStoreVo {
 	public void setCreateDate(String createDate) {
 		this.createDate = createDate;
 	}
-	
-	
 }

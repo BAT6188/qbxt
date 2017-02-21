@@ -43,6 +43,35 @@ public class VocationalWorkStore {
 	private String attaches;//附件路径
 	private String fileName;//文件名称，用于判断是否入库了
 	
+	public VocationalWorkStore() {
+		
+	}
+	
+	public VocationalWorkStore(String id, String docName, String docNumber, String time, InfoType infoType, String uid,
+			String oid, String did, String createDate) {
+		
+		init(id, docName, docNumber, time, infoType, createDate);
+		this.uid = uid;
+		this.oid = oid;
+		this.did = did;
+	}
+	
+	public VocationalWorkStore(String id, String docName, String docNumber, String time, InfoType infoType,
+			String createDate) {
+		
+		init(id, docName, docNumber, time, infoType, createDate);
+	}
+	
+	private void init(String id, String docName, String docNumber, String time, InfoType infoType,
+			String createDate) {
+		this.id = id;
+		this.docName = docName;
+		this.docNumber = docNumber;
+		this.time = time;
+		this.infoType = infoType;
+		this.createDate = createDate;
+	}
+
 	/**
 	 * 文件名称，用于判断是否入库了
 	 * @return
