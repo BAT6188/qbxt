@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -41,6 +42,60 @@ public class PersonStoreSolrServiceImpl implements IPersonStoreSolrService {
 	@Autowired private IBaseDao<PersonStore, Serializable> baseDao;
 	@Autowired private IBaseDao<CertificatesStore, Serializable> csDao;
 	@Autowired private IBaseDao<NetworkAccountStore, Serializable> nasDao;
+	
+	/**
+	 * solr对象转成vo
+	 * @param psSolr
+	 * @return
+	 * @throws IllegalAccessException
+	 * @throws InvocationTargetException
+	 * @throws NoSuchMethodException
+	 * @throws InstantiationException
+	 * @throws NoSuchFieldException
+	 * @throws SecurityException
+	 */
+	protected PersonStoreVo convertPersonStoreSolrToVo(PersonStoreSolr psSolr) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, InstantiationException, NoSuchFieldException, SecurityException {
+		PersonStoreVo vo = new PersonStoreVo();
+		vo=(PersonStoreVo) SolrBeanUtils.convertBeanToAnotherBean(psSolr, vo, QueryBean.PERSON_ID, QueryBean.ID);
+		return vo;
+	}
+	
+	
+	/**
+	 * 将dao层的PersonStore的bean转换为Solr中Bean
+	 * @param ps PersonStore dao层的PersonStore的bean
+	 * @return PersonStoreSolr Solr中Bean
+	 * @throws IllegalAccessException
+	 * @throws InvocationTargetException
+	 * @throws NoSuchMethodException
+	 * @throws InstantiationException
+	 * @throws SecurityException
+	 * @throws NoSuchFieldException
+	 */
+	protected PersonStoreSolr convertPersonStoreToSolrBean(PersonStore ps) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, NoSuchFieldException,
+			SecurityException, InstantiationException {
+		PersonStoreSolr psSolr = new PersonStoreSolr();
+		psSolr=(PersonStoreSolr) SolrBeanUtils.convertBeanToAnotherBean(ps, psSolr, QueryBean.ID, QueryBean.PERSON_ID);
+		// 复制身份账号集合
+		Set<CertificatesStore> certificatesStores = ps.getCertificatesStores();
+		StringBuffer csBuffer = new StringBuffer();
+		if (null != certificatesStores && certificatesStores.size() > 0) {
+			for (CertificatesStore store : certificatesStores) {
+				csBuffer.append(SolrBeanUtils.getStringValue(store.getCertificatesNumber()) + ",");
+			}
+		}
+		BeanUtils.copyProperty(psSolr, "certificatesStores", csBuffer.toString());
+		// 复制网络账号集合
+		Set<NetworkAccountStore> networkAccountStores = ps.getNetworkAccountStores();
+		StringBuffer nasBuffer = new StringBuffer();
+		if (null != networkAccountStores && networkAccountStores.size() > 0) {
+			for (NetworkAccountStore store : networkAccountStores) {
+				nasBuffer.append(SolrBeanUtils.getStringValue(store.getNetworkNumber()) + ",");
+			}
+		}
+		BeanUtils.copyProperty(psSolr, "networkAccountStores", nasBuffer.toString());
+		return psSolr;
+	}
 	/**
 	 * 添加证件结合
 	 * @param personStore
@@ -94,13 +149,12 @@ public class PersonStoreSolrServiceImpl implements IPersonStoreSolrService {
 	public int addDocumentByStore(HttpSolrServer server, PersonStore daoStore) {
 		try {
 			addSetProperty(daoStore);
-			PersonStoreSolr bean = SolrBeanUtils.convertPersonStoreToSolrBean(daoStore);
+			PersonStoreSolr bean = convertPersonStoreToSolrBean(daoStore);
 			server.addBean(bean);
 			server.commit();
 			logger.info("添加solr索引成功");
 			return 0;
-		} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | IOException
-				| SolrServerException e) {
+		} catch (Exception e) {
 			logger.error("添加solr索引失败");
 			e.printStackTrace();
 			return -1;
@@ -114,7 +168,7 @@ public class PersonStoreSolrServiceImpl implements IPersonStoreSolrService {
 		try {
 			for (PersonStore personStore : daoStore) {
 				addSetProperty(personStore);
-				PersonStoreSolr solrBean = SolrBeanUtils.convertPersonStoreToSolrBean(personStore);
+				PersonStoreSolr solrBean = convertPersonStoreToSolrBean(personStore);
 				// 添加到集合中
 				pStoreSolrs.add(solrBean);
 			}
@@ -123,8 +177,7 @@ public class PersonStoreSolrServiceImpl implements IPersonStoreSolrService {
 			server.commit();
 			logger.info("添加" + daoStore.size() + "条solr索引成功");
 			return daoStore.size();
-		} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | SolrServerException
-				| IOException e) {
+		} catch (Exception e) {
 			logger.error("添加solr索引失败");
 			e.printStackTrace();
 			return -1;
@@ -185,13 +238,11 @@ public class PersonStoreSolrServiceImpl implements IPersonStoreSolrService {
 		try {
 			daoStore.setId(id);
 			this.addSetProperty(daoStore);
-			PersonStoreSolr solrBean = SolrBeanUtils.convertPersonStoreToSolrBean(daoStore);
+			PersonStoreSolr solrBean = convertPersonStoreToSolrBean(daoStore);
 			server.addBean(solrBean);
 			server.commit();
 			logger.info(String.format("更新id为：%s的索引成功", id));
-		} catch (IllegalAccessException | InvocationTargetException |
-				NoSuchMethodException | IOException
-				| SolrServerException e) {
+		} catch (Exception e) {
 			logger.error(String.format("更新id为：%s的索引失败", id));
 			e.printStackTrace();
 		}
@@ -233,7 +284,7 @@ public class PersonStoreSolrServiceImpl implements IPersonStoreSolrService {
 			List<PersonStoreSolr> beans = binder.getBeans(PersonStoreSolr.class, sdList);
 			//转成vo层对象
 			for (PersonStoreSolr personStoreSolr : beans) {
-				PersonStoreVo vo = SolrBeanUtils.convertPersonStoreSolrToVo(personStoreSolr);
+				PersonStoreVo vo = convertPersonStoreSolrToVo(personStoreSolr);
 				psvList.add(vo);
 			}
 		} catch (Exception e) {

@@ -18,6 +18,10 @@ public class QueryBean {
 	
 	public static final String INFOTYPE="infoType";
 	/**
+	 * id属性常量
+	 */
+	public static final String ID="id";
+	/**
 	 * 人员solr的id
 	 */
 	public static final String PERSON_ID = "personId";

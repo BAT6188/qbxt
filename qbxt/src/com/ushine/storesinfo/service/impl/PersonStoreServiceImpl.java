@@ -116,20 +116,20 @@ public class PersonStoreServiceImpl implements IPersonStoreService{
 		QueryBean queryBean=new QueryBean(uid, oid, did, field, fieldValue, null, null, sortField,dir, startTime, endTime);
 		//查询总数
 		long totalRecord = personStoreSolrService.getDocumentsCount(server, queryBean);
-		Paging paging=new Paging(size, nextPage, totalRecord);
-		PagingObject<PersonStoreVo> vo=new PagingObject<>();
+		Paging paging = new Paging(size, nextPage, totalRecord);
+		PagingObject<PersonStoreVo> vo = new PagingObject<>();
 		vo.setPaging(paging);
-		//集合
-		//nextPage从1开始
-		List<PersonStoreVo> array=personStoreSolrService.getDocuementsVO(server, queryBean, (nextPage-1)*size, size);
-		//有关键字要高亮
-		if(StringUtils.isNotBlank(fieldValue)){
-			List<PersonStoreVo> highlightArray=SolrBeanUtils.highlightVoList(array, PersonStoreVo.class, fieldValue);
+		// 集合
+		// nextPage从1开始
+		List<PersonStoreVo> array = personStoreSolrService.getDocuementsVO(server, queryBean, (nextPage - 1) * size, size);
+		if (StringUtils.isNotBlank(fieldValue)) {
+			// 有关键字要高亮
+			List<PersonStoreVo> highlightArray = SolrBeanUtils.highlightVoList(array, PersonStoreVo.class, fieldValue);
 			vo.setArray(highlightArray);
-		}else {
+		} else {
 			vo.setArray(array);
 		}
-		return convertPersonStoreVoToJson(vo);		
+		return convertPersonStoreVoToJson(vo);
 	}
 	
 	private String convertPersonStoreVoToJson(PagingObject<PersonStoreVo> vo){

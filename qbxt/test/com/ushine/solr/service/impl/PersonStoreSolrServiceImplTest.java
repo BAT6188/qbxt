@@ -1,4 +1,4 @@
-package com.ushine.solr.service;
+package com.ushine.solr.service.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -24,6 +24,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ushine.common.utils.SpringUtils;
 import com.ushine.dao.IBaseDao;
 import com.ushine.solr.factory.SolrServerFactory;
+import com.ushine.solr.service.IPersonStoreSolrService;
+import com.ushine.solr.service.ISolrService;
 import com.ushine.solr.solrbean.QueryBean;
 import com.ushine.solr.util.SolrBeanUtils;
 import com.ushine.solr.vo.PersonStoreVo;
