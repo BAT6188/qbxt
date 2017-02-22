@@ -57,10 +57,10 @@
 		<mapping class="com.ushine.storesinfo.model.TempClueData"/>
 		<mapping class="com.ushine.storesinfo.model.ClueStore"/>
 		<mapping class="com.ushine.storesinfo.model.OutsideDocStore"/>
-		<mapping class="com.ushine.storesinfo.model.OrganizBranches"/>
+		<!-- <mapping class="com.ushine.storesinfo.model.OrganizBranches"/>
 		<mapping class="com.ushine.storesinfo.model.OrganizPerson"/>
 		<mapping class="com.ushine.storesinfo.model.OrganizPublicAction"/>
-		<mapping class="com.ushine.storesinfo.model.OrganizStore"/>
+		<mapping class="com.ushine.storesinfo.model.OrganizStore"/> -->
 		<mapping class="com.ushine.storesinfo.model.TempClueData"/>
 	</session-factory>
 </hibernate-configuration>

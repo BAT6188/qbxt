@@ -30,7 +30,7 @@ public class NetworkAccountStoreServiceImpl implements INetworkAccountStoreServi
 	public NetworkAccountStore findNetworkAccountByid(String networkAccountId)
 			throws Exception {
 		// TODO Auto-generated method stub
-		return baseDao.findById(NetworkAccountStore.class, networkAccountId);
+		return (NetworkAccountStore) baseDao.findById(NetworkAccountStore.class, networkAccountId);
 	}
 	public void deleteNetworkAccountByIds(String[] ids) {
 		// TODO Auto-generated method stub

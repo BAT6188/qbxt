@@ -7,6 +7,10 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import net.sf.ezmorph.bean.MorphDynaBean;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,23 +31,15 @@ import com.ushine.luceneindex.vo.MyComparator;
 import com.ushine.luceneindex.vo.MyJsonObject;
 import com.ushine.storesinfo.model.ClueStore;
 import com.ushine.storesinfo.model.LeadSpeakStore;
-import com.ushine.storesinfo.model.OrganizStore;
 import com.ushine.storesinfo.model.OutsideDocStore;
 import com.ushine.storesinfo.model.PersonStore;
 import com.ushine.storesinfo.model.VocationalWorkStore;
-import com.ushine.storesinfo.model.WebsiteJournalStore;
 import com.ushine.storesinfo.service.IClueStoreService;
 import com.ushine.storesinfo.service.ILeadSpeakStoreService;
-import com.ushine.storesinfo.service.IOrganizStoreService;
 import com.ushine.storesinfo.service.IOutsideDocStoreService;
 import com.ushine.storesinfo.service.IPersonStoreService;
 import com.ushine.storesinfo.service.IVocationalWorkStoreService;
-import com.ushine.storesinfo.service.IWebsiteJournalStoreService;
 import com.ushine.util.StringUtil;
-
-import net.sf.ezmorph.bean.MorphDynaBean;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 /**
  * 利用Lucene做查询的控制器
  * @author Administrator

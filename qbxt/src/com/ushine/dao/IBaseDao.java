@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.hibernate.criterion.DetachedCriteria;
 
-import com.ushine.storesinfo.model.OrganizStore;
 import com.ushine.storesinfo.model.PersonStore;
 import com.ushine.storesinfo.model.WebsiteJournalStore;
 
@@ -170,16 +169,7 @@ public interface IBaseDao<T, id extends Serializable> {
 	 * @throws Exception
 	 */
 	public List findBySqlAnPersonStore(String sql,Class<PersonStore> class1, final int sizePage, final int startRecord) throws Exception;
-	/**
-	 * 根据线索id查询组织数据
-	 * @param sql
-	 * @param class1
-	 * @param sizePage
-	 * @param startRecord
-	 * @return
-	 * @throws Exception
-	 */
-	public List findBySqlAnOrganizStore(String sql,Class<OrganizStore> class1, final int sizePage, final int startRecord) throws Exception;
+	
 	/**
 	 * 根据线索id查询媒体网站数据
 	 * @param sql

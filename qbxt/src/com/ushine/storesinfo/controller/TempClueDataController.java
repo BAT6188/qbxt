@@ -12,6 +12,9 @@ import java.util.Random;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
@@ -27,17 +30,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ushine.common.vo.PagingObject;
 import com.ushine.common.vo.ViewObject;
-import com.ushine.storesinfo.model.OrganizStore;
 import com.ushine.storesinfo.model.PersonStore;
 import com.ushine.storesinfo.model.TempClueData;
 import com.ushine.storesinfo.model.WebsiteJournalStore;
-import com.ushine.storesinfo.service.IOrganizStoreService;
 import com.ushine.storesinfo.service.IPersonStoreService;
 import com.ushine.storesinfo.service.ITempClueDataService;
-import com.ushine.storesinfo.service.IWebsiteJournalStoreService;
-
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 /**
  * 线索涉及对象临时数据控制器
  * @author wangbailin
@@ -49,10 +46,6 @@ public class TempClueDataController {
 	private ITempClueDataService clueDataService;
 	@Autowired
 	private IPersonStoreService personStoreService;
-	@Autowired
-	private IOrganizStoreService organizStoreService;
-	@Autowired
-	private IWebsiteJournalStoreService websiteJournalStoreService;
 	/**
 	 * 新增线索涉及对象临时数据，，，，，只有名称
 	 * tempClueDataName,tempClueDataType,sjnum
@@ -206,7 +199,7 @@ public class TempClueDataController {
 	 * @param list
 	 * @return
 	 */
-	@Transactional(propagation = Propagation.NOT_SUPPORTED)
+	/*@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public String organizStoreVoToJSon(PagingObject<OrganizStore> vo) {
 		JSONObject root = new JSONObject();
 		root.element("paging", vo.getPaging());
@@ -223,7 +216,8 @@ public class TempClueDataController {
 		}
 		root.element("datas", array);
 		return root.toString();
-	}
+		return null;
+	}*/
 	/**
 	 * 将特定的数据转换成json格式
 	 * @param list

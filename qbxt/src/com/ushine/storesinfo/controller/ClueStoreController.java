@@ -10,6 +10,9 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,20 +35,14 @@ import com.ushine.storesinfo.model.CertificatesStore;
 import com.ushine.storesinfo.model.ClueRelationship;
 import com.ushine.storesinfo.model.ClueStore;
 import com.ushine.storesinfo.model.NetworkAccountStore;
-import com.ushine.storesinfo.model.OrganizStore;
 import com.ushine.storesinfo.model.PersonStore;
 import com.ushine.storesinfo.model.TempClueData;
 import com.ushine.storesinfo.model.WebsiteJournalStore;
 import com.ushine.storesinfo.service.IClueRelationshipService;
 import com.ushine.storesinfo.service.IClueStoreService;
-import com.ushine.storesinfo.service.IOrganizStoreService;
 import com.ushine.storesinfo.service.IPersonStoreService;
 import com.ushine.storesinfo.service.ITempClueDataService;
-import com.ushine.storesinfo.service.IWebsiteJournalStoreService;
 import com.ushine.util.StringUtil;
-
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 
 /**
  * 线索控制器
@@ -66,10 +63,6 @@ public class ClueStoreController {
 	private IClueRelationshipService clueRelationshipService;
 	@Autowired
 	private IPersonStoreService personStoreService;
-	@Autowired
-	private IOrganizStoreService organizStoreService;
-	@Autowired
-	private IWebsiteJournalStoreService websiteJournalStoreService;
 	/**
 	 * 查询线索名称是否存在
 	 * @param clueName
@@ -595,13 +588,13 @@ public class ClueStoreController {
 			@RequestParam("clueId") String clueId) {
 		try {
 			// 汉字关键字搜索
-			fieldValue = new String(fieldValue.getBytes("ISO-8859-1"), "UTF-8");
+			/*fieldValue = new String(fieldValue.getBytes("ISO-8859-1"), "UTF-8");
 			PagingObject<OrganizStore> pagingObject = clueStoreService
 					.findClueOrganizStore(clueId, field, fieldValue, startTime,
 							endTime, nextPage, size);
 			ClueStore clueStore = clueStoreService.findClueById(clueId);
 			return findClueOrganizVoToJson(pagingObject,
-					clueStore.getClueName());
+					clueStore.getClueName());*/
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -609,7 +602,7 @@ public class ClueStoreController {
 		return null;
 	}
 
-	@Transactional(propagation = Propagation.NOT_SUPPORTED)
+	/*@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public String findClueOrganizVoToJson(PagingObject<OrganizStore> vo,
 			String clueName) {
 		JSONObject root = new JSONObject();
@@ -640,7 +633,7 @@ public class ClueStoreController {
 		}
 		root.element("datas", array);
 		return root.toString();
-	}
+	}*/
 
 	/**
 	 * 选择线索数据

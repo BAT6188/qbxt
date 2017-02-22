@@ -32,7 +32,7 @@ public class CertificatesStoreServiceImpl implements ICertificatesStoreService{
 	public CertificatesStore findCertificatesById(
 			String certificatesId) throws Exception {
 		// TODO Auto-generated method stub
-		CertificatesStore certificates =baseDao.findById(CertificatesStore.class, certificatesId);
+		CertificatesStore certificates =(CertificatesStore) baseDao.findById(CertificatesStore.class, certificatesId);
 		return certificates;
 	}
 

@@ -9,9 +9,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.httpclient.util.DateUtil;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
@@ -41,13 +42,11 @@ import com.ushine.common.utils.SpringUtils;
 import com.ushine.common.vo.Paging;
 import com.ushine.common.vo.PagingObject;
 import com.ushine.dao.IBaseDao;
-import com.ushine.luceneindex.vo.MyQueryCondition;
 import com.ushine.storesinfo.model.CertificatesStore;
 import com.ushine.storesinfo.model.ClueRelationship;
 import com.ushine.storesinfo.model.ClueStore;
 import com.ushine.storesinfo.model.LeadSpeakStore;
 import com.ushine.storesinfo.model.NetworkAccountStore;
-import com.ushine.storesinfo.model.OrganizStore;
 import com.ushine.storesinfo.model.OutsideDocStore;
 import com.ushine.storesinfo.model.PersonStore;
 import com.ushine.storesinfo.model.VocationalWorkStore;
@@ -55,9 +54,6 @@ import com.ushine.storesinfo.model.WebsiteJournalStore;
 import com.ushine.storesinfo.service.IClueRelationshipService;
 import com.ushine.storesinfo.service.IInfoTypeService;
 import com.ushine.util.StringUtil;
-
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 
 /**
  * 七个store全文检索查询接口
@@ -556,7 +552,7 @@ public class StoreIndexQuery {
 	 */
 	public static String countToJson(String fieldValue,String uid,String oid,String did) {
 		//七个库
-		Class[] classes={PersonStore.class,OrganizStore.class,WebsiteJournalStore.class,
+		Class[] classes={PersonStore.class,WebsiteJournalStore.class,
 				VocationalWorkStore.class,OutsideDocStore.class,LeadSpeakStore.class,ClueStore.class};
 		JSONArray array=new JSONArray();
 		for (Class clazz : classes) {
@@ -757,7 +753,7 @@ public class StoreIndexQuery {
 	 * @param hasValue
 	 * @return json 
 	 */
-	public static String organizStoreVoToJson(PagingObject<OrganizStore> vo,boolean hasValue){
+	/*public static String organizStoreVoToJson(PagingObject<OrganizStore> vo,boolean hasValue){
 		JSONObject root = new JSONObject();
 		root.element("paging", vo.getPaging());
 		JSONArray array = new JSONArray();
@@ -814,7 +810,7 @@ public class StoreIndexQuery {
 		}
 		root.element("datas", array);
 		return root.toString();
-	}
+	}*/
 	/**
 	 * 高亮显示WebsiteJournalStore
 	 * @param vo PagingObject封装的WebsiteJournalStore集合

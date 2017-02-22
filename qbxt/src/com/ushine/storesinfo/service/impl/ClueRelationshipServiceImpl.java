@@ -3,7 +3,6 @@ package com.ushine.storesinfo.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.cxf.ws.addressing.v200403.Relationship;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,16 +13,11 @@ import com.ushine.dao.IBaseDao;
 import com.ushine.luceneindex.index.ClueStoreNRTSearch;
 import com.ushine.storesinfo.model.ClueRelationship;
 import com.ushine.storesinfo.model.ClueStore;
-import com.ushine.storesinfo.model.OrganizStore;
 import com.ushine.storesinfo.model.PersonStore;
 import com.ushine.storesinfo.model.TempClueData;
-import com.ushine.storesinfo.model.WebsiteJournalStore;
 import com.ushine.storesinfo.service.IClueRelationshipService;
 import com.ushine.storesinfo.service.IClueStoreService;
-import com.ushine.storesinfo.service.IOrganizStoreService;
 import com.ushine.storesinfo.service.IPersonStoreService;
-import com.ushine.storesinfo.service.IWebsiteJournalStoreService;
-import com.ushine.util.StringUtil;
 /**
  * 线索基础库关系接口实现类
  * @author wangbailin
@@ -37,10 +31,6 @@ public class ClueRelationshipServiceImpl implements IClueRelationshipService{
 	private IBaseDao<ClueRelationship, String> baseDao;
 	@Autowired
 	private IPersonStoreService personStoreService;
-	@Autowired
-	IOrganizStoreService organizStoreService;
-	@Autowired
-	private IWebsiteJournalStoreService websiteJournalStoreService;
 	@Autowired
 	private IClueStoreService clueStoreService;
 	//线索索引
@@ -65,7 +55,7 @@ public class ClueRelationshipServiceImpl implements IClueRelationshipService{
 	public ClueRelationship findClueRelationshipById(String clueRelationshipId)
 			throws Exception {
 		// TODO Auto-generated method stub
-		return baseDao.findById(ClueRelationship.class, clueRelationshipId);
+		return (ClueRelationship) baseDao.findById(ClueRelationship.class, clueRelationshipId);
 	}
 	public boolean saveClueRelationship(String clueId,
 			List<TempClueData> clueDatas) throws Exception {
@@ -90,7 +80,7 @@ public class ClueRelationshipServiceImpl implements IClueRelationshipService{
 					relationship.setDataType(tempClueData.getType());
 					relationship.setLibraryId(store.getId());
 					baseDao.save(relationship);
-				}else if("organizStore".equals(tempClueData.getType())){
+				}/*else if("organizStore".equals(tempClueData.getType())){
 					OrganizStore store = new OrganizStore();
 					store.setOrganizName(tempClueData.getName());
 					store.setIsToStorage("2");
@@ -112,7 +102,7 @@ public class ClueRelationshipServiceImpl implements IClueRelationshipService{
 					relationship.setDataType(tempClueData.getType());
 					relationship.setLibraryId(store.getId());
 					baseDao.save(relationship);
-				}
+				}*/
 			}
 		}
 		return true;

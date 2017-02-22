@@ -16,12 +16,8 @@ import org.apache.poi.hwpf.usermodel.Paragraph;
 import org.apache.poi.hwpf.usermodel.ParagraphProperties;
 import org.apache.poi.hwpf.usermodel.Range;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
-import org.apache.poi.xwpf.usermodel.XWPFParagraph;
-import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,11 +33,9 @@ import com.ushine.luceneindex.index.ClueStoreNRTSearch;
 import com.ushine.luceneindex.index.StoreIndexQuery;
 import com.ushine.storesinfo.model.ClueStore;
 import com.ushine.storesinfo.model.InfoType;
-import com.ushine.storesinfo.model.OrganizStore;
 import com.ushine.storesinfo.model.PersonStore;
 import com.ushine.storesinfo.model.WebsiteJournalStore;
 import com.ushine.storesinfo.service.IClueStoreService;
-import com.ushine.util.CustomXWPFDocument;
 import com.ushine.util.StringUtil;
 /**
  * 线索库接口实现类
@@ -71,7 +65,7 @@ public class ClueStoreServiceImpl implements IClueStoreService{
 	}
 	public ClueStore findClueById(String clueId) throws Exception {
 		// TODO Auto-generated method stub
-		return baseDao.findById(ClueStore.class, clueId);
+		return (ClueStore) baseDao.findById(ClueStore.class, clueId);
 	}
 	/**
 	 * 包含排序的查询
@@ -148,34 +142,6 @@ public class ClueStoreServiceImpl implements IClueStoreService{
 		return vo;
 	}
 	
-	public PagingObject<OrganizStore> findClueOrganizStore(String clueId,
-			String field, String fieldValue,String startTime,String endTime, int nextPage, int size)
-			throws Exception {
-		String checkArr = organizCheckArr(field,fieldValue,startTime,endTime);
-		//拼接sql语句  分页查询数据
-		StringBuffer sbSql = new StringBuffer();
-		sbSql.append(" SELECT * FROM T_ORGANIZ_STORE  O  ");
-		sbSql.append(" LEFT JOIN T_CLUE_RELATIONSHIP R ON(O.`ID`=R.`LIBRARY_ID`) ");
-		sbSql.append(" LEFT JOIN T_CLUE_STORE C ON (C.`ID`=R.`CLUE_ID`) ");
-		sbSql.append(" WHERE C.`ID` = '"+clueId+"' ");
-		sbSql.append(checkArr);
-		//拼接sql语句  ,统计总条数
-		StringBuffer sbCount = new StringBuffer();
-		sbCount.append(" SELECT COUNT(*) FROM T_ORGANIZ_STORE O  ");
-		sbCount.append(" LEFT JOIN T_CLUE_RELATIONSHIP R ON(O.`ID`=R.`LIBRARY_ID`) ");
-		sbCount.append(" LEFT JOIN T_CLUE_STORE C ON (C.`ID`=R.`CLUE_ID`) ");
-		sbCount.append(" WHERE C.`ID` = '"+clueId+"' ");
-		sbCount.append(checkArr);
-		int rowCount = Integer.parseInt(baseDao.getRows(sbCount.toString()).toString());
-		Paging paging = new Paging(size, nextPage, rowCount);
-		logger.debug("分页信息：" + JSONObject.fromObject(paging));
-		@SuppressWarnings("unchecked")
-		List<OrganizStore> list = baseDao.findBySqlAnOrganizStore(sbSql.toString(), OrganizStore.class, size, paging.getStartRecord());
-		PagingObject<OrganizStore> vo = new PagingObject<OrganizStore>();
-		vo.setArray(list);
-		vo.setPaging(paging);
-		return vo;
-	}
 	public PagingObject<WebsiteJournalStore> findClueWebsiteJournalStore(
 			String clueId, String field, String fieldValue,String startTime,String endTime, int nextPage,
 			int size) throws Exception {
@@ -337,16 +303,6 @@ public class ClueStoreServiceImpl implements IClueStoreService{
 			sb.append(" LEFT JOIN T_CLUE_STORE  C ON (C.`ID`=R.`CLUE_ID`) ");
 			sb.append(" WHERE C.`ID`= '"+clueId+"' ");
 			List<PersonStore> list = baseDao.findBySqlAnPersonStore(sb.toString(), PersonStore.class, 1000, 0);
-			return list;
-		}
-		public List<OrganizStore> findOrganizStoreByClueId(String clueId)
-				throws Exception {
-			StringBuffer sb = new StringBuffer();
-			sb.append("SELECT * FROM T_ORGANIZ_STORE  O ");
-			sb.append(" LEFT JOIN T_CLUE_RELATIONSHIP  R ON (R.`LIBRARY_ID`=O.`ID`) ");
-			sb.append(" LEFT JOIN T_CLUE_STORE  C ON (C.`ID`=R.`CLUE_ID`) ");
-			sb.append(" WHERE C.`ID`= '"+clueId+"' ");
-			List<OrganizStore> list = baseDao.findBySqlAnOrganizStore(sb.toString(), OrganizStore.class, 1000, 0);
 			return list;
 		}
 		public List<WebsiteJournalStore> findWebsiteJournalStoreByClueId(String clueId)

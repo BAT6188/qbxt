@@ -1,6 +1,5 @@
 package com.ushine.luceneindex.index;
 
-import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -15,7 +14,6 @@ import org.apache.lucene.document.Field.Index;
 import org.apache.lucene.document.Field.Store;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.Filter;
 import org.apache.lucene.search.IndexSearcher;
@@ -23,28 +21,17 @@ import org.apache.lucene.search.NRTManager;
 import org.apache.lucene.search.NRTManagerReopenThread;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.SearcherWarmer;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.FSDirectory;
-import org.apache.lucene.util.Version;
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Restrictions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.wltea.analyzer.lucene.IKAnalyzer;
 
 import com.ushine.common.utils.SpringUtils;
 import com.ushine.dao.IBaseDao;
 import com.ushine.storesinfo.model.ClueRelationship;
 import com.ushine.storesinfo.model.ClueStore;
-import com.ushine.storesinfo.model.OrganizStore;
 import com.ushine.storesinfo.model.PersonStore;
 import com.ushine.storesinfo.model.WebsiteJournalStore;
-import com.ushine.storesinfo.service.IClueRelationshipService;
 
 /**
  * 单例的线索库索引操作
@@ -200,16 +187,16 @@ public class ClueStoreNRTSearch implements IStoreNRTSearch {
 			// 人员
 			List<PersonStore> personStores = new ArrayList<PersonStore>();
 			// 组织
-			List<OrganizStore> organizStores = new ArrayList<OrganizStore>();
+			//List<OrganizStore> organizStores = new ArrayList<OrganizStore>();
 			// 媒体网站
 			List<WebsiteJournalStore> websiteJournalStores = new ArrayList<WebsiteJournalStore>();
 			for (ClueRelationship relationship : list) {
 				if ("personStore".equals(relationship.getDataType())) {
 					personStores.add((PersonStore) baseDao.findById(PersonStore.class, relationship.getLibraryId()));
 				}
-				if ("organizStore".equals(relationship.getDataType())) {
+				/*if ("organizStore".equals(relationship.getDataType())) {
 					organizStores.add((OrganizStore) baseDao.findById(OrganizStore.class, relationship.getLibraryId()));
-				}
+				}*/
 				if ("websiteJournalStore".equals(relationship.getDataType())) {
 					websiteJournalStores.add((WebsiteJournalStore) baseDao.findById(WebsiteJournalStore.class,
 							relationship.getLibraryId()));
@@ -258,7 +245,7 @@ public class ClueStoreNRTSearch implements IStoreNRTSearch {
 			StringBuffer organizPublicActionNames = new StringBuffer();
 			StringBuffer websiteURL = new StringBuffer();
 			StringBuffer basicCondition = new StringBuffer();
-			for (OrganizStore organizStore : organizStores) {
+			/*for (OrganizStore organizStore : organizStores) {
 				// 名称、负责人、活动范围、类型、分支、成员、刊物、网址、基本情况和活动情况
 				organizName.append(getValue(organizStore.getOrganizName()));
 				orgHeadOfName.append(getValue(organizStore.getOrgHeadOfName()));
@@ -287,6 +274,7 @@ public class ClueStoreNRTSearch implements IStoreNRTSearch {
 					Index.ANALYZED));
 			document.add(new Field("websiteURL", bufferToString(websiteURL), Store.YES, Index.ANALYZED));
 			document.add(new Field("activityCondition", bufferToString(activityCondition), Store.NO, Index.ANALYZED));
+			*/
 			// 把媒体网站信息加入索引中 name
 			StringBuffer name = new StringBuffer();
 			StringBuffer serverAddress = new StringBuffer();
