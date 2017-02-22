@@ -31,11 +31,18 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ushine.common.config.Configured;
 import com.ushine.common.utils.PathUtils;
+import com.ushine.common.vo.Paging;
 import com.ushine.common.vo.PagingObject;
 import com.ushine.core.verify.session.UserSessionMgr;
 import com.ushine.dao.IBaseDao;
 import com.ushine.luceneindex.index.OutsideDocStoreNRTSearch;
 import com.ushine.luceneindex.index.StoreIndexQuery;
+import com.ushine.solr.service.IOutsideDocStoreSolrService;
+import com.ushine.solr.solrbean.QueryBean;
+import com.ushine.solr.util.JSonUtils;
+import com.ushine.solr.util.SolrBeanUtils;
+import com.ushine.solr.vo.OutsideDocStoreVo;
+import com.ushine.solr.vo.PersonStoreVo;
 import com.ushine.storesinfo.model.InfoType;
 import com.ushine.storesinfo.model.OutsideDocStore;
 import com.ushine.storesinfo.service.IInfoTypeService;
@@ -59,8 +66,7 @@ public class OutsideDocStoreServiceImpl implements IOutsideDocStoreService {
 	private IBaseDao<OutsideDocStore, Serializable> baseDao;
 	@Autowired
 	private IInfoTypeService infoTypeService;
-	//
-	private OutsideDocStoreNRTSearch nrtSearch = OutsideDocStoreNRTSearch.getInstance();
+	@Autowired IOutsideDocStoreSolrService solrService;
 	@Autowired
 	private IBaseDao fileNamesDao;
 	
@@ -134,14 +140,27 @@ public class OutsideDocStoreServiceImpl implements IOutsideDocStoreService {
 	public String findOutsideDocStore(String field, String fieldValue, String startTime, String endTime, int nextPage,
 			int size, String uid, String oid, String did, String sortField, String dir) throws Exception {
 		// 利用索引查询
-		boolean hasValue = false;
-		// 输入了值后高亮
-		if (!StringUtil.isEmty(fieldValue)) {
-			hasValue = true;
+		if (StringUtils.equals(field, "anyField")) {
+			//任意字段查询
+			field=QueryBean.OUTSIDEDOCALL;
 		}
-		PagingObject<OutsideDocStore> vo = StoreIndexQuery.findStore(field, fieldValue, startTime, endTime, nextPage,
-				size, uid, oid, did, sortField, dir, OutsideDocStore.class);
-		return StoreIndexQuery.outsideDocStoreVoToJson(vo, hasValue);
+		QueryBean queryBean=new QueryBean(uid, oid, did, field, fieldValue, null, null, sortField,dir, startTime, endTime);
+		//查询总数
+		long totalRecord = solrService.getDocumentsCount(queryBean);
+		Paging paging = new Paging(size, nextPage, totalRecord);
+		PagingObject<OutsideDocStoreVo> vo = new PagingObject<>();
+		vo.setPaging(paging);
+		// 集合
+		// nextPage从1开始
+		List<OutsideDocStoreVo> array = solrService.getDocuementsVo(queryBean, (nextPage - 1) * size, size);
+		if (StringUtils.isNotBlank(fieldValue)) {
+			// 有关键字要高亮
+			List<OutsideDocStoreVo> highlightArray = SolrBeanUtils.highlightVoList(array, OutsideDocStoreVo.class, fieldValue);
+			vo.setArray(highlightArray);
+		} else {
+			vo.setArray(array);
+		}
+		return JSonUtils.toJson(vo);
 	}
 
 	public void delOutsideDocStore(String[] outsideDocStoreIds) throws Exception {
@@ -158,8 +177,7 @@ public class OutsideDocStoreServiceImpl implements IOutsideDocStoreService {
 			logger.info("删除语句：" + hql);
 			// 执行删除
 			baseDao.executeHql(hql);
-			// 更新索引
-			nrtSearch.deleteIndex(outsideDocStoreIds);
+			solrService.deleteDocumentByIds(outsideDocStoreIds);
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("保存异常信息" + e.getMessage());
@@ -170,7 +188,7 @@ public class OutsideDocStoreServiceImpl implements IOutsideDocStoreService {
 		try {
 			// 保存
 			baseDao.save(outsideDocStore);
-			nrtSearch.addIndex(outsideDocStore);
+			solrService.addDocumentByStore(outsideDocStore);
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("保存异常信息" + e.getMessage());
@@ -183,7 +201,7 @@ public class OutsideDocStoreServiceImpl implements IOutsideDocStoreService {
 			logger.info("更新OutsideDocStore对象为:" + outsideDocStore.toString());
 			baseDao.update(outsideDocStore);
 			// 索引更新
-			nrtSearch.updateIndex(outsideDocStore.getId(), outsideDocStore);
+			solrService.updateDocumentByStore(outsideDocStore.getId(), outsideDocStore);
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("更新异常信息" + e.getMessage());
@@ -445,7 +463,7 @@ public class OutsideDocStoreServiceImpl implements IOutsideDocStoreService {
 			baseDao.save(list);
 			// 更新多个索引
 			logger.info("正在添加" + list.size() + "条索引");
-			nrtSearch.addIndex(list);
+			solrService.addDocumentByStores(list);
 			logger.info("添加" + list.size() + "条索引完成");
 			// 结束
 			long end = System.currentTimeMillis();
@@ -571,7 +589,7 @@ public class OutsideDocStoreServiceImpl implements IOutsideDocStoreService {
 			baseDao.save(list);
 			// 更新多个索引
 			logger.info("正在添加" + list.size() + "条索引");
-			nrtSearch.addIndex(list);
+			solrService.addDocumentByStores(list);
 			logger.info("添加" + list.size() + "条索引完成");
 			// 结束
 			long end = System.currentTimeMillis();

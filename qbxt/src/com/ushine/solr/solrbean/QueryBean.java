@@ -7,6 +7,7 @@ import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
 
 import com.ushine.solr.util.SolrDateUtils;
+import com.ushine.storesinfo.model.OutsideDocStore;
 
 /**
  * 查询语句的bean对象
@@ -252,6 +253,9 @@ public class QueryBean {
 		//业务文档
 		case "VocationalWorkStore":
 			queryBuffer=initQueryBuffer(VOCATIONALWORKSTOREALL);
+			break;
+		case "OutsideDocStore":
+			queryBuffer=initQueryBuffer(OUTSIDEDOCALL);
 			break;
 		}
 		//时间范围

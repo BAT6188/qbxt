@@ -26,12 +26,18 @@ public class SolrServerFactory {
 	private final static String ODSSOLRURL = Configured.getInstance().get("outsideDocStoreUrl");
 	private static HttpSolrServer odsSolrServer=null;
 	/**
+	 * 领导讲话的solr地址
+	 */
+	private final static String LSSSOLRUTL=Configured.getInstance().get("leadSpeakStoreUrl");
+	private static HttpSolrServer lssSolrServer=null;
+	/**
 	 * 静态代码块，类初始化时加载，只加载一次且线程安全
 	 */
 	static{
 		psSolrServer=new HttpSolrServer(PSSOLRURL);
 		vwsSolrServer=new HttpSolrServer(VWSSOLRURL);
 		odsSolrServer=new HttpSolrServer(ODSSOLRURL);
+		lssSolrServer=new HttpSolrServer(LSSSOLRUTL);
 	}
 	
 	/**
@@ -54,5 +60,12 @@ public class SolrServerFactory {
 	 */
 	public static HttpSolrServer getODSSolrServerInstance(){
 		return odsSolrServer;
+	}
+	/**
+	 * 获得领导讲话的单例SolrServer
+	 * @return HttpSolrServer
+	 */
+	public static HttpSolrServer getLSSSolrServerInstance(){
+		return lssSolrServer;
 	}
 }

@@ -62,7 +62,7 @@ Ext.define('Ushine.docInfo.LeaderTalkGridPanel',{
 		    {text: '标题',  dataIndex: 'title',sortable: true,flex: 1,menuDisabled:true},
 		    {text: '会议名称',  dataIndex: 'meetingName',sortable: true,flex: 1,menuDisabled:true},
 		    {text: '密级',  dataIndex: 'secretRank',sortable: true,flex: 1,menuDisabled:true},
-		    {text: '涉及领域',  dataIndex: 'involvedInTheField',sortable: true,flex: 1 ,menuDisabled:true},
+		    //{text: '涉及领域',  dataIndex: 'involvedInTheField',sortable: true,flex: 1 ,menuDisabled:true},
 		    {text: '建立时间',  dataIndex: 'time',sortable: true,flex: 1,menuDisabled:true,renderer:function(value){
 		    	if(value.indexOf("T00")>0){
 		    		value=value.replace("T00","");

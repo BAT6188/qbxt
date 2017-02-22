@@ -67,7 +67,7 @@ Ext.define('Ushine.docInfo.ServiceDocGridPanel',{
 			{text:'attaches',dataIndex:'attaches',flex: 1,menuDisabled:true,hidden:true},
 		    {text: '文档类别',  dataIndex: 'infoType',sortable: true,flex: 1,menuDisabled:true},
 		    {text: '文档名称',  dataIndex: 'docName',sortable: true,flex: 2,menuDisabled:true},
-		    {text: '涉及领域',  dataIndex: 'involvedInTheField',sortable: true,flex: 0.5,menuDisabled:true},
+		    //{text: '涉及领域',  dataIndex: 'involvedInTheField',sortable: true,flex: 0.5,menuDisabled:true},
 		    {text: '期刊号',  dataIndex: 'docNumber',sortable: true,flex: 0.5 ,menuDisabled:true},
 		    {text: '建立时间',  dataIndex: 'time',sortable: true,flex: 1,menuDisabled:true,renderer:function(value){
 		    	if(value.indexOf("T00")>0){

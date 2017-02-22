@@ -36,6 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ushine.common.config.Configured;
 import com.ushine.common.utils.PathUtils;
 import com.ushine.common.utils.XMLUtils;
+import com.ushine.common.vo.Paging;
 import com.ushine.common.vo.PagingObject;
 import com.ushine.common.vo.ViewObject;
 import com.ushine.core.verify.session.UserSessionMgr;
@@ -44,6 +45,11 @@ import com.ushine.luceneindex.index.StoreIndexQuery;
 import com.ushine.luceneindex.index.VocationalWorkStoreNRTSearch;
 import com.ushine.solr.factory.SolrServerFactory;
 import com.ushine.solr.service.IVocationalStoreSolrService;
+import com.ushine.solr.solrbean.QueryBean;
+import com.ushine.solr.util.JSonUtils;
+import com.ushine.solr.util.SolrBeanUtils;
+import com.ushine.solr.vo.PersonStoreVo;
+import com.ushine.solr.vo.VocationalWorkStoreVo;
 import com.ushine.storesinfo.model.InfoType;
 import com.ushine.storesinfo.model.VocationalWorkStore;
 import com.ushine.storesinfo.service.IInfoTypeService;
@@ -70,6 +76,7 @@ public class VocationalWorkStoreServiceImpl implements IVocationalWorkStoreServi
 	@Autowired
 	private IInfoTypeService infoTypeService;
 	@Autowired IVocationalStoreSolrService solrService;
+	
 	HttpSolrServer server=SolrServerFactory.getVWSSolrServerInstance();
 	public boolean saveVocationalWork(VocationalWorkStore vocationalWork) throws Exception {
 		// 新增
@@ -378,16 +385,31 @@ public class VocationalWorkStoreServiceImpl implements IVocationalWorkStoreServi
 	public String findVocationalWorkStore(String field, String fieldValue, String startTime, String endTime,
 			int nextPage, int size, String uid, String oid, String did, String sortField, String dir) throws Exception {
 		// 根据条件查询业务文档
-		boolean hasValue = false;
-		if (!StringUtil.isEmty(fieldValue)) {
-			hasValue = true;
+		//查询
+		if (StringUtils.equals(field, "anyField")) {
+			//任意字段查询
+			field=QueryBean.VOCATIONALWORKSTOREALL;
 		}
-		PagingObject<VocationalWorkStore> vo = StoreIndexQuery.findStore(field, fieldValue, startTime, endTime,
-				nextPage, size, uid, oid, did, sortField, dir, VocationalWorkStore.class);
-		// 转json
-		return StoreIndexQuery.vocationalWorkStoreVoToJson(vo, hasValue);
+		QueryBean queryBean=new QueryBean(uid, oid, did, field, fieldValue, null, null, sortField,dir, startTime, endTime);
+		//查询总数
+		long totalRecord = solrService.getDocumentsCount(server, queryBean);
+		Paging paging = new Paging(size, nextPage, totalRecord);
+		PagingObject<VocationalWorkStoreVo> vo = new PagingObject<>();
+		vo.setPaging(paging);
+		
+		// 集合
+		// nextPage从1开始 
+		List<VocationalWorkStoreVo> array = solrService.getDocuementsVO(server, queryBean, (nextPage - 1) * size, size);
+		if (StringUtils.isNotBlank(fieldValue)) {
+			// 有关键字要高亮
+			List<VocationalWorkStoreVo> highlightArray = SolrBeanUtils.highlightVoList(array, VocationalWorkStoreVo.class, fieldValue);
+			vo.setArray(highlightArray);
+		} else {
+			vo.setArray(array);
+		}
+		return JSonUtils.toJson(vo);
 	}
-
+	
 	/**
 	 * 字符串可否转日期
 	 * 

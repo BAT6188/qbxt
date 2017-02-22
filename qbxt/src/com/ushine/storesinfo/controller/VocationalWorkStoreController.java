@@ -720,7 +720,7 @@ public class VocationalWorkStoreController {
 		} finally {
 			try {
 				// 删除html
-				FileUtils.forceDelete(new File(htmlName));
+				FileUtils.forceDeleteOnExit(new File(htmlName));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

@@ -56,6 +56,7 @@ import com.ushine.dao.IBaseDao;
 import com.ushine.solr.factory.SolrServerFactory;
 import com.ushine.solr.service.IPersonStoreSolrService;
 import com.ushine.solr.solrbean.QueryBean;
+import com.ushine.solr.util.JSonUtils;
 import com.ushine.solr.util.SolrBeanUtils;
 import com.ushine.solr.vo.PersonStoreVo;
 import com.ushine.storesinfo.model.CertificatesStore;
@@ -87,7 +88,6 @@ public class PersonStoreServiceImpl implements IPersonStoreService{
 	@Autowired private IBaseDao personNamesDao;
 	@Autowired private IInfoTypeService infoTypeService;
 	@Autowired private IPersonStoreSolrService solrService;
-	@Autowired IPersonStoreSolrService personStoreSolrService;
 	// 单例的solr server
 	private HttpSolrServer server = SolrServerFactory.getPSSolrServerInstance();
 	//private PersonStoreNRTSearch personStoreNRTSearch=PersonStoreNRTSearch.getInstance();
@@ -115,13 +115,13 @@ public class PersonStoreServiceImpl implements IPersonStoreService{
 		}
 		QueryBean queryBean=new QueryBean(uid, oid, did, field, fieldValue, null, null, sortField,dir, startTime, endTime);
 		//查询总数
-		long totalRecord = personStoreSolrService.getDocumentsCount(server, queryBean);
+		long totalRecord = solrService.getDocumentsCount(server, queryBean);
 		Paging paging = new Paging(size, nextPage, totalRecord);
 		PagingObject<PersonStoreVo> vo = new PagingObject<>();
 		vo.setPaging(paging);
 		// 集合
 		// nextPage从1开始
-		List<PersonStoreVo> array = personStoreSolrService.getDocuementsVO(server, queryBean, (nextPage - 1) * size, size);
+		List<PersonStoreVo> array = solrService.getDocuementsVO(server, queryBean, (nextPage - 1) * size, size);
 		if (StringUtils.isNotBlank(fieldValue)) {
 			// 有关键字要高亮
 			List<PersonStoreVo> highlightArray = SolrBeanUtils.highlightVoList(array, PersonStoreVo.class, fieldValue);
@@ -129,17 +129,7 @@ public class PersonStoreServiceImpl implements IPersonStoreService{
 		} else {
 			vo.setArray(array);
 		}
-		return convertPersonStoreVoToJson(vo);
-	}
-	
-	private String convertPersonStoreVoToJson(PagingObject<PersonStoreVo> vo){
-		JSONObject root = new JSONObject();
-		root.element("paging", vo.getPaging());
-		//转json
-		String datas=JSONArray.fromObject(vo.getArray()).toString();
-		root.element("datas", datas);
-		//logger.info("datas:"+datas);
-		return root.toString();
+		return JSonUtils.toJson(vo);
 	}
 	
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)

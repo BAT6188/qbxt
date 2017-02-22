@@ -9,6 +9,7 @@ import java.util.Set;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -107,10 +108,12 @@ public class SolrBeanUtils {
 		if (property.equals("InfoType")) {
 			// 如果是InfoType类型，获得getTypeName属性值，付给目标对象
 			InfoType infoType = (InfoType) PropertyUtils.getSimpleProperty(sourceInstance, QueryBean.INFOTYPE);
-			if (null == infoType) {
-				// logger.error("InfoType为空："+(infoType==null));
-				throw new RuntimeException("InfoType为空");
-			}
+			//使用ObjectUtils
+			InfoType defaultValue=new InfoType();
+			defaultValue.setId(System.currentTimeMillis()+"");
+			defaultValue.setTypeName("");
+			//设置一个默认值
+			infoType=(InfoType) ObjectUtils.defaultIfNull(infoType, defaultValue);
 			propertyValue = getStringValue(infoType.getTypeName());
 		} else if (property.equals("String")) {
 			// 如果是string类型，直接付给目标对象
