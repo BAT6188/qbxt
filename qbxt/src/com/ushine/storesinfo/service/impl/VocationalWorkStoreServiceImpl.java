@@ -22,6 +22,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.dom4j.Element;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
@@ -41,6 +42,8 @@ import com.ushine.core.verify.session.UserSessionMgr;
 import com.ushine.dao.IBaseDao;
 import com.ushine.luceneindex.index.StoreIndexQuery;
 import com.ushine.luceneindex.index.VocationalWorkStoreNRTSearch;
+import com.ushine.solr.factory.SolrServerFactory;
+import com.ushine.solr.service.IVocationalStoreSolrService;
 import com.ushine.storesinfo.model.InfoType;
 import com.ushine.storesinfo.model.VocationalWorkStore;
 import com.ushine.storesinfo.service.IInfoTypeService;
@@ -66,13 +69,12 @@ public class VocationalWorkStoreServiceImpl implements IVocationalWorkStoreServi
 	private IBaseDao fileNamesDao;
 	@Autowired
 	private IInfoTypeService infoTypeService;
-	//
-	private VocationalWorkStoreNRTSearch nrtSearch = VocationalWorkStoreNRTSearch.getInstance();
-
+	@Autowired IVocationalStoreSolrService solrService;
+	HttpSolrServer server=SolrServerFactory.getVWSSolrServerInstance();
 	public boolean saveVocationalWork(VocationalWorkStore vocationalWork) throws Exception {
 		// 新增
 		baseDao.save(vocationalWork);
-		nrtSearch.addIndex(vocationalWork);
+		solrService.addDocumentByStore(server, vocationalWork);
 		return true;
 	}
 
@@ -81,7 +83,7 @@ public class VocationalWorkStoreServiceImpl implements IVocationalWorkStoreServi
 		baseDao.save(list);
 		// 更新多个索引
 		logger.info("正在添加" + list.size() + "条索引");
-		nrtSearch.addIndex(list);
+		solrService.addDocumentByStores(server, list);
 		logger.info("添加" + list.size() + "条索引完成");
 		return false;
 	}
@@ -192,7 +194,7 @@ public class VocationalWorkStoreServiceImpl implements IVocationalWorkStoreServi
 			baseDao.save(list);
 			// 更新多个索引
 			logger.info("正在添加" + list.size() + "条索引");
-			nrtSearch.addIndex(list);
+			solrService.addDocumentByStores(server, list);
 			logger.info("添加" + list.size() + "条索引完成");
 			// 结束
 			long end = System.currentTimeMillis();
@@ -322,7 +324,7 @@ public class VocationalWorkStoreServiceImpl implements IVocationalWorkStoreServi
 			baseDao.save(list);
 			// 更新多个索引
 			logger.info("正在添加" + list.size() + "条索引");
-			nrtSearch.addIndex(list);
+			solrService.addDocumentByStores(server, list);
 			logger.info("添加" + list.size() + "条索引完成");
 			// 结束
 			long end = System.currentTimeMillis();
@@ -403,101 +405,6 @@ public class VocationalWorkStoreServiceImpl implements IVocationalWorkStoreServi
 		}
 	}
 
-	// 多条件查询
-	@Transactional(readOnly = true)
-	private DetachedCriteria getCondition(String field, String fieldValue, String startTime, String endTime,
-			int nextPage, int size, String uid, String oid, String did) throws Exception {
-		DetachedCriteria criteria = DetachedCriteria.forClass(VocationalWorkStore.class);
-		if (!StringUtil.isNull(field) && !StringUtil.isNull(fieldValue) && field.equals("anyField")) {
-			// 字段任意筛选查询
-			// 利用SQL语句查询时出现 no dialect mapping for JDBC type：原因是不支持longgext类型
-			/*
-			 * list=baseDao.findBySql(
-			 * "SELECT * from t_vocationalwork_store where DOC_NAME like '%"
-			 * +fieldValue+ "%' or DOC_NUMBER like '%"+fieldValue+
-			 * "%' or THE_ORIGINAL like '%"+fieldValue+"%'");
-			 */
-
-			// 利用hql语句查询
-			// or time = '"+fieldValue+"'
-			/*
-			 * list=baseDao.findByHql(
-			 * "from VocationalWorkStore where docName like '%"+fieldValue+
-			 * "%' or " + "docNumber like '%"+fieldValue+
-			 * "%' or infoType like '%"+fieldValue+"%'and action <>'3'");
-			 */
-
-			// 要用or进行查询
-			// 如果是add则转成了and关键字所以查出的结果为0
-			if (stringToDate(fieldValue)) {
-				// 包含日期的
-				criteria.createAlias("involvedInTheField", "field").createAlias("infoType", "i")
-						.add(Restrictions.or(Restrictions.like("field.typeName", "%" + fieldValue + "%"),
-								Restrictions.or(Restrictions.like("theOriginal", "%" + fieldValue + "%"),
-										Restrictions.or(
-												Restrictions.or(Restrictions.like(
-														"docName", "%" + fieldValue + "%"),
-														Restrictions.like("docNumber",
-																"%" + fieldValue + "%")),
-												Restrictions.or(Restrictions.like("time", "%" + fieldValue + "%"),
-														Restrictions.like("i.typeName", "%" + fieldValue + "%"))))));
-			} else {
-				// 不含日期
-				criteria.createAlias("involvedInTheField", "field")
-						.createAlias("infoType",
-								"i")
-						.add(Restrictions
-								.or(Restrictions.like("field.typeName",
-										"%" + fieldValue
-												+ "%"),
-										Restrictions.or(Restrictions.like("theOriginal", "%" + fieldValue + "%"),
-												Restrictions.or(
-														Restrictions.or(
-																Restrictions.like("docName", "%" + fieldValue + "%"),
-																Restrictions.like("docNumber", "%" + fieldValue + "%")),
-														Restrictions.like("i.typeName", "%" + fieldValue + "%")))));
-			}
-		} else {
-			if (!StringUtil.isNull(field) && !StringUtil.isNull(fieldValue) && !field.equals("anyField")) {
-				// 按单个字段查
-				if (!StringUtil.isNull(field) && !StringUtil.isNull(fieldValue) && !field.equals("infoType")) {
-					// 类别不能直接设置值
-					criteria.add(Restrictions.like(field, "%" + fieldValue + "%"));
-				}
-				if (!StringUtil.isNull(field) && !StringUtil.isNull(fieldValue) && field.equals("infoType")) {
-					// 如果是类别
-					// 使用createAlias来创建属性别名,然后引用别名进行条件查询
-					criteria.createAlias("infoType", "i").add(Restrictions.like("i.typeName", "%" + fieldValue + "%"));
-				}
-			}
-		}
-
-		if (!StringUtil.isNull(startTime) && startTime.length() >= 10) {
-			startTime = startTime.substring(0, 10) + " 00:00:00";
-			criteria.add(Restrictions.ge("createDate", startTime));
-		}
-		if (!StringUtil.isNull(endTime) && endTime.length() >= 10) {
-			endTime = endTime.substring(0, 10) + " 23:59:59";
-			criteria.add(Restrictions.le("createDate", endTime));
-		}
-		if (!StringUtil.isNull(uid)) {
-			criteria.add(Restrictions.eq("uid", uid));
-		}
-		if (!StringUtil.isNull(oid)) {
-			criteria.add(Restrictions.eq("oid", oid));
-		}
-		if (!StringUtil.isNull(did)) {
-			criteria.add(Restrictions.eq("did", did));
-		}
-		// 查询时ACTION为1或者为2
-		// 不等于3,not equals
-		criteria.add(Restrictions.ne("action", "3"));
-		// criteria.add(Restrictions.sqlRestriction("action=1 or action=2"));
-		// criteria.add(Restrictions.like("action", "1"));
-		// criteria.add(Restrictions.like("action", "2"));
-		return criteria;
-	}
-
 	/**
 	 * 把业务文档集合转成json
 	 * 
@@ -550,7 +457,7 @@ public class VocationalWorkStoreServiceImpl implements IVocationalWorkStoreServi
 			// 执行删除
 			baseDao.executeHql(hql);
 			// 删除索引
-			nrtSearch.deleteIndex(storeIds);
+			solrService.deleteDocumentByIds(server, storeIds);
 			return true;
 		} catch (Exception e) {
 			return false;
@@ -561,7 +468,7 @@ public class VocationalWorkStoreServiceImpl implements IVocationalWorkStoreServi
 		String id = vocationalWorkStore.getId();
 		// 更新业务文档
 		baseDao.update(vocationalWorkStore);
-		nrtSearch.updateIndex(id, vocationalWorkStore);
+		solrService.updateDocumentByStore(server, id, vocationalWorkStore);
 		return false;
 	}
 
@@ -605,26 +512,7 @@ public class VocationalWorkStoreServiceImpl implements IVocationalWorkStoreServi
 				result = true;
 				logger.info(fileName + "已经存在于数据库中");
 			}
-			// SELECT COUNT(id) from t_vocationalwork_store where FILENAME
-			// ='报告(9371)号———测试文档580.doc' and ACTION<>'3';
-			// 判断是否已经保存了文件
-			/*
-			 * String sql=String.format(
-			 * "SELECT COUNT(ID) FROM t_vocationalwork_store WHERE FILENAME='%s' AND ACTION<>'3'"
-			 * , fileName); Integer
-			 * count=Integer.parseInt(baseDao.getRows(sql).toString()); if
-			 * (count>0) { result=true; logger.info(fileName+"已经存在于数据库中"); }
-			 */
-			//
-
-			/*
-			 * DetachedCriteria criteria =
-			 * DetachedCriteria.forClass(VocationalWorkStore.class); //没被删除
-			 * criteria.add(Restrictions.eq("fileName",
-			 * fileName)).add(Restrictions.ne("action", "3")); int restus =
-			 * baseDao.getRowCount(criteria); if(restus>0){ result=true;
-			 * logger.info(fileName+"已经存在于数据库中"); }
-			 */
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -793,149 +681,5 @@ public class VocationalWorkStoreServiceImpl implements IVocationalWorkStoreServi
 		}
 		return result;
 	}
-
-	@Override
-	public String identifyAndSaveServiceDoc(String url, ExecutorService importService, String targetFolder,
-			String typeName) throws Exception {
-		/**
-		 * 导入、识别、保存、创建索引
-		 */
-		try {
-			SmbFileUtils utils = new SmbFileUtils();
-			logger.info("正在拷贝文件");
-			utils.copySmbWordToDir(url, targetFolder);
-			logger.info("拷贝文件结束");
-			// 识别、保存、做索引
-
-			return new ViewObject(ViewObject.RET_SUCCEED, "success").toJSon();
-		} catch (Exception e) {
-			e.printStackTrace();
-			logger.error("拷贝出现异常");
-			return new ViewObject(ViewObject.RET_ERROR, "exception").toJSon();
-		} finally {
-			importService.shutdown();
-			// 删除临时文件夹
-
-		}
-	}
-
-	/**
-	 * 提交给一个FutureTask执行
-	 */
-	// ThreadLocal<FutureTask<String>> futureTaskLocal = new
-	// ThreadLocal<FutureTask<String>>();
-	// ThreadLocal<Future<String>> futureLocal = new
-	// ThreadLocal<Future<String>>();
-	// ThreadLocal<ExecutorService> serviceLocal = new
-	// ThreadLocal<ExecutorService>();
-	// Future<String> future=null;
-	FutureTask<String> futureTask = null;
-
-	@Override
-	public void identifyAndSave(final String url, final String destDir, final String typeName) {
-		final ExecutorService service = Executors.newSingleThreadExecutor();
-		try {
-			futureTask = new FutureTask<String>(new Callable<String>() {
-				@Override
-				public String call() throws Exception {
-					try {
-						logger.info("拷贝文件到目录：" + destDir);
-						logger.info("拷贝文件开始");
-						// SmbFileUtils utils = new SmbFileUtils();
-						// utils.copySmbWordToDir(url, destDir);
-						FileUtils.copyDirectoryToDirectory(new File(url), new File(destDir));
-						logger.info("拷贝文件结束");
-						return new ViewObject(ViewObject.RET_SUCCEED, "identify_save_succes").toJSon();
-					} catch (Exception e) {
-						e.printStackTrace();
-						return new ViewObject(ViewObject.RET_ERROR, "identify_save_exception").toJSon();
-					} finally {
-						service.shutdown();
-					}
-				}
-			});
-			service.submit(futureTask);
-			// logger.info("======执行线程：======"+Thread.currentThread().getName());
-
-			/*
-			 * future = service.submit(new Callable<String>() {
-			 * 
-			 * @Override public String call() throws Exception { try {
-			 * logger.info("拷贝文件到目录："+destDir); logger.info("拷贝文件开始");
-			 * SmbFileUtils utils = new SmbFileUtils();
-			 * utils.copySmbWordToDir(url, destDir); logger.info("拷贝文件结束");
-			 * return new ViewObject(ViewObject.RET_SUCCEED,
-			 * "identify_save_succes").toJSon(); } catch (Exception e) {
-			 * e.printStackTrace(); return new ViewObject(ViewObject.RET_ERROR,
-			 * "identify_save_exception").toJSon(); } } });
-			 */
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	@Override
-	public String monitorExecutorService() throws Exception {
-		// logger.info("======监测线程：======"+Thread.currentThread().getName());
-		/*
-		 * String result=new ViewObject(ViewObject.RET_DOING,
-		 * "executing").toJSon(); FutureTask<String>
-		 * futureTask=futureTaskLocal.get(); if (futureTask!=null) {
-		 * //logger.info("======futureTask 当前为 null======"); return
-		 * futureTask.get(); }else{ return result; }
-		 */
-		logger.info("监测futureTsk执行状态，是否执行完毕：" + futureTask.isDone());
-		return futureTask.get();
-		/*
-		 * String result=new ViewObject(ViewObject.RET_DOING,
-		 * "executing").toJSon();; ScheduledExecutorService
-		 * service=Executors.newSingleThreadScheduledExecutor();
-		 * service.scheduleAtFixedRate(new Runnable() {
-		 * 
-		 * @Override public void run() {
-		 * 
-		 * if(futureTask.isDone()){ try { String temp=futureTask.get(); } catch
-		 * (Exception e) { e.printStackTrace(); } } } }, 0, 5000,
-		 * TimeUnit.MILLISECONDS);
-		 */
-	}
-
 }
 
-class MonitorFutureTask implements Runnable {
-	private FutureTask<String> monitoFutureTask;
-
-	private String result;
-
-	public String getResult() {
-		return result;
-	}
-
-	public void setResult(String result) {
-		this.result = result;
-	}
-
-	public FutureTask<String> getMonitoFutureTask() {
-		return monitoFutureTask;
-	}
-
-	public void setMonitoFutureTask(FutureTask<String> monitoFutureTask) {
-		this.monitoFutureTask = monitoFutureTask;
-	}
-
-	public MonitorFutureTask(FutureTask<String> _monitoFutureTask) {
-		this.monitoFutureTask = _monitoFutureTask;
-	}
-
-	@Override
-	public void run() {
-		try {
-			if (monitoFutureTask.isDone()) {
-				setResult(monitoFutureTask.get());
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-	}
-}

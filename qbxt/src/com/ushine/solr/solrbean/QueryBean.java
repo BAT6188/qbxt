@@ -16,11 +16,14 @@ import com.ushine.solr.util.SolrDateUtils;
 public class QueryBean {
 	private static Logger logger=Logger.getLogger(QueryBean.class);
 	
-	public static final String INFOTYPE="infoType";
 	/**
 	 * id属性常量
 	 */
 	public static final String ID="id";
+	/**
+	 * 所属类别字段常量infoType
+	 */
+	public static final String INFOTYPE="infoType";
 	/**
 	 * 人员solr的id
 	 */
@@ -37,6 +40,14 @@ public class QueryBean {
 	 * 业务文档库默认的查询字段
 	 */
 	public static final String VOCATIONALWORKSTOREALL = "vocationalWorkStoreAll";
+	/**
+	 * 外来文档solr索引主键字段outsideDocId
+	 */
+	public static final String OUTSIDEDOC_ID="outsideDocId";
+	/**
+	 * 外来文档默认的查询字段
+	 */
+	public static final String OUTSIDEDOCALL="outsidedocstoreAll";
 	
 	/**
 	 * 常量字段createDate
@@ -45,16 +56,16 @@ public class QueryBean {
 	/**
 	 * 高亮前缀
 	 */
-	public static String HIGHLIGHT_PRE="<span style='background-color:#ffd73a'>";
+	public static final String HIGHLIGHT_PRE="<span style='background-color:#ffd73a'>";
 	/**
 	 * 高亮后缀
 	 */
-	public static String HIGHLIGHT_POST="</span>";
+	public static final String HIGHLIGHT_POST="</span>";
 	
 	/**
 	 * 双引号，精确查询使用
 	 */
-	public static String QUOTATION_MARK="\"";
+	public static final String QUOTATION_MARK="\"";
 	/**
 	 * 无参私有化
 	 */

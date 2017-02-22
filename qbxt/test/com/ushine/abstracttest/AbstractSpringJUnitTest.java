@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 @ContextConfiguration(locations = "/applicationContext.xml")
 @TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = false)
 @Transactional
-public abstract class AbstractSpringJUnitTest<T> {
+public abstract class AbstractSpringJUnitTest<T> extends AbstractAssert {
 	protected Logger logger=Logger.getLogger(AbstractSpringJUnitTest.class);
 	protected HttpSolrServer server;
 	//不能@Autowired ISolrService

@@ -4,7 +4,7 @@ import org.apache.solr.client.solrj.impl.HttpSolrServer;
 
 import com.ushine.common.config.Configured;
 /**
- * 工厂类，创建每个solr索引Server的单例
+ * 工厂类，获得每个solr索引Server的单例
  * @author dh
  *
  */
@@ -20,24 +20,39 @@ public class SolrServerFactory {
 	 */
 	private final static String VWSSOLRURL = Configured.getInstance().get("vocationalWorkStoreUrl");
 	private static HttpSolrServer vwsSolrServer=null;
-	
+	/**
+	 * 外来文档的solr地址
+	 */
+	private final static String ODSSOLRURL = Configured.getInstance().get("outsideDocStoreUrl");
+	private static HttpSolrServer odsSolrServer=null;
+	/**
+	 * 静态代码块，类初始化时加载，只加载一次且线程安全
+	 */
 	static{
 		psSolrServer=new HttpSolrServer(PSSOLRURL);
 		vwsSolrServer=new HttpSolrServer(VWSSOLRURL);
+		odsSolrServer=new HttpSolrServer(ODSSOLRURL);
 	}
 	
 	/**
-	 * 创建人员库的单例SolrServer
-	 * @return
+	 * 获得人员库的单例SolrServer
+	 * @return HttpSolrServer
 	 */
 	public static HttpSolrServer getPSSolrServerInstance(){
 		return psSolrServer;
 	}
 	/**
-	 * 创建业务文档库的单例SolrServer
-	 * @return
+	 * 获得业务文档库的单例SolrServer
+	 * @return HttpSolrServer
 	 */
 	public static HttpSolrServer getVWSSolrServerInstance(){
 		return vwsSolrServer;
+	}
+	/**
+	 * 获得外来文档的单例SolrServer
+	 * @return HttpSolrServer
+	 */
+	public static HttpSolrServer getODSSolrServerInstance(){
+		return odsSolrServer;
 	}
 }

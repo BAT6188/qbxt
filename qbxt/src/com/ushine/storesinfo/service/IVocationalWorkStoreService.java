@@ -113,17 +113,7 @@ public interface IVocationalWorkStoreService {
 		 * @param docType 业务文档类别
 		 */
 		public String identifyServiceDoc(String directoryPath,String docType)throws Exception;
-		/**
-		 * 识别并保存文档
-		 * @param url 共享文件路径
-		 * @param importService ExecutorService实例
-		 * @param targetFolder 目标文件夹
-		 * @param typeName 文档类别
-		 * @return 保存后的结果
-		 * @throws Exception
-		 */
-		public String identifyAndSaveServiceDoc(String url,ExecutorService importService,
-				String targetFolder,String typeName)throws Exception;
+		
 		/**
 		 * 根据docName判断是否已经存在了文档
 		 * @param docName 文档名称
@@ -131,7 +121,4 @@ public interface IVocationalWorkStoreService {
 		 */
 		public boolean hasStoreByDocName(String docName);
 		
-		public void identifyAndSave(String ip, String destDir,String typeName)throws Exception;
-		
-		public String monitorExecutorService()throws Exception;
 }

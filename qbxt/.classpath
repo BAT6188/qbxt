@@ -36,7 +36,7 @@
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/junit-4.11.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/jxl.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/libfb303-0.9.0.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/log_manageClient.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/log_manageClient.jar" sourcepath="/log_manageClient/src"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/log4j-1.2.14.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/netty-3.6.6.Final.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/ojdbc6.jar"/>
