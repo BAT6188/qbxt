@@ -2,22 +2,14 @@ package com.ushine.storesinfo;
 
 import org.apache.log4j.Logger;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.springframework.transaction.annotation.Transactional;
 
+import com.ushine.abstracttest.AbstractSpringJUnitTest;
+import com.ushine.storesinfo.model.PersonStore;
 import com.ushine.storesinfo.service.IPersonStoreService;
 
-@Component("PersonStoreServiceImplTest")
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "/applicationContext.xml")
-@TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = false)
-@Transactional
-public class PersonStoreServiceImplTest {
+
+public class PersonStoreServiceImplTest extends AbstractSpringJUnitTest<PersonStore> {
 	
 	private Logger logger=Logger.getLogger(PersonStoreServiceImplTest.class);
 	@Autowired IPersonStoreService service;

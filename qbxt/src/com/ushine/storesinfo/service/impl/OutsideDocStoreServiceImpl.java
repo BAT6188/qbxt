@@ -39,7 +39,7 @@ import com.ushine.luceneindex.index.OutsideDocStoreNRTSearch;
 import com.ushine.luceneindex.index.StoreIndexQuery;
 import com.ushine.solr.service.IOutsideDocStoreSolrService;
 import com.ushine.solr.solrbean.QueryBean;
-import com.ushine.solr.util.JSonUtils;
+import com.ushine.solr.util.MyJSonUtils;
 import com.ushine.solr.util.SolrBeanUtils;
 import com.ushine.solr.vo.OutsideDocStoreVo;
 import com.ushine.solr.vo.PersonStoreVo;
@@ -62,13 +62,10 @@ import com.ushine.util.XmlUtils;
 @Service("outsideDocStoreServiceImpl")
 public class OutsideDocStoreServiceImpl implements IOutsideDocStoreService {
 	private Logger logger = LoggerFactory.getLogger(OutsideDocStoreServiceImpl.class);
-	@Autowired
-	private IBaseDao<OutsideDocStore, Serializable> baseDao;
-	@Autowired
-	private IInfoTypeService infoTypeService;
+	@Autowired IBaseDao<OutsideDocStore, Serializable> baseDao;
+	@Autowired IInfoTypeService infoTypeService;
 	@Autowired IOutsideDocStoreSolrService solrService;
-	@Autowired
-	private IBaseDao fileNamesDao;
+	@Autowired IBaseDao fileNamesDao;
 	
 	/**
 	 * 把外来文档集合转成json
@@ -160,7 +157,7 @@ public class OutsideDocStoreServiceImpl implements IOutsideDocStoreService {
 		} else {
 			vo.setArray(array);
 		}
-		return JSonUtils.toJson(vo);
+		return MyJSonUtils.toJson(vo);
 	}
 
 	public void delOutsideDocStore(String[] outsideDocStoreIds) throws Exception {

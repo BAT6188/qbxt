@@ -158,7 +158,7 @@ public class OutsideDocStoreSolrServiceImpl implements IOutsideDocStoreSolrServi
 			query.setStart(start).setRows(rows);
 			
 			QueryResponse response = server.query(query);
-			//转成solr bean对象PersonStoreSolr
+			//转成solr bean对象OutsideDocStoreSolr
 			SolrDocumentList sdList = response.getResults();
 			DocumentObjectBinder binder=new DocumentObjectBinder();
 			List<OutsideDocStoreSolr> beans = binder.getBeans(OutsideDocStoreSolr.class, sdList);

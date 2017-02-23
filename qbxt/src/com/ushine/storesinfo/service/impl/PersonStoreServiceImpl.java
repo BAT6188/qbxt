@@ -56,7 +56,7 @@ import com.ushine.dao.IBaseDao;
 import com.ushine.solr.factory.SolrServerFactory;
 import com.ushine.solr.service.IPersonStoreSolrService;
 import com.ushine.solr.solrbean.QueryBean;
-import com.ushine.solr.util.JSonUtils;
+import com.ushine.solr.util.MyJSonUtils;
 import com.ushine.solr.util.SolrBeanUtils;
 import com.ushine.solr.vo.PersonStoreVo;
 import com.ushine.storesinfo.model.CertificatesStore;
@@ -129,7 +129,7 @@ public class PersonStoreServiceImpl implements IPersonStoreService{
 		} else {
 			vo.setArray(array);
 		}
-		return JSonUtils.toJson(vo);
+		return MyJSonUtils.toJson(vo);
 	}
 	
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)

@@ -49,7 +49,14 @@ public class QueryBean {
 	 * 外来文档默认的查询字段
 	 */
 	public static final String OUTSIDEDOCALL="outsidedocstoreAll";
-	
+	/**
+	 * 领导讲话库solr主键
+	 */
+	public static final String LEADSPEAKSTORE_ID="leadspeakstoreId";
+	/**
+	 * 领导讲话solr中默认查询字段
+	 */
+	public static final String LEADSPEAKSTOREALL="leadspeakstoreAll";
 	/**
 	 * 常量字段createDate
 	 */
@@ -68,9 +75,9 @@ public class QueryBean {
 	 */
 	public static final String QUOTATION_MARK="\"";
 	/**
-	 * 无参私有化
+	 * 无参
 	 */
-	private QueryBean(){
+	public QueryBean(){
 		
 	}
 	/**
@@ -256,6 +263,9 @@ public class QueryBean {
 			break;
 		case "OutsideDocStore":
 			queryBuffer=initQueryBuffer(OUTSIDEDOCALL);
+			break;
+		case "LeadSpeakStore":
+			queryBuffer=initQueryBuffer(LEADSPEAKSTOREALL);
 			break;
 		}
 		//时间范围

@@ -1,5 +1,7 @@
 package com.ushine.storesinfo.service.impl;
+
 import java.util.Arrays;
+import java.util.List;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -14,13 +16,21 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ushine.common.vo.Paging;
 import com.ushine.common.vo.PagingObject;
 import com.ushine.dao.IBaseDao;
 import com.ushine.luceneindex.index.LeadSpeakStoreNRTSearch;
 import com.ushine.luceneindex.index.StoreIndexQuery;
+import com.ushine.solr.service.ILeadSpeakStoreSolrService;
+import com.ushine.solr.solrbean.QueryBean;
+import com.ushine.solr.util.MyJSonUtils;
+import com.ushine.solr.util.SolrBeanUtils;
+import com.ushine.solr.vo.LeadSpeakStoreVo;
+import com.ushine.solr.vo.OutsideDocStoreVo;
 import com.ushine.storesinfo.model.LeadSpeakStore;
 import com.ushine.storesinfo.service.ILeadSpeakStoreService;
 import com.ushine.util.StringUtil;
+
 /**
  * 领导讲话接口类
  * 
@@ -33,27 +43,20 @@ public class LeadSpeakStoreServiceImpl implements ILeadSpeakStoreService {
 	private static final Logger logger = LoggerFactory.getLogger(LeadSpeakStoreServiceImpl.class);
 	@Autowired
 	private IBaseDao<LeadSpeakStore, String> baseDao;
-	//
-	private LeadSpeakStoreNRTSearch leadSpeakStoreNRTSearch=LeadSpeakStoreNRTSearch.getInstance();
-	public void saveLeadSpeakStore(LeadSpeakStore leadSpeakStore)
-			throws Exception {
+	@Autowired
+	ILeadSpeakStoreSolrService solrService;
+
+	public void saveLeadSpeakStore(LeadSpeakStore leadSpeakStore) throws Exception {
 		// 新增
-		try {
-			//logger.info("新增LeadSpeakStore对象:" + leadSpeakStore.toString());
-			baseDao.save(leadSpeakStore);
-			//添加索引
-			leadSpeakStoreNRTSearch.addIndex(leadSpeakStore);
-		} catch (Exception e) {
-			e.printStackTrace();
-			logger.error("新增异常信息:" + e.getMessage());
-		}
+		baseDao.save(leadSpeakStore);
+		// 添加索引
+		solrService.addDocumentByStore(leadSpeakStore);
 	}
-	public LeadSpeakStore findLeadSpeakStoreById(String leadSpeakStoreId)
-			throws Exception {
+
+	public LeadSpeakStore findLeadSpeakStoreById(String leadSpeakStoreId) throws Exception {
 		// 查询
 		try {
-			LeadSpeakStore leadSpeakStore = baseDao.findById(
-					LeadSpeakStore.class, leadSpeakStoreId);
+			LeadSpeakStore leadSpeakStore = baseDao.findById(LeadSpeakStore.class, leadSpeakStoreId);
 			logger.info("查询LeadSpeakStore对象:" + leadSpeakStore.toString());
 			return leadSpeakStore;
 		} catch (Exception e) {
@@ -62,66 +65,69 @@ public class LeadSpeakStoreServiceImpl implements ILeadSpeakStoreService {
 			return null;
 		}
 	}
-	public void updateLeadSpeakStore(LeadSpeakStore leadSpeakStore)
-			throws Exception {
+
+	public void updateLeadSpeakStore(LeadSpeakStore leadSpeakStore) throws Exception {
+		baseDao.update(leadSpeakStore);
+		logger.info("更新LeadSpeakStore对象:" + leadSpeakStore.toString());
 		// 更新
-		try {
-			baseDao.update(leadSpeakStore);
-			logger.info("更新LeadSpeakStore对象:" + leadSpeakStore.toString());
-			leadSpeakStoreNRTSearch.updateIndex(leadSpeakStore.getId(), leadSpeakStore);
-		} catch (Exception e) {
-			e.printStackTrace();
-			logger.error("更新异常信息:" + e.getMessage());
-		}
+		solrService.updateDocumentByStore(leadSpeakStore.getId(), leadSpeakStore);
 	}
+
 	public void delLeadSpeakStore(String[] leadSpeakStoreIds) throws Exception {
 		// 删除
-		try {
-			StringBuffer buffer = new StringBuffer("update LeadSpeakStore set action='3' where ");
-			for (String string : leadSpeakStoreIds) {
-				buffer.append(String.format("id='%s' or ", string));
-			}
-			String hql = buffer.toString().trim();
-			// 去掉最后的or
-			hql = StringUtils.substring(hql, 0, hql.length() - 2);
-			logger.info("删除语句：" + hql);
-			// 执行删除
-			baseDao.executeHql(hql);
-			//删除多条
-			leadSpeakStoreNRTSearch.deleteIndex(leadSpeakStoreIds);
-			logger.info("删除LeadSpeakStore对象id:"+ Arrays.toString(leadSpeakStoreIds));
-		} catch (Exception e) {
-			e.printStackTrace();
-			logger.error("删除异常信息:" + e.getMessage());
+		StringBuffer buffer = new StringBuffer("update LeadSpeakStore set action='3' where ");
+		for (String string : leadSpeakStoreIds) {
+			buffer.append(String.format("id='%s' or ", string));
 		}
+		String hql = buffer.toString().trim();
+		// 去掉最后的or
+		hql = StringUtils.substring(hql, 0, hql.length() - 2);
+		logger.info("删除语句：" + hql);
+		// 执行删除
+		baseDao.executeHql(hql);
+		solrService.deleteDocumentByIds(leadSpeakStoreIds);
+		// 删除多条
+		// logger.info("删除LeadSpeakStore对象id:" +
+		// Arrays.toString(leadSpeakStoreIds));
 	}
+
 	@SuppressWarnings("unchecked")
-	public String findLeadSpeakStore(String field, String fieldValue,
-			String startTime, String endTime, int nextPage, int size,
-			String uid, String oid, String did) throws Exception {
-		logger.debug("筛选信息,field:" + field + ",fieldValue:" + fieldValue
-				+ ",startTime:" + startTime + "endTime:" + endTime + "");
+	public String findLeadSpeakStore(String field, String fieldValue, String startTime, String endTime, int nextPage, int size, String uid, String oid, String did) throws Exception {
+		logger.debug("筛选信息,field:" + field + ",fieldValue:" + fieldValue + ",startTime:" + startTime + "endTime:" + endTime + "");
 		return null;
 	}
+
 	@SuppressWarnings("unchecked")
 	@Override
-	public String findLeadSpeakStore(String field, String fieldValue, String startTime, String endTime, int nextPage,
-			int size, String uid, String oid, String did, String sortField,String dir) throws Exception {
-		//查询数据并排序
-		PagingObject<LeadSpeakStore> vo=StoreIndexQuery.findStore(field, fieldValue, 
-				startTime, endTime, nextPage, size, 
-				uid, oid, did,sortField, dir,LeadSpeakStore.class);
-		boolean hasValue=false;
-		if (StringUtil.isEmty(fieldValue)){
-			hasValue=false;
-		}else{
-			//输入了值才高亮
-			hasValue=true;
+	public String findLeadSpeakStore(String field, String fieldValue, String startTime, String endTime, int nextPage, int size, String uid, String oid, String did, String sortField, String dir)
+			throws Exception {
+		// 利用索引查询
+		if (StringUtils.equals(field, "anyField")) {
+			//任意字段查询
+			field=QueryBean.LEADSPEAKSTOREALL;
 		}
-		return StoreIndexQuery.leadSpeakStoreVoToJson(vo,hasValue);
+		QueryBean queryBean=new QueryBean(uid, oid, did, field, fieldValue, null, null, sortField,dir, startTime, endTime);
+		//查询总数
+		long totalRecord = solrService.getDocumentsCount(queryBean);
+		Paging paging = new Paging(size, nextPage, totalRecord);
+		PagingObject<LeadSpeakStoreVo> vo = new PagingObject<>();
+		vo.setPaging(paging);
+		// 集合
+		// nextPage从1开始
+		List<LeadSpeakStoreVo> array = solrService.getDocuementsVo(queryBean, (nextPage - 1) * size, size);
+		if (StringUtils.isNotBlank(fieldValue)) {
+			// 有关键字要高亮
+			List<LeadSpeakStoreVo> highlightArray = SolrBeanUtils.highlightVoList(array, LeadSpeakStoreVo.class, fieldValue);
+			vo.setArray(highlightArray);
+		} else {
+			vo.setArray(array);
+		}
+		return MyJSonUtils.toJson(vo);
 	}
+
 	/**
 	 * 领导讲话集合转成json
+	 * 
 	 * @param vo
 	 * @return
 	 */
@@ -139,12 +145,12 @@ public class LeadSpeakStoreServiceImpl implements ILeadSpeakStoreService {
 			obj.put("secretRank", store.getSecretRank());
 			obj.put("centent", store.getCentent());
 			obj.put("createDate", store.getCreateDate());
-			if(store.getInvolvedInTheField()!=null){
-				//不为空
+			if (store.getInvolvedInTheField() != null) {
+				// 不为空
 				obj.put("involvedInTheField", store.getInvolvedInTheField().getTypeName());
 			}
-			//类别不为空
-			if(store.getInfoType()!=null){
+			// 类别不为空
+			if (store.getInfoType() != null) {
 				obj.put("infoType", store.getInfoType().getTypeName());
 			}
 			array.add(obj);
@@ -152,13 +158,13 @@ public class LeadSpeakStoreServiceImpl implements ILeadSpeakStoreService {
 		root.element("datas", array);
 		return root.toString();
 	}
+
 	@Override
 	public boolean hasStoreByMeetingName(String meetingName) {
-		//判断是否存在
+		// 判断是否存在
 		try {
-			String hql=String.format("select id from LeadSpeakStore where "
-					+ "meetingName='%s' and action<>'3'", meetingName);
-			if(baseDao.findByHql(hql).size()>0){
+			String hql = String.format("select id from LeadSpeakStore where " + "meetingName='%s' and action<>'3'", meetingName);
+			if (baseDao.findByHql(hql).size() > 0) {
 				return true;
 			}
 		} catch (Exception e) {

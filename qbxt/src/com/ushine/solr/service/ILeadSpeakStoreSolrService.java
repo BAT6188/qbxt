@@ -27,5 +27,5 @@ public interface ILeadSpeakStoreSolrService extends IBaseSolrService<LeadSpeakSt
 	 * @param list
 	 * @return
 	 */
-	List<LeadSpeakStoreVo> convertToOutsideDocStoreVoList(List<LeadSpeakStoreSolr> list);
+	List<LeadSpeakStoreVo> convertToLeadSpeakStoreVoList(List<LeadSpeakStoreSolr> list);
 }

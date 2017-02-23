@@ -5,7 +5,7 @@ import com.ushine.common.vo.PagingObject;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
-public class JSonUtils {
+public class MyJSonUtils {
 	/**
 	 * PagingObject对象转json格式
 	 * @param vo PagingObject实例

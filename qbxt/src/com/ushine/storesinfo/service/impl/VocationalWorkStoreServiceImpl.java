@@ -46,7 +46,7 @@ import com.ushine.luceneindex.index.VocationalWorkStoreNRTSearch;
 import com.ushine.solr.factory.SolrServerFactory;
 import com.ushine.solr.service.IVocationalStoreSolrService;
 import com.ushine.solr.solrbean.QueryBean;
-import com.ushine.solr.util.JSonUtils;
+import com.ushine.solr.util.MyJSonUtils;
 import com.ushine.solr.util.SolrBeanUtils;
 import com.ushine.solr.vo.PersonStoreVo;
 import com.ushine.solr.vo.VocationalWorkStoreVo;
@@ -407,7 +407,7 @@ public class VocationalWorkStoreServiceImpl implements IVocationalWorkStoreServi
 		} else {
 			vo.setArray(array);
 		}
-		return JSonUtils.toJson(vo);
+		return MyJSonUtils.toJson(vo);
 	}
 	
 	/**
