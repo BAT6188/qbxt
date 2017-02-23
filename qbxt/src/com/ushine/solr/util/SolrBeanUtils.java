@@ -30,11 +30,6 @@ import com.ushine.storesinfo.model.PersonStore;
  */
 public class SolrBeanUtils {
 	private static Logger logger = Logger.getLogger(SolrBeanUtils.class);
-	private static final String INFOTYPE = "infoType";
-	private static final String CREATEDATE = "createDate";
-
-	
-
 	/**
 	 * 将dao层的bean对象转成solr索引中的对象
 	 * 
@@ -165,12 +160,8 @@ public class SolrBeanUtils {
 	 * @return 如果是null返回空串
 	 */
 	public static String getStringValue(Object propertyValue) {
-		StringBuilder buffer = new StringBuilder();
-		// 防止出现null
-		if (null != propertyValue && StringUtils.isNotBlank(propertyValue.toString())) {
-			buffer.append(propertyValue);
-		}
-		return buffer.toString();
+		Object defaultValue=ObjectUtils.defaultIfNull(propertyValue, "");
+		return defaultValue.toString();
 	}
 
 	/**
@@ -225,6 +216,7 @@ public class SolrBeanUtils {
 	 * @throws InvocationTargetException
 	 * @throws NoSuchMethodException
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static List highlightVoList(List list, Class clazz, String searchString) throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		List newList = new ArrayList<>();
 		for (Object object : list) {

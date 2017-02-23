@@ -161,7 +161,7 @@ public class LeadSpeakStoreSolrServiceImpl implements ILeadSpeakStoreSolrService
 	public List<LeadSpeakStoreVo> getDocuementsVo(QueryBean bean, int start, int rows) {
 		List<LeadSpeakStoreVo> voList = new ArrayList<LeadSpeakStoreVo>();
 		try {
-			SolrQuery query = bean.getSolrQuery(OutsideDocStore.class);
+			SolrQuery query = bean.getSolrQuery(LeadSpeakStore.class);
 			// 分页
 			query.setStart(start).setRows(rows);
 			QueryResponse response = server.query(query);

@@ -58,6 +58,14 @@ public class QueryBean {
 	 */
 	public static final String LEADSPEAKSTOREALL="leadspeakstoreAll";
 	/**
+	 * 线索solr默认查询字段
+	 */
+	public static final String CLUESTOREALL="cluestoreAll";
+	/**
+	 * 线索solr主键
+	 */
+	public static final String CLUESTORE_ID="cluestoreId";
+	/**
 	 * 常量字段createDate
 	 */
 	public static final String CREAT_EDATE = "createDate";
@@ -266,6 +274,9 @@ public class QueryBean {
 			break;
 		case "LeadSpeakStore":
 			queryBuffer=initQueryBuffer(LEADSPEAKSTOREALL);
+			break;
+		case "ClueStore":
+			queryBuffer=initQueryBuffer(CLUESTOREALL);
 			break;
 		}
 		//时间范围

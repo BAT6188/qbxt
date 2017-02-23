@@ -1,8 +1,11 @@
 package com.ushine.storesinfo.service.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.ListUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +32,11 @@ public class ClueRelationshipServiceImpl implements IClueRelationshipService{
 	private static final Logger logger = LoggerFactory.getLogger(InfoTypeServiceImpl.class);
 	@Autowired
 	private IBaseDao<ClueRelationship, String> baseDao;
+	
+	@SuppressWarnings("rawtypes")
+	@Autowired
+	private IBaseDao storeIdDao;
+	
 	@Autowired
 	private IPersonStoreService personStoreService;
 	@Autowired
@@ -172,5 +180,17 @@ public class ClueRelationshipServiceImpl implements IClueRelationshipService{
 			buffer.append(clueRelationship.getClueId()+",");
 		}
 		return buffer.toString();
+	}
+	@Override
+	public String findStoreIdByClueId(String clueId, String storeType) throws Exception {
+		String defalut="[]";
+		try {
+			List<String> list = storeIdDao.findByHql(String.format("select libraryId from ClueRelationship where clueId='%s' and dataType='%s'", clueId,storeType));
+			defalut=list.toString();
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("查询出现异常："+e.getMessage());
+		}
+		return defalut.substring(1, defalut.length()-1);
 	}
 }

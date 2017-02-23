@@ -28,8 +28,13 @@ public class SolrServerFactory {
 	/**
 	 * 领导讲话的solr地址
 	 */
-	private final static String LSSSOLRUTL=Configured.getInstance().get("leadSpeakStoreUrl");
+	private final static String LSSSOLRURL=Configured.getInstance().get("leadSpeakStoreUrl");
 	private static HttpSolrServer lssSolrServer=null;
+	/**
+	 * 线索的solr地址
+	 */
+	private static final String CSSOLRURL=Configured.getInstance().get("clueStoreUrl");
+	private static HttpSolrServer csSolrServer=null;
 	/**
 	 * 静态代码块，类初始化时加载，只加载一次且线程安全
 	 */
@@ -37,7 +42,8 @@ public class SolrServerFactory {
 		psSolrServer=new HttpSolrServer(PSSOLRURL);
 		vwsSolrServer=new HttpSolrServer(VWSSOLRURL);
 		odsSolrServer=new HttpSolrServer(ODSSOLRURL);
-		lssSolrServer=new HttpSolrServer(LSSSOLRUTL);
+		lssSolrServer=new HttpSolrServer(LSSSOLRURL);
+		csSolrServer=new HttpSolrServer(CSSOLRURL);
 	}
 	
 	/**
@@ -67,5 +73,12 @@ public class SolrServerFactory {
 	 */
 	public static HttpSolrServer getLSSSolrServerInstance(){
 		return lssSolrServer;
+	}
+	/**
+	 * 获得线索的单例SolrServer
+	 * @return HttpSolrServer
+	 */
+	public static HttpSolrServer getCSSolrServerInstance(){
+		return csSolrServer;
 	}
 }

@@ -13,6 +13,11 @@ import com.ushine.storesinfo.model.TempClueData;
  *
  */
 public interface IClueRelationshipService {
+	
+		/**
+		 * 关联的人员对象常量
+		 */
+		public static  final String PERSONSTORE_TYPE="personStore";
 		/**
 		 * 根据store的Id查找所属线索的id
 		 * @param storeId store的id
@@ -21,6 +26,14 @@ public interface IClueRelationshipService {
 		 * @throws Exception
 		 */
 		public String findCluesIdByStoreId(String storeId,String storeType)throws Exception;
+		/**
+		 * 根据线索的id查询关联该线索的StoreId
+		 * @param clueId
+		 * @param storeType
+		 * @return store的id
+		 * @throws Exception
+		 */
+		public String findStoreIdByClueId(String clueId,String storeType)throws Exception;
 		/**
 		 * 新增线索基础库关系
 		 * @param clueRelationship

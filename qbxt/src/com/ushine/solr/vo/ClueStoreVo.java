@@ -6,11 +6,11 @@ package com.ushine.solr.vo;
  */
 public class ClueStoreVo {
 
-	private String cluestoreId;
+	private String id;
 	private String clueName;//线索名称
 	private String clueSource;//线索来源
 	private String findTime;//发现时间
-	private long createDate;
+	private String createDate;
 	/**
 	 * 带参构造函数
 	 * @param cluestoreId
@@ -19,8 +19,8 @@ public class ClueStoreVo {
 	 * @param findTime
 	 * @param createDate
 	 */
-	public ClueStoreVo(String cluestoreId, String clueName, String clueSource, String findTime, long createDate) {
-		this.cluestoreId = cluestoreId;
+	public ClueStoreVo(String id, String clueName, String clueSource, String findTime, String createDate) {
+		this.id = id;
 		this.clueName = clueName;
 		this.clueSource = clueSource;
 		this.findTime = findTime;
@@ -29,11 +29,11 @@ public class ClueStoreVo {
 	public ClueStoreVo() {
 		
 	}
-	public String getCluestoreId() {
-		return cluestoreId;
+	public String getId() {
+		return id;
 	}
-	public void setCluestoreId(String cluestoreId) {
-		this.cluestoreId = cluestoreId;
+	public void setId(String id) {
+		this.id = id;
 	}
 	public String getClueName() {
 		return clueName;
@@ -53,12 +53,16 @@ public class ClueStoreVo {
 	public void setFindTime(String findTime) {
 		this.findTime = findTime;
 	}
-	public long getCreateDate() {
+	public String getCreateDate() {
 		return createDate;
 	}
-	public void setCreateDate(long createDate) {
+	@Override
+	public String toString() {
+		return "ClueStoreVo [id=" + id + ", clueName=" + clueName + ", clueSource=" + clueSource
+				+ ", findTime=" + findTime + ", createDate=" + createDate + "]";
+	}
+	public void setCreateDate(String createDate) {
 		this.createDate = createDate;
 	}
-	
 	
 }
