@@ -79,7 +79,6 @@ import net.sf.json.JSONSerializer;
 @Controller(value = "personStoreController")
 public class PersonStoreController {
 	private static final Logger logger = LoggerFactory.getLogger(PersonStoreController.class);
-	private ServletContext servletContext;
 	@Autowired
 	private IInfoTypeService infoTypeService;
 	@Autowired

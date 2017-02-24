@@ -130,4 +130,5 @@ public class SolrDateUtils {
 		}
 		return false;
 	}
+	
 }

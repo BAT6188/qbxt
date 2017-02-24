@@ -6,20 +6,27 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
+import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.beans.DocumentObjectBinder;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
+import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.common.SolrDocumentList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ushine.dao.IBaseDao;
 import com.ushine.solr.factory.SolrServerFactory;
 import com.ushine.solr.service.IClueStoreSolrService;
+import com.ushine.solr.service.IPersonStoreSolrService;
 import com.ushine.solr.solrbean.ClueStoreSolr;
-import com.ushine.solr.solrbean.LeadSpeakStoreSolr;
+import com.ushine.solr.solrbean.PersonStoreSolr;
 import com.ushine.solr.solrbean.QueryBean;
 import com.ushine.solr.util.SolrBeanUtils;
 import com.ushine.solr.vo.ClueStoreVo;
-import com.ushine.solr.vo.LeadSpeakStoreVo;
+import com.ushine.solr.vo.PersonStoreVo;
 import com.ushine.storesinfo.model.ClueStore;
+import com.ushine.storesinfo.model.PersonStore;
 import com.ushine.storesinfo.service.IClueRelationshipService;
 
 /**
@@ -35,6 +42,8 @@ import com.ushine.storesinfo.service.IClueRelationshipService;
 public class ClueStoreSolrServiceImpl implements IClueStoreSolrService {
 	@Autowired
 	IClueRelationshipService relationshipService;
+	@Autowired
+	IPersonStoreSolrService personStoreSolrService;
 	@Autowired
 	IBaseDao<ClueStore, Serializable> baseDao;
 	protected HttpSolrServer server = SolrServerFactory.getCSSolrServerInstance();
@@ -184,5 +193,69 @@ public class ClueStoreSolrServiceImpl implements IClueStoreSolrService {
 		}
 		return voList;
 	}
-
+	/**
+	 * 获得全部符合查询条件的人员
+	 * @param bean 查询条件
+	 * @return List<String> 人员的id集合
+	 */
+	protected List<String> getPersonStoreMatch(QueryBean bean){
+		List<String> personIdList=new ArrayList<>();
+		//查询全部符合的人员
+		HttpSolrServer personServer=SolrServerFactory.getPSSolrServerInstance();
+		List<PersonStoreVo> list=personStoreSolrService.getDocuementsVO(personServer, bean, 0, Integer.MAX_VALUE);
+		for (PersonStoreVo vo : list) {
+			personIdList.add(vo.getId());
+		}
+		return personIdList;
+	}
+	/**
+	 * 获得线索本身符合条件的全部集合
+	 * @param bean 查询条件
+	 * @return List<ClueStoreSolr> ClueStoreSolr集合
+	 */
+	protected List<ClueStoreSolr> getClueStoreMatch(QueryBean bean) {
+		List<ClueStoreSolr> solrList = new ArrayList<ClueStoreSolr>();
+		try {
+			solrList = getSolrList(bean);
+		} catch (Exception e) {
+			logger.error("查询数量失败");
+			e.printStackTrace();
+		}
+		return solrList;
+	}
+	/**
+	 * 获得符合条件的所有ClueStoreSolr
+	 * @param bean
+	 * @return List ClueStoreSolr集合
+	 * @throws SolrServerException
+	 */
+	private List<ClueStoreSolr> getSolrList(QueryBean bean) throws SolrServerException {
+		List<ClueStoreSolr> solrList;
+		SolrQuery query = bean.getSolrQuery(ClueStore.class);
+		// 获得线索本身符合条件的全部集合
+		query.setStart(0).setRows(Integer.MAX_VALUE);
+		QueryResponse response = server.query(query);
+		// 转成solr bean对象ClueStoreSolr
+		SolrDocumentList sdList = response.getResults();
+		DocumentObjectBinder binder = new DocumentObjectBinder();
+		solrList = binder.getBeans(ClueStoreSolr.class, sdList);
+		return solrList;
+	}
+	
+	@SuppressWarnings("unchecked")
+	protected List<ClueStoreSolr> getClueStoreNotMatch(QueryBean bean) {
+		List<ClueStoreSolr> notMatchList=new ArrayList<ClueStoreSolr>();
+		try {
+			QueryBean totalQueryBean=new QueryBean();
+			//其他条件为null
+			totalQueryBean.setStartDate("1970-01-01");
+			totalQueryBean.setEndDate("");
+			List<ClueStoreSolr> totalList=getSolrList(totalQueryBean);
+			notMatchList=(List<ClueStoreSolr>) CollectionUtils.subtract(totalList, getClueStoreMatch(bean));
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("获得不符合条件的线索库异常："+e.getMessage());
+		}
+		return notMatchList;
+	}
 }
