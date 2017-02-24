@@ -32,6 +32,7 @@ Ext.require([
 	'Ushine.utils.CluesTempDataGridPanel',
 	'Ushine.cluesInfo.CluePerson',
 	'Ushine.cluesInfo.CluePersonInfoGridPanel',
+	'Ushine.utils.SelectExistingDataGridPanel',
 	'Ushine.utils.PersonStoreFileGridPanel',
 	'Ushine.personInfo.PersonInfos',
 	'Ushine.personInfo.PersonInfoManage',

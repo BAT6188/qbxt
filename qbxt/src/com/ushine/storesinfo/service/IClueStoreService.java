@@ -21,6 +21,13 @@ public interface IClueStoreService {
 		 */
 		public boolean saveClue(ClueStore clueStore)throws Exception;
 		/**
+		 * 新增线索
+		 * @param clueStore ClueStore对象
+		 * @param number String类型，在添加关联其他库时设置的
+		 * @throws Exception
+		 */
+		public void saveClue(ClueStore clueStore,String number)throws Exception;
+		/**
 		 * 修改线索
 		 * @param clueStore
 		 * @return

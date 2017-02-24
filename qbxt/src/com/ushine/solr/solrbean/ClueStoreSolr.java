@@ -1,22 +1,36 @@
 package com.ushine.solr.solrbean;
+
+import org.apache.solr.client.solrj.beans.Field;
+
 /**
  * 线索对应的solrbean
  * @author dh
  *
  */
 public class ClueStoreSolr {
+	@Field
 	private String cluestoreId;
+	@Field
 	private String clueName;//线索名称
+	@Field
 	private String clueSource;//线索来源
+	@Field
 	private String findTime;//发现时间
+	@Field
 	private String clueContent;//线索内容
+	@Field
 	private String arrangeAndEvolveCondition;//工作部署及进展情况
+	@Field
 	private String uid; // 创建人
+	@Field
 	private String oid; // 组织
+	@Field
 	private String did; // 部门
 	//当前数据创建时间
+	@Field
 	private long createDate;
 	//关联的人员id集合
+	@Field
 	private String personId;
 	
 	public ClueStoreSolr() {

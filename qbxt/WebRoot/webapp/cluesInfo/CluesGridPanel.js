@@ -57,13 +57,6 @@ Ext.define('Ushine.cluesInfo.CluesGridPanel',{
 		});
 		this.columns=[
 		    {text:'id',dataIndex:'id',flex: 1,menuDisabled:true,hidden:true},
-		    /*{text: '是否启用',  dataIndex: 'isEnable',id:'isEnable',sortable: false,flex: 1,menuDisabled:true,renderer:function(value){
-		    	if(value == '1'){
-					return "否";
-				}else{
-					return "是";
-				}
-			}},*/
 		    {text: '线索名称',  dataIndex: 'clueName',sortable: true,flex: 2,menuDisabled:true},
 		    {text: '线索来源',  dataIndex: 'clueSource',sortable: true,flex: 2,menuDisabled:true},
 		    {text: '发现时间',  dataIndex: 'findTime',sortable: true,flex: 2,menuDisabled:true},
@@ -76,6 +69,7 @@ Ext.define('Ushine.cluesInfo.CluesGridPanel',{
 		    	items:[{
 		            icon: 'images/user-red.png',
 		            tooltip: '人员对象',
+		            iconCls:'personStore',
 		            style:'margin-left:20px;',
 		            handler: function(grid, rowIndex, colIndex){
 		            	var data = self.store.getAt(rowIndex).data;   //选中一行的数据
@@ -109,6 +103,7 @@ Ext.define('Ushine.cluesInfo.CluesGridPanel',{
 	             menuDisabled:true,
 	             renderer:function(value){
 	            	 var self = this;
+	            	 
 	            	 //分割成数组
 	            	 var icon = value.split(",");
 	            		 var c =[];
@@ -120,7 +115,7 @@ Ext.define('Ushine.cluesInfo.CluesGridPanel',{
 	            			 self.items[0].icon ="images/user-red1.png";
 	            		 }
 	            		 
-	            		 //显示线索涉及对象组织图标
+	            		/* //显示线索涉及对象组织图标
 	            		 c = icon[1].split(":");
 	            		 if(c[1]=='true'){
 	            			self.items[1].icon ="images/briefcase.png";
@@ -134,7 +129,7 @@ Ext.define('Ushine.cluesInfo.CluesGridPanel',{
 	            			self.items[2].icon ="images/inbox-document-text.png";
 	            		 }else{
 	            			 self.items[2].icon ="images/inbox-document-text1.png";
-	            		 }
+	            		 }*/
 		        }
 		    },
 		    {text: '下载',sortable: false,align:'center',flex:0.5,xtype:'actioncolumn',

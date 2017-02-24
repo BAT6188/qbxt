@@ -32,11 +32,19 @@ import com.ushine.dao.IBaseDao;
 import com.ushine.luceneindex.index.ClueStoreNRTSearch;
 import com.ushine.luceneindex.index.StoreIndexQuery;
 import com.ushine.solr.service.IClueStoreSolrService;
+import com.ushine.solr.solrbean.QueryBean;
+import com.ushine.solr.util.MyJSonUtils;
+import com.ushine.solr.util.SolrBeanUtils;
+import com.ushine.solr.vo.ClueStoreVo;
+import com.ushine.solr.vo.PersonStoreVo;
 import com.ushine.storesinfo.model.ClueStore;
 import com.ushine.storesinfo.model.InfoType;
 import com.ushine.storesinfo.model.PersonStore;
+import com.ushine.storesinfo.model.TempClueData;
 import com.ushine.storesinfo.model.WebsiteJournalStore;
+import com.ushine.storesinfo.service.IClueRelationshipService;
 import com.ushine.storesinfo.service.IClueStoreService;
+import com.ushine.storesinfo.service.ITempClueDataService;
 import com.ushine.util.StringUtil;
 
 /**
@@ -55,18 +63,39 @@ public class ClueStoreServiceImpl implements IClueStoreService {
 	private IBaseDao<PersonStore, String> dao;
 	@Autowired
 	IClueStoreSolrService solrService;
+	@Autowired
+	ITempClueDataService tempClueDataService;
+	@Autowired
+	IClueRelationshipService relationshipService;
 
 	public boolean saveClue(ClueStore clueStore) throws Exception {
-		baseDao.save(clueStore);
+
 		// 添加索引
 		solrService.addDocumentByStore(clueStore);
+		String personId = relationshipService.findStoreIdByClueId(clueStore.getId(),
+				IClueRelationshipService.PERSONSTORE_TYPE);
+		logger.error("提交到hibernate时personId：" + personId);
 		return true;
+	}
+
+	@Override
+	public void saveClue(ClueStore clueStore, String number) throws Exception {
+		baseDao.save(clueStore);
+		// 获得临时的关联信息
+		List<TempClueData> clueDatas = tempClueDataService.findTempClueData(number);
+		//关联
+		relationshipService.saveClueRelationship(clueStore.getId(),clueDatas);
+		//添加索引
+		solrService.addDocumentByStore(clueStore);
+		//删除临时表数据
+		tempClueDataService.delTempCluDataByAction(number);
 	}
 
 	public boolean updateClue(ClueStore clueStore) throws Exception {
 		baseDao.update(clueStore);
 		// 更新索引
 		solrService.updateDocumentByStore(clueStore.getId(), clueStore);
+
 		return true;
 	}
 
@@ -80,15 +109,30 @@ public class ClueStoreServiceImpl implements IClueStoreService {
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
-	public String findClueStore(String field, String fieldValue, String startTime, String endTime, int nextPage, int size, String uid, String oid, String did, String sortField, String dir)
-			throws Exception {
+	public String findClueStore(String field, String fieldValue, String startTime, String endTime, int nextPage,
+			int size, String uid, String oid, String did, String sortField, String dir) throws Exception {
 		// 按索引查询
-		boolean hasValue = false;
-		if (!StringUtil.isEmty(fieldValue)) {
-			hasValue = true;
+		if (StringUtils.equals(field, "anyField")) {
+			// 任意字段查询
+			field = QueryBean.CLUESTOREALL;
 		}
-		PagingObject<ClueStore> vo = StoreIndexQuery.findStore(field, fieldValue, startTime, endTime, nextPage, size, uid, oid, did, sortField, dir, ClueStore.class);
-		return StoreIndexQuery.clueStoreVoToJson(vo, hasValue);
+		QueryBean queryBean = new QueryBean(uid, oid, did, field, fieldValue, null, null, sortField, dir, startTime,
+				endTime);
+		long totalRecord = solrService.getDocumentsCount(queryBean);
+		Paging paging = new Paging(size, nextPage, totalRecord);
+		PagingObject<ClueStoreVo> vo = new PagingObject<>();
+		vo.setPaging(paging);
+		//
+		// nextPage从1开始
+		List<ClueStoreVo> array = solrService.getDocuementsVo(queryBean, (nextPage - 1) * size, size);
+		if (StringUtils.isNotBlank(fieldValue)) {
+			// 有关键字要高亮
+			List<ClueStoreVo> highlightArray = SolrBeanUtils.highlightVoList(array, ClueStoreVo.class, fieldValue);
+			vo.setArray(highlightArray);
+		} else {
+			vo.setArray(array);
+		}
+		return MyJSonUtils.toJson(vo);
 	}
 
 	public boolean delClueStoreByIds(String[] ids) throws Exception {
@@ -111,7 +155,8 @@ public class ClueStoreServiceImpl implements IClueStoreService {
 	@Transactional(readOnly = true)
 	public List findById(String id) throws Exception {
 		// TODO Auto-generated method stub
-		String sql = "SELECT * FROM T_PERSON_STORE  AS P LEFT JOIN T_CLUE_RELATIONSHIP  R ON (R.`LIBRARY_ID`=P.`ID`) LEFT JOIN T_CLUE_STORE  C ON(C.`ID`=R.`CLUE_ID`) WHERE C.`ID` = '" + id + "' ";
+		String sql = "SELECT * FROM T_PERSON_STORE  AS P LEFT JOIN T_CLUE_RELATIONSHIP  R ON (R.`LIBRARY_ID`=P.`ID`) LEFT JOIN T_CLUE_STORE  C ON(C.`ID`=R.`CLUE_ID`) WHERE C.`ID` = '"
+				+ id + "' ";
 		List list = baseDao.findBySqlAnPersonStore(sql, PersonStore.class, 0, 2);
 		// Object list = baseDao.getRows(sql);
 		// int a = Integer.parseInt(l);
@@ -122,7 +167,8 @@ public class ClueStoreServiceImpl implements IClueStoreService {
 	/**
 	 * 根据clueid查询相关联的人员
 	 */
-	public PagingObject<PersonStore> findCluePersonStore(String clueId, String field, String fieldValue, String startTime, String endTime, int nextPage, int size) throws Exception {
+	public PagingObject<PersonStore> findCluePersonStore(String clueId, String field, String fieldValue,
+			String startTime, String endTime, int nextPage, int size) throws Exception {
 		String checkArr = personCheckArr(field, fieldValue, startTime, endTime);
 		// 拼接sql语句 分页查询数据
 		StringBuffer sbSql = new StringBuffer();
@@ -142,14 +188,16 @@ public class ClueStoreServiceImpl implements IClueStoreService {
 		Paging paging = new Paging(size, nextPage, rowCount);
 		logger.debug("分页信息：" + JSONObject.fromObject(paging));
 		@SuppressWarnings("unchecked")
-		List<PersonStore> list = baseDao.findBySqlAnPersonStore(sbSql.toString(), PersonStore.class, size, paging.getStartRecord());
+		List<PersonStore> list = baseDao.findBySqlAnPersonStore(sbSql.toString(), PersonStore.class, size,
+				paging.getStartRecord());
 		PagingObject<PersonStore> vo = new PagingObject<PersonStore>();
 		vo.setArray(list);
 		vo.setPaging(paging);
 		return vo;
 	}
 
-	public PagingObject<WebsiteJournalStore> findClueWebsiteJournalStore(String clueId, String field, String fieldValue, String startTime, String endTime, int nextPage, int size) throws Exception {
+	public PagingObject<WebsiteJournalStore> findClueWebsiteJournalStore(String clueId, String field, String fieldValue,
+			String startTime, String endTime, int nextPage, int size) throws Exception {
 		String checkArr = websiteJournalCheckArr(field, fieldValue, startTime, endTime);
 		StringBuffer sbSql = new StringBuffer();
 		sbSql.append(" SELECT * FROM T_WEBSITE_JOURNAL_STORE  AS W ");
@@ -168,7 +216,8 @@ public class ClueStoreServiceImpl implements IClueStoreService {
 		Paging paging = new Paging(size, nextPage, rowCount);
 		logger.debug("分页信息：" + JSONObject.fromObject(paging));
 		@SuppressWarnings("unchecked")
-		List<WebsiteJournalStore> list = baseDao.findBySqlAnWebsiteJournalStore(sbSql.toString(), WebsiteJournalStore.class, size, paging.getStartRecord());
+		List<WebsiteJournalStore> list = baseDao.findBySqlAnWebsiteJournalStore(sbSql.toString(),
+				WebsiteJournalStore.class, size, paging.getStartRecord());
 		PagingObject<WebsiteJournalStore> vo = new PagingObject<WebsiteJournalStore>();
 		vo.setArray(list);
 		vo.setPaging(paging);
@@ -181,28 +230,31 @@ public class ClueStoreServiceImpl implements IClueStoreService {
 		// workUnit,personName,nameUsedBefore,englishName,bebornTime
 		if (!StringUtil.isNull(field) && !StringUtil.isNull(fieldValue)) {
 			if ("anyField".equals(field)) {
-				sb.append("   AND P.`WORK_UNIT` like '%" + fieldValue + "%'  ").append("   OR P.`PERSON_NAME` like '%" + fieldValue + "%'  ")
-						.append("   OR P.`NAME_USED_BEFORE` like '%" + fieldValue + "%'  ").append("   OR P.`ENGLISH_NAME` like '%" + fieldValue + "%'  ")
-						.append("   OR P.`PRESENT_ADDRESS` like '%" + fieldValue + "%'  ").append("   OR P.`REGISTER_ADDRESS` like '%" + fieldValue + "%'  ")
-						// .append("   OR P.`BEBORN_TIME` like '%"+fieldValue+"%'  ")
+				sb.append("   AND P.`WORK_UNIT` like '%" + fieldValue + "%'  ")
+						.append("   OR P.`PERSON_NAME` like '%" + fieldValue + "%'  ")
+						.append("   OR P.`NAME_USED_BEFORE` like '%" + fieldValue + "%'  ")
+						.append("   OR P.`ENGLISH_NAME` like '%" + fieldValue + "%'  ")
+						.append("   OR P.`PRESENT_ADDRESS` like '%" + fieldValue + "%'  ")
+						.append("   OR P.`REGISTER_ADDRESS` like '%" + fieldValue + "%'  ")
+						// .append(" OR P.`BEBORN_TIME` like '%"+fieldValue+"%'
+						// ")
 						.append("   OR P.`SEX` like '%" + fieldValue + "%'  ");
 			}
 			/*
-			 * if("workUnit".equals(field)){
-			 * sb.append("   AND P.`WORK_UNIT` like '%"+fieldValue+"%'  ");
-			 * }else if("personName".equals(field)){
-			 * sb.append("   AND P.`PERSON_NAME` like '%"+fieldValue+"%'  ");
-			 * }else if("nameUsedBefore".equals(field)){
-			 * sb.append("   AND P.`NAME_USED_BEFORE` like '%"
-			 * +fieldValue+"%'  "); }else if("englishName".equals(field)){
-			 * sb.append("   AND P.`ENGLISH_NAME` like '%"+fieldValue+"%'  ");
-			 * }else if("presentAddress".equals(field)){
-			 * sb.append("   AND P.`PRESENT_ADDRESS` like '%"
-			 * +fieldValue+"%'  "); }else if("registerAddress".equals(field)){
-			 * sb
-			 * .append("   AND P.`REGISTER_ADDRESS` like '%"+fieldValue+"%'  ");
-			 * }else if("bebornTime".equals(field)){
-			 * sb.append("   AND P.`BEBORN_TIME` like '%"+fieldValue+"%'  "); }
+			 * if("workUnit".equals(field)){ sb.append(
+			 * "   AND P.`WORK_UNIT` like '%"+fieldValue+"%'  "); }else
+			 * if("personName".equals(field)){ sb.append(
+			 * "   AND P.`PERSON_NAME` like '%"+fieldValue+"%'  "); }else
+			 * if("nameUsedBefore".equals(field)){ sb.append(
+			 * "   AND P.`NAME_USED_BEFORE` like '%" +fieldValue+"%'  "); }else
+			 * if("englishName".equals(field)){ sb.append(
+			 * "   AND P.`ENGLISH_NAME` like '%"+fieldValue+"%'  "); }else
+			 * if("presentAddress".equals(field)){ sb.append(
+			 * "   AND P.`PRESENT_ADDRESS` like '%" +fieldValue+"%'  "); }else
+			 * if("registerAddress".equals(field)){ sb .append(
+			 * "   AND P.`REGISTER_ADDRESS` like '%"+fieldValue+"%'  "); }else
+			 * if("bebornTime".equals(field)){ sb.append(
+			 * "   AND P.`BEBORN_TIME` like '%"+fieldValue+"%'  "); }
 			 */
 		}
 		if (!StringUtil.isNull(startTime) && !StringUtil.isNull(endTime)) {
@@ -222,20 +274,22 @@ public class ClueStoreServiceImpl implements IClueStoreService {
 		// organizName，foundTime，degreeOfLatitude，websiteURL，orgHeadOfName
 		if (!StringUtil.isNull(field) && !StringUtil.isNull(fieldValue)) {
 			if ("anyField".equals(field)) {
-				sb.append("   AND O.`ORGANIZ_NAME` like '%" + fieldValue + "%'  ").append("   OR O.`DEGREE_OF_LATITUDE` like '%" + fieldValue + "%'  ")
-						.append("   OR O.`WEBSITE_URL` like '%" + fieldValue + "%'  ").append("   OR O.`ORG_HEADOF_NAME` like '%" + fieldValue + "%'  ");
+				sb.append("   AND O.`ORGANIZ_NAME` like '%" + fieldValue + "%'  ")
+						.append("   OR O.`DEGREE_OF_LATITUDE` like '%" + fieldValue + "%'  ")
+						.append("   OR O.`WEBSITE_URL` like '%" + fieldValue + "%'  ")
+						.append("   OR O.`ORG_HEADOF_NAME` like '%" + fieldValue + "%'  ");
 			}
 			/*
-			 * if("organizName".equals(field)){
-			 * sb.append("   AND O.`ORGANIZ_NAME` like '%"+fieldValue+"%'  ");
-			 * }else if("degreeOfLatitude".equals(field)){
-			 * sb.append("   AND O.`DEGREE_OF_LATITUDE` like '%"
-			 * +fieldValue+"%'  "); }else if("websiteURL".equals(field)){
-			 * sb.append("   AND O.`WEBSITE_URL` like '%"+fieldValue+"%'  ");
-			 * }else if("orgHeadOfName".equals(field)){
-			 * sb.append("   AND O.`ORG_HEADOF_NAME` like '%"
-			 * +fieldValue+"%'  "); }else if("foundTime".equals(field)){
-			 * sb.append("   AND O.`FOUND_TIME` like '%"+fieldValue+"%'  "); }
+			 * if("organizName".equals(field)){ sb.append(
+			 * "   AND O.`ORGANIZ_NAME` like '%"+fieldValue+"%'  "); }else
+			 * if("degreeOfLatitude".equals(field)){ sb.append(
+			 * "   AND O.`DEGREE_OF_LATITUDE` like '%" +fieldValue+"%'  ");
+			 * }else if("websiteURL".equals(field)){ sb.append(
+			 * "   AND O.`WEBSITE_URL` like '%"+fieldValue+"%'  "); }else
+			 * if("orgHeadOfName".equals(field)){ sb.append(
+			 * "   AND O.`ORG_HEADOF_NAME` like '%" +fieldValue+"%'  "); }else
+			 * if("foundTime".equals(field)){ sb.append(
+			 * "   AND O.`FOUND_TIME` like '%"+fieldValue+"%'  "); }
 			 */
 		}
 		if (!StringUtil.isNull(startTime) && !StringUtil.isNull(endTime)) {
@@ -254,9 +308,12 @@ public class ClueStoreServiceImpl implements IClueStoreService {
 		StringBuffer sb = new StringBuffer();
 		if (!StringUtil.isNull(field) && !StringUtil.isNull(fieldValue)) {
 			if ("anyField".equals(field)) {
-				sb.append("   AND W.`NAME` like '%" + fieldValue + "%'  ").append("   OR W.`WEBSITEURL` like '%" + fieldValue + "%'  ")
-						.append("   OR W.`MAIN_WHOLESALE_ADDRESS` like '%" + fieldValue + "%'  ").append("   OR W.`ESTABLISH_PERSON` like '%" + fieldValue + "%'  ")
-						.append("   OR W.`BASIC_CONDITION` like '%" + fieldValue + "%'  ").append("   OR W.`ESTABLISH_ADDRESS` like '%" + fieldValue + "%'  ")
+				sb.append("   AND W.`NAME` like '%" + fieldValue + "%'  ")
+						.append("   OR W.`WEBSITEURL` like '%" + fieldValue + "%'  ")
+						.append("   OR W.`MAIN_WHOLESALE_ADDRESS` like '%" + fieldValue + "%'  ")
+						.append("   OR W.`ESTABLISH_PERSON` like '%" + fieldValue + "%'  ")
+						.append("   OR W.`BASIC_CONDITION` like '%" + fieldValue + "%'  ")
+						.append("   OR W.`ESTABLISH_ADDRESS` like '%" + fieldValue + "%'  ")
 						.append("   OR W.`SERVER_ADDRESS` like '%" + fieldValue + "%'  ");
 			}
 		}
@@ -270,7 +327,8 @@ public class ClueStoreServiceImpl implements IClueStoreService {
 		return sb.toString();
 	}
 
-	public PagingObject<ClueStore> findClueStore(int nextPage, int size, String uid, String oid, String did) throws Exception {
+	public PagingObject<ClueStore> findClueStore(int nextPage, int size, String uid, String oid, String did)
+			throws Exception {
 		DetachedCriteria criteria = DetachedCriteria.forClass(ClueStore.class);
 		// 必须是没有删除的数据
 		criteria.add(Restrictions.or(Restrictions.eq("action", "1"), Restrictions.eq("action", "2")));
@@ -313,7 +371,8 @@ public class ClueStoreServiceImpl implements IClueStoreService {
 		sb.append(" LEFT JOIN T_CLUE_RELATIONSHIP  R ON (R.`LIBRARY_ID`=P.`ID`) ");
 		sb.append(" LEFT JOIN T_CLUE_STORE  C ON (C.`ID`=R.`CLUE_ID`) ");
 		sb.append(" WHERE C.`ID`= '" + clueId + "' ");
-		List<WebsiteJournalStore> list = baseDao.findBySqlAnWebsiteJournalStore(sb.toString(), WebsiteJournalStore.class, 1000, 0);
+		List<WebsiteJournalStore> list = baseDao.findBySqlAnWebsiteJournalStore(sb.toString(),
+				WebsiteJournalStore.class, 1000, 0);
 		return list;
 	}
 
@@ -343,7 +402,8 @@ public class ClueStoreServiceImpl implements IClueStoreService {
 		FileOutputStream fos = null;
 		String fontFamily = "宋体";
 		int fontSize = 30;
-		String[] properties = new String[] { "clueName", "clueSource", "findTime", "clueContent", "arrangeAndEvolveCondition" };
+		String[] properties = new String[] { "clueName", "clueSource", "findTime", "clueContent",
+				"arrangeAndEvolveCondition" };
 		String[] chinese_properties = new String[] { "线索名称", "线索来源", "发现时间", "线索内容", "工作部署及进展情况" };
 		try {
 			ClueStore store = findClueById(id);

@@ -133,8 +133,7 @@ public class ClueStoreController {
 			if (list != null && list.size() > 0) {
 				if ("0x0001".equals(list.get(0))) {
 					// 获得临时的涉及对象数据
-					List<TempClueData> clueDatas = tempClueDataService
-							.findTempClueData(number);
+					List<TempClueData> clueDatas = tempClueDataService.findTempClueData(number);
 
 					ClueStore clue = new ClueStore();
 					clue.setArrangeAndEvolveCondition(arrangeAndEvolveCondition);
@@ -150,15 +149,7 @@ public class ClueStoreController {
 					clue.setIsEnable("2");
 					clue.setAction("1");
 					// 新增线索
-					clueStoreService.saveClue(clue);
-					// 新增线索关系
-					clueRelationshipService.saveClueRelationship(clue.getId(),
-							clueDatas);
-					// 新增成功后删除临时数据
-					tempClueDataService.delTempCluDataByAction(number);
-					//索引添加条记录
-					ClueStoreNRTSearch nrtSearch=ClueStoreNRTSearch.getInstance();
-					nrtSearch.addIndex(clue);
+					clueStoreService.saveClue(clue, number);
 					return new ViewObject(ViewObject.RET_SUCCEED, "新增线索成功!").toJSon();
 				}
 			}
