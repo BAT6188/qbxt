@@ -1,5 +1,6 @@
 /**
  * 数据检索
+ * 
  */
  Ext.define('Ushine.dataSearch.DataSearchPenel', {
 	extend: 'Ext.panel.Panel',
@@ -29,7 +30,7 @@
 	showStoresCount:function(data,gridPanel,createGridPanel,parentPanel,htmlId,fieldValue){
 		//总数
 		var dataCount=data.dataCount;		
-		console.log(dataCount);
+		//console.log(dataCount);
 		//具体数据
 		var datas=data.datas.datas;
 		//console.log(fieldValue);
@@ -83,13 +84,14 @@
 					//console.log(data);
 					var i=0;
 					$(data).each(function(temp,value){
+						//console.log(value);
 						if(value.dataCount==0){
 							i++;
 						}
 					});
 					if(i==data.length){
 						//全部隐藏
-						var panels=['personstorespanel','organizstorespanel','websitestorespanel',
+						var panels=['personstorespanel',
 							'cluestorespanel','outsidedocstorespanel','servicedocstorespanel',
 							'leadspeakstorespanel'];
 						$(panels).each(function(index,panel){
@@ -100,22 +102,58 @@
 						})
 						Ext.create('Ushine.utils.Msg').onInfo("没有符合条件的数据");
 					}else{
+						//线程异步执行任务
 						//人员的
-						self.showStoresCount(self.searchDataPostion(data,'PersonStore'),'storesearch_persongridpanel',
-							'Ushine.storesearch.PersonStoreGridPanel','personstorespanel','#personstorecount');
+						var person = new Ext.util.TaskRunner();
+						person.start({
+							run:function(){
+								self.showStoresCount(self.searchDataPostion(data,'PersonStore'),'storesearch_persongridpanel',
+										'Ushine.storesearch.PersonStoreGridPanel','personstorespanel','#personstorecount');
+							},
+							interval:0,
+							repeat:1
+						});
 						//线索
-						var fieldValue=Ext.getCmp('fieldValue').getValue();
-						self.showStoresCount(self.searchDataPostion(data,'ClueStore'),'storesearch_cluegridpanel',
-							'Ushine.storesearch.ClueStoreGridPanel','cluestorespanel','#cluestorecount',fieldValue);
+						var clue = new Ext.util.TaskRunner();
+						clue.start({
+							run:function(){
+								var fieldValue=Ext.getCmp('fieldValue').getValue();
+								self.showStoresCount(self.searchDataPostion(data,'ClueStore'),'storesearch_cluegridpanel',
+									'Ushine.storesearch.ClueStoreGridPanel','cluestorespanel','#cluestorecount',fieldValue);
+							},
+							interval:0,
+							repeat:1
+						});
 						//外来文档
-						self.showStoresCount(self.searchDataPostion(data,'OutsideDocStore'),'storesearch_outsidedocgridpanel',
-							'Ushine.storesearch.OutsideDocStoreGridPanel','outsidedocstorespanel','#outsidedocstorecount');
+						var outside = new Ext.util.TaskRunner();
+						outside.start({
+							run:function(){
+								self.showStoresCount(self.searchDataPostion(data,'OutsideDocStore'),'storesearch_outsidedocgridpanel',
+										'Ushine.storesearch.OutsideDocStoreGridPanel','outsidedocstorespanel','#outsidedocstorecount');
+							},
+							interval:0,
+							repeat:1
+						});
 						//业务文档
-						self.showStoresCount(self.searchDataPostion(data,'VocationalWorkStore'),'storesearch_servicedocgridpanel',
-							'Ushine.storesearch.ServiceDocStoreGridPanel','servicedocstorespanel','#servicedocstorecount');
+						var vocation= new Ext.util.TaskRunner();
+						vocation.start({
+							run:function(){
+								self.showStoresCount(self.searchDataPostion(data,'VocationalWorkStore'),'storesearch_servicedocgridpanel',
+										'Ushine.storesearch.ServiceDocStoreGridPanel','servicedocstorespanel','#servicedocstorecount');
+							},
+							interval:0,
+							repeat:1
+						});
 						//领导讲话
-						self.showStoresCount(self.searchDataPostion(data,'LeadSpeakStore'),'storesearch_leadspeakgridpanel',
-							'Ushine.storesearch.LeadSpeakStoreGridPanel','leadspeakstorespanel','#leadspeakstorecount');
+						var lead=new Ext.util.TaskRunner();
+						lead.start({
+							run:function(){
+								self.showStoresCount(self.searchDataPostion(data,'LeadSpeakStore'),'storesearch_leadspeakgridpanel',
+										'Ushine.storesearch.LeadSpeakStoreGridPanel','leadspeakstorespanel','#leadspeakstorecount');
+							},
+							interval:0,
+							repeat:1
+						});
 					}
 					loadMask.hide();
 				},

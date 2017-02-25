@@ -10,9 +10,6 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +27,6 @@ import com.tdcq.common.logging.LogInfo;
 import com.ushine.common.vo.PagingObject;
 import com.ushine.common.vo.ViewObject;
 import com.ushine.core.verify.session.UserSessionMgr;
-import com.ushine.luceneindex.index.ClueStoreNRTSearch;
 import com.ushine.storesinfo.model.CertificatesStore;
 import com.ushine.storesinfo.model.ClueRelationship;
 import com.ushine.storesinfo.model.ClueStore;
@@ -43,6 +39,9 @@ import com.ushine.storesinfo.service.IClueStoreService;
 import com.ushine.storesinfo.service.IPersonStoreService;
 import com.ushine.storesinfo.service.ITempClueDataService;
 import com.ushine.util.StringUtil;
+
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 /**
  * 线索控制器

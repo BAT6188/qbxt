@@ -28,6 +28,7 @@ public class SolrDateUtilsTest {
 		String date2="2017-01-25 23:37:10";
 		String pattern="yyyy-MM-dd HH:mm:ss";
 		System.err.println(SolrDateUtils.getStartTimeMillis(null));
+		System.err.println(SolrDateUtils.getEndTimeMillis(null));
 		assertEquals(date2, StringUtils.substring(date, 0, pattern.length()));
 		//assertEquals(SolrDateUtils.getTimeMillis(date), SolrDateUtils.getTimeMillis(date2));
 	}

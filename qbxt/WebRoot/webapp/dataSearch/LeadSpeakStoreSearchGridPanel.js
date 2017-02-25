@@ -72,7 +72,7 @@ Ext.define('Ushine.dataSearch.LeadSpeakStoreSearchGridPanel',{
 		    }},
 		    {text: '会议名称',  dataIndex: 'meetingName',sortable: true,flex: 1,menuDisabled:true},
 		    {text: '密级',  dataIndex: 'secretRank',sortable: true,flex: 1,menuDisabled:true},
-		    {text: '涉及领域',  dataIndex: 'involvedInTheField',sortable: true,flex:1,menuDisabled:true},
+		    //{text: '涉及领域',  dataIndex: 'involvedInTheField',sortable: true,flex:1,menuDisabled:true},
 		    {text: '数据创建时间',  dataIndex: 'createDate',sortable: true,flex:1,menuDisabled:true,renderer:function(value){
 		    	  return Ext.Date.format(value, 'Y-m-d H:i:s');
 	        }}

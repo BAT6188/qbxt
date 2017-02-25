@@ -4,8 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.List;
-
-import net.sf.json.JSONObject;
+import java.util.Map;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.io.IOUtils;
@@ -29,14 +28,12 @@ import com.ushine.common.utils.PathUtils;
 import com.ushine.common.vo.Paging;
 import com.ushine.common.vo.PagingObject;
 import com.ushine.dao.IBaseDao;
-import com.ushine.luceneindex.index.ClueStoreNRTSearch;
-import com.ushine.luceneindex.index.StoreIndexQuery;
 import com.ushine.solr.service.IClueStoreSolrService;
 import com.ushine.solr.solrbean.QueryBean;
 import com.ushine.solr.util.MyJSonUtils;
+import com.ushine.solr.util.MyStringUtils;
 import com.ushine.solr.util.SolrBeanUtils;
 import com.ushine.solr.vo.ClueStoreVo;
-import com.ushine.solr.vo.PersonStoreVo;
 import com.ushine.storesinfo.model.ClueStore;
 import com.ushine.storesinfo.model.InfoType;
 import com.ushine.storesinfo.model.PersonStore;
@@ -46,6 +43,8 @@ import com.ushine.storesinfo.service.IClueRelationshipService;
 import com.ushine.storesinfo.service.IClueStoreService;
 import com.ushine.storesinfo.service.ITempClueDataService;
 import com.ushine.util.StringUtil;
+
+import net.sf.json.JSONObject;
 
 /**
  * 线索库接口实现类
@@ -83,11 +82,11 @@ public class ClueStoreServiceImpl implements IClueStoreService {
 		baseDao.save(clueStore);
 		// 获得临时的关联信息
 		List<TempClueData> clueDatas = tempClueDataService.findTempClueData(number);
-		//关联
-		relationshipService.saveClueRelationship(clueStore.getId(),clueDatas);
-		//添加索引
+		// 关联
+		relationshipService.saveClueRelationship(clueStore.getId(), clueDatas);
+		// 添加索引
 		solrService.addDocumentByStore(clueStore);
-		//删除临时表数据
+		// 删除临时表数据
 		tempClueDataService.delTempCluDataByAction(number);
 	}
 
@@ -116,8 +115,9 @@ public class ClueStoreServiceImpl implements IClueStoreService {
 			// 任意字段查询
 			field = QueryBean.CLUESTOREALL;
 		}
-		QueryBean queryBean = new QueryBean(uid, oid, did, field, fieldValue, null, null, sortField, dir, startTime,
-				endTime);
+		Map<String, String> map = MyStringUtils.getSplitMap(fieldValue);
+		QueryBean queryBean = new QueryBean(uid, oid, did, field, map.get(MyStringUtils.QUERYVALUE), null,
+				map.get(MyStringUtils.AGAINQUERYVALUE), sortField, dir, startTime, endTime);
 		long totalRecord = solrService.getDocumentsCount(queryBean);
 		Paging paging = new Paging(size, nextPage, totalRecord);
 		PagingObject<ClueStoreVo> vo = new PagingObject<>();

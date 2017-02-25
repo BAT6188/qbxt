@@ -1,15 +1,12 @@
 package com.ushine.core.init;
 
-import java.io.File;
 import java.util.List;
 
 import javax.servlet.ServletContextEvent;
 
-import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.ushine.common.config.Configured;
 import com.ushine.common.listener.InitializedService;
 import com.ushine.common.utils.SpringUtils;
 import com.ushine.core.cache.OperCache;
@@ -20,8 +17,6 @@ import com.ushine.core.service.ICityService;
 import com.ushine.core.service.IOperationService;
 import com.ushine.core.service.IResourceService;
 import com.ushine.dao.IBaseDao;
-import com.ushine.luceneindex.index.PersonStoreNRTSearch;
-import com.ushine.storesinfo.model.PersonStore;
 
 /**
  * 基础模块初始化服务实现:

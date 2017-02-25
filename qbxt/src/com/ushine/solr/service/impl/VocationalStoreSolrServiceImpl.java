@@ -27,7 +27,7 @@ import com.ushine.storesinfo.model.VocationalWorkStore;
 @Service(value = "vocationalStoreSolrServiceImpl")
 public class VocationalStoreSolrServiceImpl implements IVocationalStoreSolrService {
 
-	Logger logger = Logger.getLogger(VocationalStoreSolrServiceImplTest.class);
+	Logger logger = Logger.getLogger(VocationalStoreSolrServiceImpl.class);
 	@Autowired IBaseDao<VocationalWorkStore, Serializable> baseDao;
 	/**
 	 * 将dao层对象转成solr里的bean

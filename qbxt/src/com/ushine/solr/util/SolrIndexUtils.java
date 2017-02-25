@@ -12,15 +12,7 @@ public class SolrIndexUtils {
 	 * @return true创建，false不创建新的
 	 */
 	public static boolean createNewIndex(String createIndex){
-		try {
-			boolean result=Boolean.getBoolean(Configured.getInstance().get(createIndex));
-			if (result) {
-				return true;
-			}
-		} catch (Exception e) {
-			logger.error("获得配置文件信息异常，返回false");
-			e.printStackTrace();
-		}
-		return false;
+		
+		return Boolean.parseBoolean(Configured.getInstance().get(createIndex));
 	}
 }

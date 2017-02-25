@@ -1,11 +1,8 @@
 package com.ushine.storesinfo.service.impl;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.ListUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ushine.dao.IBaseDao;
-import com.ushine.luceneindex.index.ClueStoreNRTSearch;
 import com.ushine.storesinfo.model.ClueRelationship;
 import com.ushine.storesinfo.model.ClueStore;
 import com.ushine.storesinfo.model.PersonStore;
@@ -41,8 +37,6 @@ public class ClueRelationshipServiceImpl implements IClueRelationshipService{
 	private IPersonStoreService personStoreService;
 	@Autowired
 	private IClueStoreService clueStoreService;
-	//线索索引
-	private ClueStoreNRTSearch nrtSearch=ClueStoreNRTSearch.getInstance();
 	public boolean savaClueRelationship(ClueRelationship clueRelationship)
 			throws Exception {
 		//关联
@@ -54,9 +48,9 @@ public class ClueRelationshipServiceImpl implements IClueRelationshipService{
 		//int count = Integer.parseInt(baseDao.getRows(sql).toString());
 		if(count <= 0){
 			baseDao.save(clueRelationship);
-			nrtSearch.deleteIndex(clueRelationship.getClueId());
+			//nrtSearch.deleteIndex(clueRelationship.getClueId());
 			//添加新的线索索引
-			nrtSearch.addIndex(clueStoreService.findClueById(clueRelationship.getClueId()));
+			//nrtSearch.addIndex(clueStoreService.findClueById(clueRelationship.getClueId()));
 		}
 		return true;
 	}
@@ -130,7 +124,7 @@ public class ClueRelationshipServiceImpl implements IClueRelationshipService{
 			//String sql = "DELETE FROM T_CLUE_RELATIONSHIP  WHERE CLUE_ID = '"+clueId+"' AND LIBRARY_ID = '"+s+"'";
 			//baseDao.executeSql(sql);
 			baseDao.executeHql(hql);
-			nrtSearch.updateIndex(clueId, clueStoreService.findClueById(clueId));
+			//nrtSearch.updateIndex(clueId, clueStoreService.findClueById(clueId));
 		}
 		return true;
 	}
@@ -162,9 +156,9 @@ public class ClueRelationshipServiceImpl implements IClueRelationshipService{
 		//保存数据
 		baseDao.save(clueRelationships);
 		//删除原来的索引
-		nrtSearch.deleteIndex(clueId);
+		//nrtSearch.deleteIndex(clueId);
 		//添加新关联的
-		nrtSearch.addIndex(clueStores);
+		//nrtSearch.addIndex(clueStores);
 		return true;
 	}
 	public List<ClueRelationship> findRelationshipByClueId(String clueId) throws Exception {

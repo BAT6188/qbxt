@@ -54,18 +54,7 @@ Ext.define('Ushine.dataSearch.DataSearchPenelGridPanel',{
 					        		fieldValue:self.fieldValue
 					        	}));
 				        	}
-				        	if(data.dataType=='重点组织库'){
-				        		//组织的
-				        		Ext.getCmp('content_frame').add(new Ushine.dataSearch.OrganizStoreSearch({
-					        		fieldValue:self.fieldValue
-					        	}));
-				        	}
-				        	if(data.dataType=='媒体网站刊物库'){
-				        		//媒体网站刊物库
-				        		Ext.getCmp('content_frame').add(new Ushine.dataSearch.WebsiteJournalStoreSearch({
-					        		fieldValue:self.fieldValue
-					        	}));
-				        	}
+				        	
 				        	if(data.dataType=='外来文档库'){
 				        		//外来文档库
 				        		Ext.getCmp('content_frame').add(new Ushine.dataSearch.OutsideDocStoreSearch({

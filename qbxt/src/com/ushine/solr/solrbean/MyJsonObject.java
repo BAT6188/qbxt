@@ -1,4 +1,4 @@
-package com.ushine.luceneindex.vo;
+package com.ushine.solr.solrbean;
 /**
  * 一键搜索返回的数据类型
  * @author dh

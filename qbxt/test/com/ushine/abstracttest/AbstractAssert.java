@@ -1,5 +1,6 @@
 package com.ushine.abstracttest;
 
+import org.apache.log4j.Logger;
 import org.junit.Assert;
 /**
  * 继承自Assert<br>
@@ -9,4 +10,5 @@ import org.junit.Assert;
  */
 public class AbstractAssert extends Assert {
 
+	protected Logger logger=Logger.getLogger(AbstractAssert.class);
 }

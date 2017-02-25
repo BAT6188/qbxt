@@ -3,6 +3,7 @@ package com.ushine.solr.util;
 import java.text.ParseException;
 import java.util.Date;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -48,7 +49,7 @@ public class SolrDateUtils {
 			Date parseDate = DateUtils.parseDate(date, new String[] { DATE_PATTERNS });
 			return com.ushine.common.utils.DateUtils.getMillis(parseDate);
 		} catch (Exception e) {
-			logger.error("日期" + (date) + "转成long型失败");
+			//logger.error("日期" + (date) + "转成long型失败");
 			return 0;
 		}
 	}
@@ -60,7 +61,7 @@ public class SolrDateUtils {
 			Date parseDate = DateUtils.parseDate(date, new String[] { DATE_PATTERNS });
 			return com.ushine.common.utils.DateUtils.getMillis(parseDate);
 		} catch (Exception e) {
-			logger.error("日期" + (date + time) + "转成long型失败");
+			//logger.error("日期" + (date + time) + "转成long型失败");
 			return 0;
 		}
 	}
@@ -75,6 +76,7 @@ public class SolrDateUtils {
 	public static long getStartTimeMillis(String startDate) {
 		// 先截取成标准的格式
 		startDate = StringUtils.substring(startDate, 0, YMD_PATTERNS.length());
+		//null值返回0
 		return getTimeMillis(startDate, START_TIME);
 	}
 
@@ -86,6 +88,9 @@ public class SolrDateUtils {
 	 * @return
 	 */
 	public static long getEndTimeMillis(String endDate) {
+		String defalutValue=DateFormatUtils.format(new Date(), YMD_PATTERNS);
+		//为null返回当天
+		endDate=(String) ObjectUtils.defaultIfNull(endDate, defalutValue);
 		// 先截取成标准的格式
 		endDate = StringUtils.substring(endDate, 0, YMD_PATTERNS.length());
 		return getTimeMillis(endDate, END_TIME);

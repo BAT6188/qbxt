@@ -8,13 +8,19 @@ import javax.servlet.ServletContextListener;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.ushine.common.utils.PathUtils;
 import com.ushine.common.utils.PropertiesUtils;
 import com.ushine.common.utils.SpringUtils;
 import com.ushine.solr.factory.SolrServerFactory;
+import com.ushine.solr.service.IClueStoreSolrService;
+import com.ushine.solr.service.ILeadSpeakStoreSolrService;
+import com.ushine.solr.service.IOutsideDocStoreSolrService;
 import com.ushine.solr.service.IPersonStoreSolrService;
+import com.ushine.solr.service.IVocationalStoreSolrService;
 import com.ushine.solr.util.SolrIndexUtils;
+import com.ushine.storesinfo.service.ILeadSpeakStoreService;
 
 /**
  * 应用服务监听器, 在程序启动与停止时，执行初始化和注销方法。
@@ -74,40 +80,78 @@ public class ApplicationServiceListener implements ServletContextListener {
 	/**
 	 * 应用程序启动时执行
 	 */
+
 	// 不用自动装配@Autowired IPersonStoreSolrService personStoreSolrService;
 	HttpSolrServer psServer = SolrServerFactory.getPSSolrServerInstance();
+	HttpSolrServer vwsServer = SolrServerFactory.getVWSSolrServerInstance();
+
+	/**
+	 * 是否为每个库创建索引
+	 * 
+	 * @param createWhichIndex
+	 *            是否为该库创建索引
+	 * @param runnable
+	 *            Runnable接口
+	 */
+	private void startThreadCreateIndex(String createWhichIndex, Runnable runnable) {
+		if (SolrIndexUtils.createNewIndex(createWhichIndex)) {
+			new Thread(runnable).start();
+		}
+	}
 
 	@SuppressWarnings("unchecked")
 	public void contextInitialized(ServletContextEvent sce) {
 		logger.info("应用程序初始化启动.");
 		try {
 			// 是否为每个库重新建立索引
-			if (SolrIndexUtils.createNewIndex("createPersonStoreIndex")) {
-				// 人员
-				IPersonStoreSolrService personStoreSolrService = (IPersonStoreSolrService) SpringUtils
-						.getBean("personStoreSolrServiceImpl");
-				personStoreSolrService.createNewIndexByStores(psServer);
-				logger.info("人员库索引创建成功");
-			}
-			if (SolrIndexUtils.createNewIndex("createClueStoreIndex")) {
-				// 线索
-				logger.info("线索库创建索引成功");
-			}
-			if (SolrIndexUtils.createNewIndex("createVocationalWorkStoreIndex")) {
-				// 业务文档
+			startThreadCreateIndex("createPersonStoreIndex", new Runnable() {
+				@Override
+				public void run() {
+					// 人员
+					logger.info("开始创建人员库索引");
+					IPersonStoreSolrService personStoreSolrService = (IPersonStoreSolrService) SpringUtils
+							.getBean("personStoreSolrServiceImpl");
+					personStoreSolrService.createNewIndexByStores(psServer);
+				}
+			});
+			startThreadCreateIndex("createClueStoreIndex", new Runnable() {
+				@Override
+				public void run() {
+					IClueStoreSolrService solrService = (IClueStoreSolrService) SpringUtils
+							.getBean("clueStoreSolrServiceImpl");
+					solrService.createNewIndexByStores();
+					logger.info("开始线索库创建索引");
+				}
+			});
 
-				logger.info("业务文档库创建索引成功");
-			}
-			if (SolrIndexUtils.createNewIndex("createOutsideDocStoreIndex")) {
-				// 外来文档
+			startThreadCreateIndex("createVocationalWorkStoreIndex", new Runnable() {
+				@Override
+				public void run() {
+					IVocationalStoreSolrService solrService = (IVocationalStoreSolrService) SpringUtils
+							.getBean("vocationalStoreSolrServiceImpl");
+					solrService.createNewIndexByStores(vwsServer);
+					logger.info("开始业务文档库创建索引");
+				}
+			});
+			startThreadCreateIndex("createOutsideDocStoreIndex", new Runnable() {
+				@Override
+				public void run() {
+					IOutsideDocStoreSolrService solrService = (IOutsideDocStoreSolrService) SpringUtils
+							.getBean("outsideDocStoreSolrServiceImpl");
+					solrService.createNewIndexByStores();
+					logger.info("开始外来文档库创建索引");
+				}
+			});
+			startThreadCreateIndex("createLeadSpeakStoreIndex", new Runnable() {
 
-				logger.info("外来文档库创建索引成功");
-			}
-			if (SolrIndexUtils.createNewIndex("createLeadSpeakStoreIndex")) {
-				// 领导讲话
-
-				logger.info("领导讲话库创建索引成功");
-			}
+				@Override
+				public void run() {
+					ILeadSpeakStoreSolrService solrService = (ILeadSpeakStoreSolrService) SpringUtils
+							.getBean("leadSpeakStoreSolrServiceImpl");
+					solrService.createNewIndexByStores();
+					logger.info("开始领导讲话库创建索引");
+				}
+			});
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("创建索引库失败");

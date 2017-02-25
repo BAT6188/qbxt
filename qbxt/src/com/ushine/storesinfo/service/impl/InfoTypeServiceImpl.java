@@ -8,9 +8,6 @@ import java.util.List;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
@@ -21,11 +18,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ushine.dao.IBaseDao;
-import com.ushine.luceneindex.index.LeadSpeakStoreNRTSearch;
-import com.ushine.luceneindex.index.OutsideDocStoreNRTSearch;
-import com.ushine.luceneindex.index.PersonStoreNRTSearch;
-import com.ushine.luceneindex.index.VocationalWorkStoreNRTSearch;
-import com.ushine.luceneindex.index.WebsiteJournalStoreNRTSearch;
 import com.ushine.storesinfo.model.CertificatesStore;
 import com.ushine.storesinfo.model.InfoType;
 import com.ushine.storesinfo.model.LeadSpeakStore;
@@ -37,6 +29,9 @@ import com.ushine.storesinfo.model.WebsiteJournalStore;
 import com.ushine.storesinfo.service.IInfoTypeService;
 import com.ushine.storesinfo.service.ILeadSpeakStoreService;
 import com.ushine.util.XMLHandler;
+
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 /**
  * 信息类别接口实现
@@ -67,7 +62,7 @@ public class InfoTypeServiceImpl implements IInfoTypeService {
 				criteria.add(Restrictions.ne("action", "3"));
 				criteria.createAlias("infoType", "i").add(Restrictions.eq("i.typeName", srcInfoType.getTypeName()));
 				// 创建索引
-				PersonStoreNRTSearch personStoreNRTSearch = PersonStoreNRTSearch.getInstance();
+				//PersonStoreNRTSearch personStoreNRTSearch = PersonStoreNRTSearch.getInstance();
 				List<PersonStore> list=baseDao.findByCriteria(criteria);
 				System.err.println("PersonStore所属类别数量"+list.size());
 				String []ids=new String[list.size()];
@@ -81,58 +76,9 @@ public class InfoTypeServiceImpl implements IInfoTypeService {
 					newList.add(store);
 				}
 				//删除
-				personStoreNRTSearch.deleteIndex(ids);
 				//新加
-				personStoreNRTSearch.addIndex(newList);
-			}
-			/*if ("OrganizStore".equals(storeName)) {
-				OrganizStoreNRTSearch organizStoreNRTSearch = OrganizStoreNRTSearch.getInstance();
-				// 查询aciton不为3的
-				DetachedCriteria criteria = DetachedCriteria.forClass(OrganizStore.class);
-				criteria.add(Restrictions.ne("action", "3"));
-				criteria.createAlias("infoType", "i").add(Restrictions.eq("i.typeName", srcInfoType.getTypeName()));
-				List<OrganizStore> list=baseDao.findByCriteria(criteria);
-				System.err.println("OrganizStore所属类别数量"+list.size());
-				String []ids=new String[list.size()];
-				//修改后的
-				List<OrganizStore> newList=new ArrayList<>();
-				int i=0;
-				for (OrganizStore store : list) {
-					ids[i]=store.getId();
-					i++;
-					store.setInfoType(destInfoType);
-					newList.add(store);
-				}
-				//删除原来的索引
-				organizStoreNRTSearch.deleteIndex(ids);
-				//添加新索引
-				organizStoreNRTSearch.addIndex(newList);
-			}*/
-			if ("WebsiteJournalStore".equals(storeName)) {
-				WebsiteJournalStoreNRTSearch websiteJournalStoreNRTSearch=WebsiteJournalStoreNRTSearch.getInstance();
-				DetachedCriteria criteria = DetachedCriteria.forClass(WebsiteJournalStore.class);
-				// 查询aciton不为3的
-				criteria.add(Restrictions.ne("action", "3"));
-				criteria.createAlias("infoType", "i").add(Restrictions.eq("i.typeName", srcInfoType.getTypeName()));
-				List<WebsiteJournalStore> list=baseDao.findByCriteria(criteria);
-				System.err.println("WebsiteJournalStore所属类别数量"+list.size());
-				String []ids=new String[list.size()];
-				//修改后的
-				List<WebsiteJournalStore> newList=new ArrayList<>();
-				int i=0;
-				for (WebsiteJournalStore store : list) {
-					ids[i]=store.getId();
-					i++;
-					store.setInfoType(destInfoType);
-					newList.add(store);
-				}
-				//删除原来的索引
-				websiteJournalStoreNRTSearch.deleteIndex(ids);
-				//添加新索引
-				websiteJournalStoreNRTSearch.addIndex(newList);
 			}
 			if ("VocationalWorkStore".equals(storeName)) {
-				VocationalWorkStoreNRTSearch vocationalWorkStoreNRTSearch = VocationalWorkStoreNRTSearch.getInstance();
 				DetachedCriteria criteria = DetachedCriteria.forClass(VocationalWorkStore.class);
 				// 查询aciton不为3的
 				criteria.add(Restrictions.ne("action", "3"));
@@ -150,12 +96,9 @@ public class InfoTypeServiceImpl implements IInfoTypeService {
 					newList.add(store);
 				}
 				//删除原来的索引
-				vocationalWorkStoreNRTSearch.deleteIndex(ids);
 				//添加新索引
-				vocationalWorkStoreNRTSearch.addIndex(newList);
 			}
 			if ("OutsideDocStore".equals(storeName)) {
-				OutsideDocStoreNRTSearch outsideDocStoreNRTSearch=OutsideDocStoreNRTSearch.getInstance();
 				DetachedCriteria criteria = DetachedCriteria.forClass(OutsideDocStore.class);
 				// 查询aciton不为3的
 				criteria.add(Restrictions.ne("action", "3"));
@@ -173,13 +116,10 @@ public class InfoTypeServiceImpl implements IInfoTypeService {
 					newList.add(store);
 				}
 				//删除原来的索引
-				outsideDocStoreNRTSearch.deleteIndex(ids);
 				//添加新索引
-				outsideDocStoreNRTSearch.addIndex(newList);
 			}
 			if ("LeadSpeakStore".equals(storeName)) {
 				DetachedCriteria criteria = DetachedCriteria.forClass(LeadSpeakStore.class);
-				LeadSpeakStoreNRTSearch leadSpeakStoreNRTSearch = LeadSpeakStoreNRTSearch.getInstance();
 				// 查询aciton不为3的
 				criteria.add(Restrictions.ne("action", "3"));
 				criteria.createAlias("infoType", "i").add(Restrictions.eq("i.typeName", srcInfoType.getTypeName()));
@@ -196,9 +136,7 @@ public class InfoTypeServiceImpl implements IInfoTypeService {
 					newList.add(store);
 				}
 				//删除原来的索引
-				leadSpeakStoreNRTSearch.deleteIndex(ids);
 				//添加新索引
-				leadSpeakStoreNRTSearch.addIndex(newList);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -223,9 +161,6 @@ public class InfoTypeServiceImpl implements IInfoTypeService {
 		reCreateIndex(srcInfoType, destInfoType);
 		//更新涉及领域
 		if ("InvolvedInTheField".equals(storeName)) {
-			LeadSpeakStoreNRTSearch leadSpeakStoreNRTSearch=LeadSpeakStoreNRTSearch.getInstance();
-			OutsideDocStoreNRTSearch outsideDocStoreNRTSearch=OutsideDocStoreNRTSearch.getInstance();
-			VocationalWorkStoreNRTSearch vocationalWorkStoreNRTSearch=VocationalWorkStoreNRTSearch.getInstance();
 			//领导讲话
 			DetachedCriteria criteria = DetachedCriteria.forClass(LeadSpeakStore.class);
 			// 查询aciton不为3的
@@ -244,9 +179,7 @@ public class InfoTypeServiceImpl implements IInfoTypeService {
 				newList.add(leadSpeakStore);
 			}
 			//删除
-			leadSpeakStoreNRTSearch.deleteIndex(ids);
 			//新加
-			leadSpeakStoreNRTSearch.addIndex(newList);
 			//外来文档
 			DetachedCriteria odsCriteria = DetachedCriteria.forClass(OutsideDocStore.class);
 			// 查询aciton不为3的
@@ -265,9 +198,7 @@ public class InfoTypeServiceImpl implements IInfoTypeService {
 				odsNewList.add(outsideDocStore);
 			}
 			//删除
-			outsideDocStoreNRTSearch.deleteIndex(odsids);
 			//新加
-			outsideDocStoreNRTSearch.addIndex(odsNewList);
 			//业务
 			DetachedCriteria vwsCriteria = DetachedCriteria.forClass(VocationalWorkStore.class);
 			// 查询aciton不为3的
@@ -286,9 +217,7 @@ public class InfoTypeServiceImpl implements IInfoTypeService {
 				vwsNewList.add(vocationalWorkStore);
 			}
 			//删除
-			vocationalWorkStoreNRTSearch.deleteIndex(vwsids);
 			//新加
-			vocationalWorkStoreNRTSearch.addIndex(vwsNewList);
 		}
 	}
 	

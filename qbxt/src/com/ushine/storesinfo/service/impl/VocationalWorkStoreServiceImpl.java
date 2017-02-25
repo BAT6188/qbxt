@@ -6,17 +6,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.FutureTask;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-
-import net.sf.ezmorph.bean.MorphDynaBean;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-import net.sf.json.JSONSerializer;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -24,8 +16,6 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.dom4j.Element;
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,17 +28,14 @@ import com.ushine.common.utils.PathUtils;
 import com.ushine.common.utils.XMLUtils;
 import com.ushine.common.vo.Paging;
 import com.ushine.common.vo.PagingObject;
-import com.ushine.common.vo.ViewObject;
 import com.ushine.core.verify.session.UserSessionMgr;
 import com.ushine.dao.IBaseDao;
-import com.ushine.luceneindex.index.StoreIndexQuery;
-import com.ushine.luceneindex.index.VocationalWorkStoreNRTSearch;
 import com.ushine.solr.factory.SolrServerFactory;
 import com.ushine.solr.service.IVocationalStoreSolrService;
 import com.ushine.solr.solrbean.QueryBean;
 import com.ushine.solr.util.MyJSonUtils;
+import com.ushine.solr.util.MyStringUtils;
 import com.ushine.solr.util.SolrBeanUtils;
-import com.ushine.solr.vo.PersonStoreVo;
 import com.ushine.solr.vo.VocationalWorkStoreVo;
 import com.ushine.storesinfo.model.InfoType;
 import com.ushine.storesinfo.model.VocationalWorkStore;
@@ -56,8 +43,12 @@ import com.ushine.storesinfo.service.IInfoTypeService;
 import com.ushine.storesinfo.service.IVocationalWorkStoreService;
 import com.ushine.storesinfo.storefinal.StoreFinal;
 import com.ushine.util.IdentifyDocUtils;
-import com.ushine.util.SmbFileUtils;
 import com.ushine.util.StringUtil;
+
+import net.sf.ezmorph.bean.MorphDynaBean;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+import net.sf.json.JSONSerializer;
 
 /**
  * 业务文档接口实现类
@@ -75,9 +66,11 @@ public class VocationalWorkStoreServiceImpl implements IVocationalWorkStoreServi
 	private IBaseDao fileNamesDao;
 	@Autowired
 	private IInfoTypeService infoTypeService;
-	@Autowired IVocationalStoreSolrService solrService;
-	
-	HttpSolrServer server=SolrServerFactory.getVWSSolrServerInstance();
+	@Autowired
+	IVocationalStoreSolrService solrService;
+
+	HttpSolrServer server = SolrServerFactory.getVWSSolrServerInstance();
+
 	public boolean saveVocationalWork(VocationalWorkStore vocationalWork) throws Exception {
 		// 新增
 		baseDao.save(vocationalWork);
@@ -111,8 +104,8 @@ public class VocationalWorkStoreServiceImpl implements IVocationalWorkStoreServi
 		// 返回结果
 		JSONObject resultObject = new JSONObject();
 		List<VocationalWorkStore> list = new ArrayList<>();
-		//删除临时上传的文件夹
-		String tempFolderPath=null;
+		// 删除临时上传的文件夹
+		String tempFolderPath = null;
 		try {
 			// 开始
 			long start = System.currentTimeMillis();
@@ -133,8 +126,8 @@ public class VocationalWorkStoreServiceImpl implements IVocationalWorkStoreServi
 				JSONObject jsonObject = JSONObject.fromObject(object);
 				MorphDynaBean bean = (MorphDynaBean) JSONObject.toBean(jsonObject);
 				String filePath = (String) bean.get("filePath");
-				//获得路径
-				tempFolderPath=FilenameUtils.getFullPath(filePath);
+				// 获得路径
+				tempFolderPath = FilenameUtils.getFullPath(filePath);
 				String fileName = FilenameUtils.getName(filePath).substring(8);
 				hql += " (fileName='" + fileName + "' and action<>'3') or";
 			}
@@ -169,7 +162,7 @@ public class VocationalWorkStoreServiceImpl implements IVocationalWorkStoreServi
 				// 设置类别
 				store.setInfoType(docInfoType);
 				// 设置涉及领域
-				//store.setInvolvedInTheField(involvedInTheField);
+				// store.setInvolvedInTheField(involvedInTheField);
 				// copy文件到vocationalWorkStoreAttachment文件夹中
 				FileUtils.copyFileToDirectory(new File(filePath), new File(directory));
 				String attaches = vocationalWorkStoreAttachment + File.separator + FilenameUtils.getName(filePath);
@@ -214,10 +207,10 @@ public class VocationalWorkStoreServiceImpl implements IVocationalWorkStoreServi
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error(e.getMessage());
-		}finally {
-			logger.info("删除临时上传的文件夹路径："+tempFolderPath);
-			File file=new File(tempFolderPath);
-			if(file.exists()){
+		} finally {
+			logger.info("删除临时上传的文件夹路径：" + tempFolderPath);
+			File file = new File(tempFolderPath);
+			if (file.exists()) {
 				FileUtils.deleteDirectory(file);
 			}
 		}
@@ -227,8 +220,8 @@ public class VocationalWorkStoreServiceImpl implements IVocationalWorkStoreServi
 	@Override
 	public String saveVocationalWork(String datas, HttpServletRequest request, UserSessionMgr userMgr)
 			throws Exception {
-		//临时文件夹路径
-		String folderPath=null;
+		// 临时文件夹路径
+		String folderPath = null;
 		// 把json转成对象
 		JSONArray jsonArray = (JSONArray) JSONSerializer.toJSON(datas);
 		List li = (List) JSONSerializer.toJava(jsonArray);
@@ -245,13 +238,14 @@ public class VocationalWorkStoreServiceImpl implements IVocationalWorkStoreServi
 			// 开始
 			long start = System.currentTimeMillis();
 			// 设置默认的涉及领域
-			InfoType involvedInTheField = infoTypeService.findInfoTypeById(Configured.getInstance().get("involvedInTheField"));
-			
+			InfoType involvedInTheField = infoTypeService
+					.findInfoTypeById(Configured.getInstance().get("involvedInTheField"));
+
 			// logger.info("文档类型"+docInfoType.toString());
 			String vocationalWorkStoreAttachment = Configured.getInstance().get("vocationalWorkStore");
 			// 拷贝到这个文件夹中
 			String directory = request.getServletContext().getRealPath("/") + vocationalWorkStoreAttachment;
-			
+
 			// 拼接查询
 			Object[] fileNames = null;
 			String hql = "select fileName from VocationalWorkStore where";
@@ -268,7 +262,7 @@ public class VocationalWorkStoreServiceImpl implements IVocationalWorkStoreServi
 			// 转数组
 			fileNames = (Object[]) nameList.toArray();
 			logger.info("已经存在的文档名称：" + Arrays.toString(fileNames));
-			
+
 			for (Object object : li) {
 				JSONObject jsonObject = JSONObject.fromObject(object);
 				// 获得实例
@@ -277,17 +271,18 @@ public class VocationalWorkStoreServiceImpl implements IVocationalWorkStoreServi
 				String docNumber = (String) bean.get("docNumber");
 				String time = (String) bean.get("time");
 				String filePath = (String) bean.get("filePath");
-				//文件夹路径
-				folderPath=FilenameUtils.getFullPath(filePath);
-				String infoType= (String) bean.get("infoType");
-				
-				/*logger.info("docName："+docName);
-				logger.info("docNumber："+docNumber);
-				logger.info("time："+time);
-				logger.info("filePath："+filePath);
-				logger.info("infoType："+infoType);*/
+				// 文件夹路径
+				folderPath = FilenameUtils.getFullPath(filePath);
+				String infoType = (String) bean.get("infoType");
+
+				/*
+				 * logger.info("docName："+docName);
+				 * logger.info("docNumber："+docNumber);
+				 * logger.info("time："+time); logger.info("filePath："+filePath);
+				 * logger.info("infoType："+infoType);
+				 */
 				// 所属类别
-				InfoType docInfoType = infoTypeService.findInfoTypeByTypeNameAndTableName(infoType, 
+				InfoType docInfoType = infoTypeService.findInfoTypeByTypeNameAndTableName(infoType,
 						StoreFinal.VOCATIONAL_WORK_STORE);
 				// 保存
 				VocationalWorkStore store = new VocationalWorkStore();
@@ -305,7 +300,7 @@ public class VocationalWorkStoreServiceImpl implements IVocationalWorkStoreServi
 				// 设置类别
 				store.setInfoType(docInfoType);
 				// 设置涉及领域
-				//store.setInvolvedInTheField(involvedInTheField);
+				// store.setInvolvedInTheField(involvedInTheField);
 				// copy文件到vocationalWorkStoreAttachment文件夹中
 				FileUtils.copyFileToDirectory(new File(filePath), new File(directory));
 				String attaches = vocationalWorkStoreAttachment + File.separator + FilenameUtils.getName(filePath);
@@ -318,8 +313,7 @@ public class VocationalWorkStoreServiceImpl implements IVocationalWorkStoreServi
 				if (StringUtils.length(error) > 0) {
 					// 没有标题或期刊号
 					unSaveDetail.append(String.format("文档入库失败：%s,%s", fileName, error)).append("<br>");
-				}
-				else if (ArrayUtils.contains(fileNames, fileName)) {
+				} else if (ArrayUtils.contains(fileNames, fileName)) {
 					// 已存在
 					unSaveDetail.append(String.format("文档已经存在：%s", fileName)).append("<br>");
 				} else {
@@ -344,9 +338,9 @@ public class VocationalWorkStoreServiceImpl implements IVocationalWorkStoreServi
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error(e.getMessage());
-		}finally {
-			//删除临时上传的文件夹
-			logger.info("删除临时文件夹路径folderPath："+folderPath);
+		} finally {
+			// 删除临时上传的文件夹
+			logger.info("删除临时文件夹路径folderPath：" + folderPath);
 			FileUtils.deleteDirectory(new File(folderPath));
 		}
 		return resultObject.toString();
@@ -385,31 +379,34 @@ public class VocationalWorkStoreServiceImpl implements IVocationalWorkStoreServi
 	public String findVocationalWorkStore(String field, String fieldValue, String startTime, String endTime,
 			int nextPage, int size, String uid, String oid, String did, String sortField, String dir) throws Exception {
 		// 根据条件查询业务文档
-		//查询
+		// 查询
 		if (StringUtils.equals(field, "anyField")) {
-			//任意字段查询
-			field=QueryBean.VOCATIONALWORKSTOREALL;
+			// 任意字段查询
+			field = QueryBean.VOCATIONALWORKSTOREALL;
 		}
-		QueryBean queryBean=new QueryBean(uid, oid, did, field, fieldValue, null, null, sortField,dir, startTime, endTime);
-		//查询总数
+		Map<String, String> map = MyStringUtils.getSplitMap(fieldValue);
+		QueryBean queryBean = new QueryBean(uid, oid, did, field, map.get(MyStringUtils.QUERYVALUE), null,
+				map.get(MyStringUtils.AGAINQUERYVALUE), sortField, dir, startTime, endTime);
+		// 查询总数
 		long totalRecord = solrService.getDocumentsCount(server, queryBean);
 		Paging paging = new Paging(size, nextPage, totalRecord);
 		PagingObject<VocationalWorkStoreVo> vo = new PagingObject<>();
 		vo.setPaging(paging);
-		
+
 		// 集合
-		// nextPage从1开始 
+		// nextPage从1开始
 		List<VocationalWorkStoreVo> array = solrService.getDocuementsVO(server, queryBean, (nextPage - 1) * size, size);
 		if (StringUtils.isNotBlank(fieldValue)) {
 			// 有关键字要高亮
-			List<VocationalWorkStoreVo> highlightArray = SolrBeanUtils.highlightVoList(array, VocationalWorkStoreVo.class, fieldValue);
+			List<VocationalWorkStoreVo> highlightArray = SolrBeanUtils.highlightVoList(array,
+					VocationalWorkStoreVo.class, fieldValue);
 			vo.setArray(highlightArray);
 		} else {
 			vo.setArray(array);
 		}
 		return MyJSonUtils.toJson(vo);
 	}
-	
+
 	/**
 	 * 字符串可否转日期
 	 * 
@@ -451,10 +448,11 @@ public class VocationalWorkStoreServiceImpl implements IVocationalWorkStoreServi
 			// obj.put("infoType", infoTypeMap.get(store.getId()));
 			// 涉及领域
 			// obj.put("involvedInTheField", fieldMap.get(store.getId()));
-			/*if (store.getInvolvedInTheField() != null) {
-				// 不为空
-				obj.put("involvedInTheField", store.getInvolvedInTheField().getTypeName());
-			}*/
+			/*
+			 * if (store.getInvolvedInTheField() != null) { // 不为空
+			 * obj.put("involvedInTheField",
+			 * store.getInvolvedInTheField().getTypeName()); }
+			 */
 			// 类别不为空
 			if (store.getInfoType() != null) {
 				obj.put("infoType", store.getInfoType().getTypeName());
@@ -534,7 +532,7 @@ public class VocationalWorkStoreServiceImpl implements IVocationalWorkStoreServi
 				result = true;
 				logger.info(fileName + "已经存在于数据库中");
 			}
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -704,4 +702,3 @@ public class VocationalWorkStoreServiceImpl implements IVocationalWorkStoreServi
 		return result;
 	}
 }
-

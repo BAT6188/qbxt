@@ -7,21 +7,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-
-import net.sf.ezmorph.bean.MorphDynaBean;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-import net.sf.json.JSONSerializer;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.dom4j.Element;
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,14 +29,12 @@ import com.ushine.common.vo.Paging;
 import com.ushine.common.vo.PagingObject;
 import com.ushine.core.verify.session.UserSessionMgr;
 import com.ushine.dao.IBaseDao;
-import com.ushine.luceneindex.index.OutsideDocStoreNRTSearch;
-import com.ushine.luceneindex.index.StoreIndexQuery;
 import com.ushine.solr.service.IOutsideDocStoreSolrService;
 import com.ushine.solr.solrbean.QueryBean;
 import com.ushine.solr.util.MyJSonUtils;
+import com.ushine.solr.util.MyStringUtils;
 import com.ushine.solr.util.SolrBeanUtils;
 import com.ushine.solr.vo.OutsideDocStoreVo;
-import com.ushine.solr.vo.PersonStoreVo;
 import com.ushine.storesinfo.model.InfoType;
 import com.ushine.storesinfo.model.OutsideDocStore;
 import com.ushine.storesinfo.service.IInfoTypeService;
@@ -51,6 +43,11 @@ import com.ushine.storesinfo.storefinal.StoreFinal;
 import com.ushine.util.IdentifyDocUtils;
 import com.ushine.util.StringUtil;
 import com.ushine.util.XmlUtils;
+
+import net.sf.ezmorph.bean.MorphDynaBean;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+import net.sf.json.JSONSerializer;
 
 /**
  * 外来文档接口实现类
@@ -62,11 +59,15 @@ import com.ushine.util.XmlUtils;
 @Service("outsideDocStoreServiceImpl")
 public class OutsideDocStoreServiceImpl implements IOutsideDocStoreService {
 	private Logger logger = LoggerFactory.getLogger(OutsideDocStoreServiceImpl.class);
-	@Autowired IBaseDao<OutsideDocStore, Serializable> baseDao;
-	@Autowired IInfoTypeService infoTypeService;
-	@Autowired IOutsideDocStoreSolrService solrService;
-	@Autowired IBaseDao fileNamesDao;
-	
+	@Autowired
+	IBaseDao<OutsideDocStore, Serializable> baseDao;
+	@Autowired
+	IInfoTypeService infoTypeService;
+	@Autowired
+	IOutsideDocStoreSolrService solrService;
+	@Autowired
+	IBaseDao fileNamesDao;
+
 	/**
 	 * 把外来文档集合转成json
 	 * 
@@ -138,11 +139,13 @@ public class OutsideDocStoreServiceImpl implements IOutsideDocStoreService {
 			int size, String uid, String oid, String did, String sortField, String dir) throws Exception {
 		// 利用索引查询
 		if (StringUtils.equals(field, "anyField")) {
-			//任意字段查询
-			field=QueryBean.OUTSIDEDOCALL;
+			// 任意字段查询
+			field = QueryBean.OUTSIDEDOCALL;
 		}
-		QueryBean queryBean=new QueryBean(uid, oid, did, field, fieldValue, null, null, sortField,dir, startTime, endTime);
-		//查询总数
+		Map<String, String> map = MyStringUtils.getSplitMap(fieldValue);
+		QueryBean queryBean = new QueryBean(uid, oid, did, field, map.get(MyStringUtils.QUERYVALUE), null,
+				map.get(MyStringUtils.AGAINQUERYVALUE), sortField, dir, startTime, endTime);
+		// 查询总数
 		long totalRecord = solrService.getDocumentsCount(queryBean);
 		Paging paging = new Paging(size, nextPage, totalRecord);
 		PagingObject<OutsideDocStoreVo> vo = new PagingObject<>();
@@ -152,7 +155,8 @@ public class OutsideDocStoreServiceImpl implements IOutsideDocStoreService {
 		List<OutsideDocStoreVo> array = solrService.getDocuementsVo(queryBean, (nextPage - 1) * size, size);
 		if (StringUtils.isNotBlank(fieldValue)) {
 			// 有关键字要高亮
-			List<OutsideDocStoreVo> highlightArray = SolrBeanUtils.highlightVoList(array, OutsideDocStoreVo.class, fieldValue);
+			List<OutsideDocStoreVo> highlightArray = SolrBeanUtils.highlightVoList(array, OutsideDocStoreVo.class,
+					fieldValue);
 			vo.setArray(highlightArray);
 		} else {
 			vo.setArray(array);
@@ -356,9 +360,8 @@ public class OutsideDocStoreServiceImpl implements IOutsideDocStoreService {
 	}
 
 	@Override
-	public String saveOutsideDocStore(String datas, String sourceUnit,String secretRank,
-			String infoType, HttpServletRequest request, UserSessionMgr userMgr,
-			String uploadNumber) throws Exception {
+	public String saveOutsideDocStore(String datas, String sourceUnit, String secretRank, String infoType,
+			HttpServletRequest request, UserSessionMgr userMgr, String uploadNumber) throws Exception {
 		// logger.info("多个业务文档" + datas);
 		// 把json转成对象
 		JSONArray jsonArray = (JSONArray) JSONSerializer.toJSON(datas);

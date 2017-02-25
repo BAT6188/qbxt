@@ -11,20 +11,21 @@ import com.ushine.storesinfo.model.OutsideDocStore;
 
 /**
  * 查询语句的bean对象
+ * 
  * @author Administrator
  *
  */
 public class QueryBean {
-	private static Logger logger=Logger.getLogger(QueryBean.class);
-	
+	private static Logger logger = Logger.getLogger(QueryBean.class);
+
 	/**
 	 * id属性常量
 	 */
-	public static final String ID="id";
+	public static final String ID = "id";
 	/**
 	 * 所属类别字段常量infoType
 	 */
-	public static final String INFOTYPE="infoType";
+	public static final String INFOTYPE = "infoType";
 	/**
 	 * 人员solr的id
 	 */
@@ -44,27 +45,27 @@ public class QueryBean {
 	/**
 	 * 外来文档solr索引主键字段outsideDocId
 	 */
-	public static final String OUTSIDEDOC_ID="outsideDocId";
+	public static final String OUTSIDEDOC_ID = "outsideDocId";
 	/**
 	 * 外来文档默认的查询字段
 	 */
-	public static final String OUTSIDEDOCALL="outsidedocstoreAll";
+	public static final String OUTSIDEDOCALL = "outsidedocstoreAll";
 	/**
 	 * 领导讲话库solr主键
 	 */
-	public static final String LEADSPEAKSTORE_ID="leadspeakstoreId";
+	public static final String LEADSPEAKSTORE_ID = "leadspeakstoreId";
 	/**
 	 * 领导讲话solr中默认查询字段
 	 */
-	public static final String LEADSPEAKSTOREALL="leadspeakstoreAll";
+	public static final String LEADSPEAKSTOREALL = "leadspeakstoreAll";
 	/**
 	 * 线索solr默认查询字段
 	 */
-	public static final String CLUESTOREALL="cluestoreAll";
+	public static final String CLUESTOREALL = "cluestoreAll";
 	/**
 	 * 线索solr主键
 	 */
-	public static final String CLUESTORE_ID="cluestoreId";
+	public static final String CLUESTORE_ID = "cluestoreId";
 	/**
 	 * 常量字段createDate
 	 */
@@ -72,38 +73,53 @@ public class QueryBean {
 	/**
 	 * 高亮前缀
 	 */
-	public static final String HIGHLIGHT_PRE="<span style='background-color:#ffd73a'>";
+	public static final String HIGHLIGHT_PRE = "<span style='background-color:#ffd73a'>";
 	/**
 	 * 高亮后缀
 	 */
-	public static final String HIGHLIGHT_POST="</span>";
-	
+	public static final String HIGHLIGHT_POST = "</span>";
+
 	/**
 	 * 双引号，精确查询使用
 	 */
-	public static final String QUOTATION_MARK="\"";
+	public static final String QUOTATION_MARK = "\"";
+
 	/**
 	 * 无参
 	 */
-	public QueryBean(){
-		
+	public QueryBean() {
+
 	}
+
 	/**
 	 * 默认构造函数
-	 * @param uid uid
-	 * @param oid oid
-	 * @param did did
-	 * @param queryField 待查询字段，null为查询所有
-	 * @param queryFieldValue 待查询字段的值
-	 * @param againQueryField 进行再查询的字段，null为不进行再查询
-	 * @param againQueryFieldValue 再查询字段的值
-	 * @param sortField 待排序字段，null以及默认都是createDate
-	 * @param sortDirection 排序方向，null以及默认都是降序
-	 * @param startDate 开始日期
-	 * @param endDate 结束日期
+	 * 
+	 * @param uid
+	 *            uid
+	 * @param oid
+	 *            oid
+	 * @param did
+	 *            did
+	 * @param queryField
+	 *            待查询字段，null为查询所有
+	 * @param queryFieldValue
+	 *            待查询字段的值
+	 * @param againQueryField
+	 *            进行再查询的字段，null为不进行再查询
+	 * @param againQueryFieldValue
+	 *            再查询字段的值
+	 * @param sortField
+	 *            待排序字段，null以及默认都是createDate
+	 * @param sortDirection
+	 *            排序方向，null以及默认都是降序
+	 * @param startDate
+	 *            开始日期
+	 * @param endDate
+	 *            结束日期
 	 */
 	public QueryBean(String uid, String oid, String did, String queryField, String queryFieldValue,
-			String againQueryField, String againQueryFieldValue,String sortField,String sortDirection, String startDate, String endDate) {
+			String againQueryField, String againQueryFieldValue, String sortField, String sortDirection,
+			String startDate, String endDate) {
 		this.uid = uid;
 		this.oid = oid;
 		this.did = did;
@@ -113,10 +129,10 @@ public class QueryBean {
 		this.againQueryFieldValue = againQueryFieldValue;
 		this.startDate = startDate;
 		this.endDate = endDate;
-		this.sortField=sortField;
-		this.sortDirection=sortDirection;
+		this.sortField = sortField;
+		this.sortDirection = sortDirection;
 	}
-	
+
 	private String uid;
 	private String oid;
 	private String did;
@@ -132,15 +148,19 @@ public class QueryBean {
 	public String getSortDirection() {
 		return sortDirection;
 	}
+
 	public void setSortDirection(String sortDirection) {
 		this.sortDirection = sortDirection;
 	}
+
 	public String getSortField() {
 		return sortField;
 	}
+
 	public void setSortField(String sortField) {
 		this.sortField = sortField;
 	}
+
 	public String getStartDate() {
 		return startDate;
 	}
@@ -212,127 +232,144 @@ public class QueryBean {
 	public void setAgainQueryFieldValue(String againQueryFieldValue) {
 		this.againQueryFieldValue = againQueryFieldValue;
 	}
+
 	/**
 	 * 返回solr的查询语句
-	 * @param clazz dao层的对象
+	 * 
+	 * @param clazz
+	 *            dao层的对象
 	 * @return SolrQuery对象
 	 */
-	public SolrQuery getSolrQuery(Class clazz){
-		SolrQuery query=new SolrQuery(initQuery(clazz));
-		//排序字段
-		if(null==sortField){
-			sortField=CREAT_EDATE;
+	public SolrQuery getSolrQuery(Class clazz) {
+		SolrQuery query = new SolrQuery(initQuery(clazz));
+		// 排序字段
+		if (null == sortField) {
+			sortField = CREAT_EDATE;
 		}
-		
+
 		if (StringUtils.equalsIgnoreCase(sortDirection, "asc")) {
 			query.addSort(sortField, ORDER.asc);
-		}else {
-			//降序
+		} else {
+			// 降序
 			query.addSort(sortField, ORDER.desc);
 		}
-		
-		logger.info(clazz.getSimpleName()+"排序字段："+sortField);
-		//设置过滤条件，针对权限
+
+		// logger.info(clazz.getSimpleName() + "排序字段：" + sortField);
+		// 设置过滤条件，针对权限
 		if (null == uid && null == oid && null != did) {
 			// 读取所属部门
-			query.setFilterQueries("did:\""+did+"\"");
+			query.setFilterQueries("did:\"" + did + "\"");
 		}
 		if (null == did && null == uid && null != oid) {
 			// 读取所属组织
-			query.setFilterQueries("oid:\""+oid+"\"");
+			query.setFilterQueries("oid:\"" + oid + "\"");
 		}
 		if (null == oid && null == did && null != uid) {
 			// 读取个人数据
-			query.setFilterQueries("uid:\""+uid+"\"");
+			query.setFilterQueries("uid:\"" + uid + "\"");
 		}
-		logger.info(clazz.getSimpleName()+"完整的查询语句："+query.toString());
+		logger.info(clazz.getSimpleName() + "完整的查询语句：" + query.toString());
 		return query;
 	}
+
 	/**
 	 * 依据类库获得query语句用于查询
-	 * @param clazz dao层对应的store
+	 * 
+	 * @param clazz
+	 *            dao层对应的store
 	 * @return String
 	 */
-	public String initQuery(Class clazz){
-		StringBuffer queryBuffer=null;
-		//开始和结束时间
-		long startTime=SolrDateUtils.getStartTimeMillis(startDate);
-		long endTime=SolrDateUtils.getEndTimeMillis(endDate);
-		//String.format
-		//空串
+	public String initQuery(Class clazz) {
+		StringBuffer queryBuffer = null;
+		// 开始和结束时间
+		long startTime = SolrDateUtils.getStartTimeMillis(startDate);
+		long endTime = SolrDateUtils.getEndTimeMillis(endDate);
+		// String.format
+		// 空串
 		switch (ClassUtils.getShortClassName(clazz)) {
-		//人员库
+		// 人员库
 		case "PersonStore":
-			queryBuffer=initQueryBuffer(PERSONSTOREALL);
+			queryBuffer = initQueryBuffer(PERSONSTOREALL);
 			break;
-		//业务文档
+		// 业务文档
 		case "VocationalWorkStore":
-			queryBuffer=initQueryBuffer(VOCATIONALWORKSTOREALL);
+			queryBuffer = initQueryBuffer(VOCATIONALWORKSTOREALL);
 			break;
 		case "OutsideDocStore":
-			queryBuffer=initQueryBuffer(OUTSIDEDOCALL);
+			queryBuffer = initQueryBuffer(OUTSIDEDOCALL);
 			break;
 		case "LeadSpeakStore":
-			queryBuffer=initQueryBuffer(LEADSPEAKSTOREALL);
+			queryBuffer = initQueryBuffer(LEADSPEAKSTOREALL);
 			break;
 		case "ClueStore":
-			queryBuffer=initQueryBuffer(CLUESTOREALL);
+			queryBuffer = initQueryBuffer(CLUESTOREALL);
 			break;
 		}
-		//时间范围
-		queryBuffer.append(" AND ").append(String.format(CREAT_EDATE+":[%s TO %s]", startTime,endTime));
-		//查询语句
-		logger.info(clazz.getSimpleName()+"基本的查询语句："+queryBuffer.toString());
+		// 时间范围
+		queryBuffer.append(" AND ").append(String.format(CREAT_EDATE + ":[%s TO %s]", startTime, endTime));
+		// 查询语句
+		// logger.info(clazz.getSimpleName() + "基本的查询语句：" +queryBuffer.toString());
 		return queryBuffer.toString();
 	}
+
 	/**
 	 * 精确查询语句拼接
-	 * @param copyField 每个solr库中的任意字段
+	 * 
+	 * @param copyField
+	 *            每个solr库中的任意字段
 	 * @return StringBuffer
 	 */
-	protected StringBuffer initQueryBuffer(String copyField){
-		StringBuffer queryBuffer=new StringBuffer();
-		//第一次查询
+	protected StringBuffer initQueryBuffer(String copyField) {
+		StringBuffer queryBuffer = new StringBuffer();
+		// 第一次查询
 		getQueryBuffer(copyField, queryBuffer);
-		//为第二次查询准备
+		// 为第二次查询准备
 		getAgainQueryBuffer(copyField, queryBuffer);
 		return queryBuffer;
 	}
+
 	/**
 	 * 拼接查询字段
-	 * @param copyField 每个solr库中的任意字段
-	 * @param queryBuffer StringBuffer
+	 * 
+	 * @param copyField
+	 *            每个solr库中的任意字段
+	 * @param queryBuffer
+	 *            StringBuffer
 	 */
 	private void getQueryBuffer(String copyField, StringBuffer queryBuffer) {
-		if (StringUtils.isNotBlank(queryFieldValue)&&StringUtils.isNotBlank(queryField)) {
-			//查询字段、查询的关键字都不是空串
-			//精确查询
-			queryBuffer.append(queryField).append(":").append(QUOTATION_MARK)
-				.append(queryFieldValue).append(QUOTATION_MARK);
-		}else if(StringUtils.isBlank(queryField)&&StringUtils.isNotBlank(queryFieldValue)){
-			//查询内容不是空，但查询字段为空
-			queryBuffer.append(copyField).append(":").append(QUOTATION_MARK)
-				.append(queryFieldValue).append(QUOTATION_MARK);
-		}else {
-			//通配符
+		if (StringUtils.isNotBlank(queryFieldValue) && StringUtils.isNotBlank(queryField)) {
+			// 查询字段、查询的关键字都不是空串
+			// 精确查询
+			queryBuffer.append(queryField).append(":").append(QUOTATION_MARK).append(queryFieldValue)
+					.append(QUOTATION_MARK);
+		} else if (StringUtils.isBlank(queryField) && StringUtils.isNotBlank(queryFieldValue)) {
+			// 查询内容不是空，但查询字段为空
+			queryBuffer.append(copyField).append(":").append(QUOTATION_MARK).append(queryFieldValue)
+					.append(QUOTATION_MARK);
+		} else {
+			// 通配符
 			queryBuffer.append(copyField).append(":").append("*");
 		}
 	}
+
 	/**
 	 * 拼接再查询
-	 * @param copyField 全字段
-	 * @param queryBuffer StringBuffer
+	 * 
+	 * @param copyField
+	 *            全字段
+	 * @param queryBuffer
+	 *            StringBuffer
 	 */
 	private void getAgainQueryBuffer(String copyField, StringBuffer queryBuffer) {
-		if (StringUtils.isNotBlank(againQueryField)&&StringUtils.isNotBlank(againQueryFieldValue)) {
-			//AND进行拼接，也是精确查询
-			queryBuffer.append(" AND ").append(againQueryField).append(":")
-				.append(QUOTATION_MARK).append(againQueryFieldValue).append(QUOTATION_MARK);
-		}else if(StringUtils.isBlank(againQueryField)&&StringUtils.isNotBlank(againQueryFieldValue)){
-			//关键字不是空但查询字段是空，全字段查询
-			queryBuffer.append(" AND ").append(copyField).append(":")
-				.append(QUOTATION_MARK).append(againQueryFieldValue).append(QUOTATION_MARK);
+		if (StringUtils.isNotBlank(againQueryField) && StringUtils.isNotBlank(againQueryFieldValue)) {
+			// AND进行拼接，也是精确查询
+			queryBuffer.append(" AND ").append(againQueryField).append(":").append(QUOTATION_MARK)
+					.append(againQueryFieldValue).append(QUOTATION_MARK);
+		} else if (StringUtils.isBlank(againQueryField) && StringUtils.isNotBlank(againQueryFieldValue)) {
+			// 关键字不是空但查询字段是空，全字段查询
+			queryBuffer.append(" AND ").append(copyField).append(":").append(QUOTATION_MARK)
+					.append(againQueryFieldValue).append(QUOTATION_MARK);
 		}
-		//其他情况不考虑
+		// 其他情况不考虑
 	}
 }
