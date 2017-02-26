@@ -72,7 +72,16 @@ Ext.define('Ushine.personInfo.PersonInfoManage',{
 							   	   			Ext.create('Ushine.utils.Msg').onInfo("请选择一行数据");
 							   	   		}else{
 							   	   			//修改数据
-							   	   			self.modifyPerson(record);
+							   	   			Ext.Ajax.request({
+							   	   				url:'getPersonStoreDetailById.do?id='+record[0].data.id,
+							   	   				method:'get',
+							   	   				success:function(response){
+							   	   					var obj=response.responseText;
+							   	   					var temp=Ext.JSON.decode(obj);
+							   	   					//console.log(temp.datas[0]);
+							   	   					self.modifyPerson(temp.datas[0]);
+							   	   				}
+							   	   			})
 							   	   		}
 							   	   }else{
 							   	   		Ext.create('Ushine.utils.Msg').onInfo("请至少选择一行数据");
@@ -111,6 +120,7 @@ Ext.define('Ushine.personInfo.PersonInfoManage',{
 					       			if(personStoreGrid.getSelectionModel().hasSelection()){
 							   	   		//允许多行
 							   	   		var record=personStoreGrid.getSelectionModel().getSelection();
+							   	   		
 							   	   		var personStoreIds=[];
 							   	   		for(var i=0;i<record.length;i++){
 							   	   			personStoreIds.push(record[i].get('id'));
@@ -121,95 +131,6 @@ Ext.define('Ushine.personInfo.PersonInfoManage',{
 							   	   }
 					       		}
 					       }),
-						   /*Ext.create('Ushine.buttons.IconButton',{
-					       		id:'updateStatusBtn',
-					       		btnText:'启用人员',
-					       		handler:function(){
-					       			//启用人员
-					       			var personStoreGrid=self.getComponent(1);					    	   	
-							   	    if(personStoreGrid.getSelectionModel().hasSelection()){
-							   	   		//允许多行
-							   	   		var record=personStoreGrid.getSelectionModel().getSelection();
-							   	   		var personStoreIds=[];
-							   	   		for(var i=0;i<record.length;i++){
-							   	   			//如果是禁用
-							   	   			//console.log(record[i].get('isEnable'));
-							   	   			if(record[i].get('isEnable')=='否'){
-								   	   			personStoreIds.push(record[i].get('id'));
-							   	   			}
-							   	   		}
-							   	   		//后台
-							   	   		if(personStoreIds.length>0){
-							   	   			Ext.Ajax.request({
-								   	   			url:'startPersonStore.do',
-								   	   			params:{
-								   	   				ids:personStoreIds
-								   	   			},
-								   	   			method:'post',
-								   	   			success:function(response){
-								   	   				var obj=Ext.JSON.decode(response.responseText);
-													Ext.create('Ushine.utils.Msg').onInfo(obj.msg);
-													//刷新前台数据
-													Ext.getCmp('personInfoGridPanel').getStore().reload();
-													////取消选择
-													Ext.getCmp('personInfoGridPanel').getSelectionModel().clearSelections();
-								   	   			},
-								   	   			failure:function(){
-								   	   				Ext.create('Ushine.utils.Msg').onInfo("请求后台失败!!!");
-								   	   			}
-							   	   			})
-							   	   		}else{
-							   	   			Ext.create('Ushine.utils.Msg').onInfo("选中的人员已经启用");
-							   	   		}
-							   	    }else{
-							   	   		Ext.create('Ushine.utils.Msg').onInfo("请至少选择一行数据");
-							   	    }
-					       		 }
-						   }),
-						   Ext.create('Ushine.buttons.IconButton',{
-					       		id:'updateCeaseBtn',
-					       		btnText:'禁用人员',
-					       		handler:function(){
-					       			//禁用人员
-					       			var personStoreGrid=self.getComponent(1);					    	   	
-							   	    if(personStoreGrid.getSelectionModel().hasSelection()){
-							   	   		//允许多行
-							   	   		var record=personStoreGrid.getSelectionModel().getSelection();
-							   	   		var personStoreIds=[];
-							   	   		for(var i=0;i<record.length;i++){
-							   	   			//如果是启用
-								   	   		//console.log(record[i].get('isEnable'));
-							   	   			if(record[i].get('isEnable')=='是'){
-								   	   			personStoreIds.push(record[i].get('id'));
-							   	   			}
-							   	   		}
-							   	   		if(personStoreIds.length>0){
-							   	   			Ext.Ajax.request({
-								   	   			url:'ceasePersonStore.do',
-								   	   			params:{
-								   	   				ids:personStoreIds
-								   	   			},
-								   	   			method:'post',
-								   	   			success:function(response){
-								   	   				var obj=Ext.JSON.decode(response.responseText);
-													Ext.create('Ushine.utils.Msg').onInfo(obj.msg);
-													//刷新前台数据
-													Ext.getCmp('personInfoGridPanel').getStore().reload();
-													//取消选择
-													Ext.getCmp('personInfoGridPanel').getSelectionModel().clearSelections();
-								   	   			},
-								   	   			failure:function(){
-								   	   				Ext.create('Ushine.utils.Msg').onInfo("请求后台失败!!!");
-								   	   			}
-								   	   		})
-							   	   		}else{
-							   	   			Ext.create('Ushine.utils.Msg').onInfo("选中的人员已经禁用");
-							   	   		}
-							   	    }else{
-							   	   		Ext.create('Ushine.utils.Msg').onInfo("请至少选择一行数据");
-							   	    }
-					       		}
-						   }),*/
 						   Ext.create('Ushine.buttons.IconButton', {
 					    	   id: 'downExcelBtn',
 					    	   btnText: '导出人员',
@@ -647,29 +568,28 @@ Ext.define('Ushine.personInfo.PersonInfoManage',{
 	},
 	//字符串替换
 	replaceString:function(string){
-		var value=string;
-		//去除所有的html标签
-		/*if(string.indexOf("<font color='orange'/>")>-1&&string.indexOf("</font>")>-1){
-			value=string.replace(/<[^>]+>/g,"");
-		}*/
-		value=string.replace(/<[^>]+>/g,"");
-		return value;
+		if(string){
+			//去除所有的html标签
+			return string.replace(/<[^>]+>/g,"");
+		}
 	},
 	//重置
 	resetPersonInfo:function(form,record){
 		var self=this;
-		form.findField('personName').setValue(self.replaceString(record[0].get('personName')));
-		form.findField('englishName').setValue(self.replaceString(record[0].get('englishName')));
-		form.findField('nameUsedBefore').setValue(self.replaceString(record[0].get('nameUsedBefore')));
-		form.findField('sex').setValue(self.replaceString(record[0].get('sex')));
-		form.findField('bebornTime').setValue(self.replaceString(record[0].get('bebornTime')).substring(0,10));
-		form.findField('presentAddress').setValue(self.replaceString(record[0].get('presentAddress')));
-		form.findField('workUnit').setValue(self.replaceString(record[0].get('workUnit')));
-		form.findField('registerAddress').setValue(self.replaceString(record[0].get('registerAddress')));
-		form.findField('antecedents').setValue(self.replaceString(record[0].get('antecedents')));
-		form.findField('activityCondition').setValue(self.replaceString(record[0].get('activityCondition')));
-		form.findField('infoType').setValue(self.replaceString(record[0].get('infoType')));
-		form.findField('id').setValue(record[0].get('id'));
+		form.findField('personName').setValue(self.replaceString(record.personName));
+		form.findField('englishName').setValue(self.replaceString(record.englishName));
+		form.findField('nameUsedBefore').setValue(self.replaceString(record.nameUsedBefore));
+		form.findField('sex').setValue(self.replaceString(record.sex));
+		if(self.replaceString(record.bebornTime)){
+			form.findField('bebornTime').setValue(self.replaceString(record.bebornTime).substring(0,10));
+		}
+		form.findField('presentAddress').setValue(self.replaceString(record.presentAddress));
+		form.findField('workUnit').setValue(self.replaceString(record.workUnit));
+		form.findField('registerAddress').setValue(self.replaceString(record.registerAddress));
+		form.findField('antecedents').setValue(self.replaceString(record.antecedents));
+		form.findField('activityCondition').setValue(self.replaceString(record.activityCondition));
+		form.findField('infoType').setValue(self.replaceString(record.infoType));
+		form.findField('id').setValue(record.id);
 	},
 	//修改人员
 	modifyPerson:function(record){
@@ -684,22 +604,20 @@ Ext.define('Ushine.personInfo.PersonInfoManage',{
 		Ext.getCmp('certificatestypegrid').getStore().removeAll();
 		Ext.getCmp('networkaccounttypegrid').getStore().removeAll();
 		//再把数据加进来
-		var certificates=record[0].data.certificates;
-		if(certificates.length>0){
+		var certificates=record.certificates;
+		//.length>0
+		if(certificates){
 			Ext.getCmp('certificatestypegrid').getStore().add(certificates);
 		}
-		var networkaccount=record[0].data.networkaccount;
-		if(networkaccount.length>0){
+		var networkaccount=record.networkaccount;
+		//length>0
+		if(networkaccount){
 			Ext.getCmp('networkaccounttypegrid').getStore().add(networkaccount);
 		}
 		//获得第一个组件
 		var self=this;
 		var form=win.getComponent(0).getForm();
 		self.resetPersonInfo(form,record);
-		/*Ext.getCmp('resetPersonInfo').addListener('click',function(){
-			//修改重置
-			self.resetPersonInfo(form,record);
-		})*/
 	},
 	//删除人员
 	delPesonInfo:function(personStoreIds){
@@ -1940,14 +1858,14 @@ Ext.define('UpdatePersonInfoForm',{
 								'afterrender':function(){
 									var personStorePhotoImage=Ext.getCmp('personStorePhotoImage');
 									//console.log(config.record[0].data.photo);
-									Ext.get('nophotospan').dom.innerHTML="双击可删除";
+									/*Ext.get('nophotospan').dom.innerHTML="双击可删除";
 									var arr=config.record[0].data.photo.split(",");
 									if(config.record[0].data.photo.length>1){
 										//原来有照片
 										Ext.Array.each(arr,function(value){
 											personStorePhotoImage.add(self.update(value));
 										});
-									}
+									}*/
 								}
 							}
 						},{

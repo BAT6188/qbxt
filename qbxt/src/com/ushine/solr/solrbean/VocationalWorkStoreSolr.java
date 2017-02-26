@@ -31,6 +31,15 @@ public class VocationalWorkStoreSolr {
 	private long createDate;
 	@Field
 	private String attaches;
+	@Field
+	private String attachContent;//附件里面的文字内容
+	
+	public String getAttachContent() {
+		return attachContent;
+	}
+	public void setAttachContent(String attachContent) {
+		this.attachContent = attachContent;
+	}
 	/**
 	 * 包含id的构造函数
 	 * @param vocationalWorkStoreId

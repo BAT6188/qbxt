@@ -156,12 +156,6 @@ public class PersonStoreServiceImpl implements IPersonStoreService {
 		for (PersonStore PersonStore : vo.getArray()) {
 			JSONObject obj = new JSONObject();
 			obj.put("id", PersonStore.getId());
-			/*
-			 * if(PersonStore.getIsEnable().trim().equals("2")){
-			 * obj.put("isEnable", "是"); }
-			 * if(PersonStore.getIsEnable().trim().equals("1")){
-			 * obj.put("isEnable", "否"); }
-			 */
 			obj.put("isEnable", PersonStore.getIsEnable());
 			obj.put("personName", PersonStore.getPersonName());
 			obj.put("nameUsedBefore", PersonStore.getNameUsedBefore());
@@ -799,6 +793,18 @@ public class PersonStoreServiceImpl implements IPersonStoreService {
 			e.printStackTrace();
 		} finally {
 			IOUtils.closeQuietly(fos);
+		}
+	}
+
+	@Override
+	public void testFindPersonStoreById(int count) {
+		try {
+			for (int i = 0; i < count; i++) {
+				PersonStore store = baseDao.findById(PersonStore.class, System.currentTimeMillis()+"");
+				logger.info("store is null ?："+(store==null));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 }

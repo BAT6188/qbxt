@@ -39,7 +39,6 @@ public class VocationalWorkStore {
 	private String did; // 部门
 	private String action;// 增量数据操作 1:新增，2:修改，3:删除
 	private String createDate;// 当前数据创建时间
-	//private InfoType involvedInTheField;// 涉及领域
 	private String attaches;//附件路径
 	private String fileName;//文件名称，用于判断是否入库了
 	

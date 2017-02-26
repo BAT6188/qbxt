@@ -29,7 +29,7 @@ Ext.define('Ushine.utils.PersonStoreFileGridPanel', {
 		//console.log(this.record[0].data.appendix );
 		var appendix='';
 		if(this.record){
-			appendix=encodeURI(encodeURI(this.record[0].data.appendix));
+			appendix=encodeURI(encodeURI(record.appendix));
 			console.log(appendix);
 		}
 		this.store=Ext.create('Ext.data.JsonStore',{

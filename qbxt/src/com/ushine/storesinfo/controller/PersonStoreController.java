@@ -26,6 +26,7 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -92,6 +93,73 @@ public class PersonStoreController {
 
 	@Autowired
 	private ITempClueDataService tempClueDataService;
+
+	@RequestMapping(value = "/getPersonStoreDetailById.do", method = RequestMethod.GET)
+	@ResponseBody
+	public String getPersonStoreDetailById(@RequestParam(value = "id", required = true) String id) {
+		JSONObject obj = new JSONObject();
+		JSONArray array = new JSONArray();
+		JSONObject root = new JSONObject();
+		try {
+			PersonStore PersonStore = personStoreService.findPersonStoreById(id);
+			obj.put("id", PersonStore.getId());
+			obj.put("isEnable", PersonStore.getIsEnable());
+			obj.put("personName", PersonStore.getPersonName());
+			obj.put("nameUsedBefore", PersonStore.getNameUsedBefore());
+			obj.put("englishName", PersonStore.getEnglishName());
+			obj.put("bebornTime", PersonStore.getBebornTime());
+			obj.put("presentAddress", PersonStore.getPresentAddress());
+			obj.put("workUnit", PersonStore.getWorkUnit());
+			obj.put("registerAddress", PersonStore.getRegisterAddress());
+			obj.put("antecedents", PersonStore.getAntecedents());
+			obj.put("activityCondition", PersonStore.getActivityCondition());
+			obj.put("sex", PersonStore.getSex());
+			obj.put("createDate", PersonStore.getCreateDate());
+			// 为空的情况
+			if (PersonStore.getInfoType() != null) {
+				// 类别可能被删除
+				// 人员关联的类别就为空了
+				obj.put("infoType", PersonStore.getInfoType().getTypeName());
+			}
+			// 附件
+			obj.put("appendix", PersonStore.getAppendix());
+			// 照片
+			obj.put("photo", PersonStore.getPhotofraphWay());
+			// 证件
+			Set<CertificatesStore> set1 = PersonStore.getCertificatesStores();
+			JSONArray cjArray = new JSONArray();
+			for (CertificatesStore c : set1) {
+				JSONObject cObject = new JSONObject();
+				// 为空
+				if (c.getInfoType() != null && c.getInfoType().getTypeName().trim().length() > 0) {
+					cObject.put("certificatesType", c.getInfoType().getTypeName());
+					cObject.put("certificatesTypeNumber", c.getCertificatesNumber());
+					// 需要放到array中
+					cjArray.add(cObject);
+					obj.put("certificates", cjArray.toString());
+				}
+			}
+			// 网络账号
+			Set<NetworkAccountStore> set = PersonStore.getNetworkAccountStores();
+			JSONArray nArray = new JSONArray();
+			for (NetworkAccountStore networkAccountStore : set) {
+				JSONObject networkObject = new JSONObject();
+				if (networkAccountStore.getInfoType() != null
+						&& networkAccountStore.getInfoType().getTypeName().trim().length() > 0) {
+					networkObject.put("networkAccountType", networkAccountStore.getInfoType().getTypeName());
+					networkObject.put("networkAccountTypeNumber", networkAccountStore.getNetworkNumber());
+					
+					nArray.add(networkObject);
+					obj.put("networkaccount", nArray.toString());
+				}
+			}
+			array.add(obj);
+			root.element("datas", array);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return root.toString();
+	}
 
 	/**
 	 * 查询人员库信息，多条件
@@ -650,6 +718,7 @@ public class PersonStoreController {
 			if (list != null && list.size() > 0) {
 				if ("0x0001".equals(list.get(0))) {// 启用
 					// 获得这个人员
+					logger.info("修改人员的id："+id);
 					PersonStore store = personStoreService.findPersonStoreById(id);
 					// 增加权限
 					store.setUid(sessionMgr.getUID(request));
@@ -878,44 +947,6 @@ public class PersonStoreController {
 			logger.error(msg, e);
 			loginfo.setResult(msg + e.getMessage());
 			ViewObject object = new ViewObject(ViewObject.RET_FAILURE, "启用人员信息失败");
-			return object.toJSon();
-		} finally {
-			log.log(loginfo);
-		}
-	}
-
-	/**
-	 * 禁用人员
-	 * 
-	 * @param request
-	 * @param ids
-	 * @return
-	 */
-	@RequestMapping(value = "/ceasePersonStore.do", method = RequestMethod.POST)
-	@ResponseBody
-	public String ceasePesonStore(HttpServletRequest request, @RequestParam("ids") String[] ids) {
-		logger.info("禁用人员");
-		com.tdcq.common.logging.Logger log = LogFactory.getLogger();
-		LogInfo loginfo = new LogInfo();
-		loginfo.setApplication("test");
-		loginfo.setUri(request.getRequestURI());
-		loginfo.setClientIP(request.getRemoteAddr());
-		loginfo.setLogTime(new Date());
-		loginfo.setResult("禁用人员成功");
-		loginfo.setOperationType(com.tdcq.common.logging.Logger.LOG_OPERATION_TYPE_UPDATE);
-		try {
-			// 获取用户的登录信息
-			UserSessionMgr sessionMgr = UserSessionMgr.getInstance();
-			loginfo.setUserName(sessionMgr.getTrueName(request));
-			loginfo.setUserCode(sessionMgr.getCode(request));
-			personStoreService.updatePersonStoreIsEnableCease(ids);
-			return new ViewObject(ViewObject.RET_FAILURE, "禁用人员信息成功！").toJSon();
-		} catch (Exception e) {
-			e.printStackTrace();
-			String msg = "禁用人员信息失败";
-			logger.error(msg, e);
-			loginfo.setResult(msg + e.getMessage());
-			ViewObject object = new ViewObject(ViewObject.RET_FAILURE, "禁用人员信息失败");
 			return object.toJSon();
 		} finally {
 			log.log(loginfo);
@@ -1280,12 +1311,6 @@ public class PersonStoreController {
 			if (tempFiles.exists()) {
 				tempFile = tempFiles.listFiles();
 				for (File file : tempFile) {
-					/*
-					 * fi = new FileInputStream(file); fo = new
-					 * FileOutputStream(lpath + File.separator+ file.getName());
-					 * in = fi.getChannel(); out = fo.getChannel(); //
-					 * 连接两个通道,从in中读取,然后写入out in.transferTo(0, in.size(), out);
-					 */
 					org.apache.commons.io.FileUtils.copyFileToDirectory(file, fileT);
 					list.add(personStoreFile + File.separator + file.getName());
 				}
@@ -1679,19 +1704,11 @@ public class PersonStoreController {
 	 * OpenSessionInView导致的一直创建新的session，不关闭最终导致session不足；
 	 * 解决方式是不要在request里面进行循环读取，放到service层里
 	 *****************************/
-	// @RequestMapping(value="/findPersonTest.do",method=RequestMethod.GET)
-	// @ResponseBody
+	@RequestMapping(value="/findPersonTest.do",method=RequestMethod.GET)
+	@ResponseBody
 	public String findPersonTest(@RequestParam(value = "count") int count) {
 		String result = "success";
-		try {
-			for (int i = 0; i < count; i++) {
-				personStoreService.findPersonStoreById("40288a625624b632015624b647300005");
-				System.err.println("第" + i + ":"
-						+ personStoreService.findPersonStoreById("40288a625624b632015624b647300005").getPersonName());
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		personStoreService.testFindPersonStoreById(count);
 		return result;
 	}
 }

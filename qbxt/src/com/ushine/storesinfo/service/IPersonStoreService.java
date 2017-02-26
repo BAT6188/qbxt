@@ -124,4 +124,6 @@ public interface IPersonStoreService {
 	 * @param filePath 文件保存的路径
 	 */
 	public void outputPersonStoreToWord(String id,String filePath);
+	
+	public void testFindPersonStoreById(int count);
 }

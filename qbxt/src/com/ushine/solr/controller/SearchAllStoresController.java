@@ -51,18 +51,7 @@ public class SearchAllStoresController {
 	private IResourceService resourceService;
 	@Autowired
 	private IPermitService permitService;
-	@Autowired
-	private IPersonStoreService personStoreService;
-	@Autowired
-	private IClueStoreService clueStoreService;
-	@Autowired
-	private IVocationalWorkStoreService vocationalWorkStoreService;
-	@Autowired
-	private IOutsideDocStoreService outsideDocStoreService;
-	@Autowired
-	private ILeadSpeakStoreService leadSpeakStoreService;
-	@Autowired
-	IOutsideDocStoreSolrService outsideDocStoreSolrService;
+	
 	Logger logger = Logger.getLogger(SearchAllStoresController.class);
 
 	private static final String OID = "oid";
