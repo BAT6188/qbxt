@@ -148,7 +148,7 @@ public class PersonStoreController {
 						&& networkAccountStore.getInfoType().getTypeName().trim().length() > 0) {
 					networkObject.put("networkAccountType", networkAccountStore.getInfoType().getTypeName());
 					networkObject.put("networkAccountTypeNumber", networkAccountStore.getNetworkNumber());
-					
+
 					nArray.add(networkObject);
 					obj.put("networkaccount", nArray.toString());
 				}
@@ -718,7 +718,7 @@ public class PersonStoreController {
 			if (list != null && list.size() > 0) {
 				if ("0x0001".equals(list.get(0))) {// 启用
 					// 获得这个人员
-					logger.info("修改人员的id："+id);
+					logger.info("修改人员的id：" + id);
 					PersonStore store = personStoreService.findPersonStoreById(id);
 					// 增加权限
 					store.setUid(sessionMgr.getUID(request));
@@ -909,44 +909,6 @@ public class PersonStoreController {
 			logger.error(msg, e);
 			loginfo.setResult(msg + e.getMessage());
 			ViewObject object = new ViewObject(ViewObject.RET_FAILURE, "异常信息,删除失败");
-			return object.toJSon();
-		} finally {
-			log.log(loginfo);
-		}
-	}
-
-	/**
-	 * 启用人员
-	 * 
-	 * @param request
-	 * @param ids
-	 * @return
-	 */
-	@RequestMapping(value = "/startPersonStore.do", method = RequestMethod.POST)
-	@ResponseBody
-	public String startPesonStore(HttpServletRequest request, @RequestParam("ids") String[] ids) {
-		logger.info("启用人员");
-		com.tdcq.common.logging.Logger log = LogFactory.getLogger();
-		LogInfo loginfo = new LogInfo();
-		loginfo.setApplication("test");
-		loginfo.setUri(request.getRequestURI());
-		loginfo.setClientIP(request.getRemoteAddr());
-		loginfo.setLogTime(new Date());
-		loginfo.setResult("启用人员成功");
-		loginfo.setOperationType(com.tdcq.common.logging.Logger.LOG_OPERATION_TYPE_UPDATE);
-		try {
-			// 获取用户的登录信息
-			UserSessionMgr sessionMgr = UserSessionMgr.getInstance();
-			loginfo.setUserName(sessionMgr.getTrueName(request));
-			loginfo.setUserCode(sessionMgr.getCode(request));
-			personStoreService.updatePersonStoreIsEnableStart(ids);
-			return new ViewObject(ViewObject.RET_FAILURE, "启用人员信息成功！").toJSon();
-		} catch (Exception e) {
-			e.printStackTrace();
-			String msg = "启用人员信息失败";
-			logger.error(msg, e);
-			loginfo.setResult(msg + e.getMessage());
-			ViewObject object = new ViewObject(ViewObject.RET_FAILURE, "启用人员信息失败");
 			return object.toJSon();
 		} finally {
 			log.log(loginfo);
@@ -1613,6 +1575,49 @@ public class PersonStoreController {
 	}
 
 	/**
+	 * 下载人员信息的PDF文件
+	 * 
+	 * @param request
+	 * @param name
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value = "/downloadPersonPDFFile.do")
+	@ResponseBody
+	public String dwonExportData(HttpServletRequest request, @RequestParam("personId") String personId,
+			HttpServletResponse response) {
+		ServletOutputStream out = null;
+		String root = request.getServletContext().getRealPath("/doctemplate");
+		// 文件名
+		File file =null;
+		try {
+			// 获取服务器地址
+			// String path = servletContext.getRealPath("/") + "PDFFilePath/";
+			// 生成word
+			file =personStoreService.outputPersonStoreToWord(personId);
+			// 下载附件
+			// 1.设置文件ContentType类型，这样设置，会自动判断下载文件类型
+			response.setContentType("multipart/form-data");
+			// 2.设置文件头
+			response.setHeader("Content-Disposition", "attachment;fileName=" + personId + ".doc");
+			// 要下载的文件地址
+			out = response.getOutputStream();
+			// 使用IOUtils
+			IOUtils.write(FileUtils.readFileToByteArray(file), out);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				IOUtils.closeQuietly(out);
+				FileUtils.forceDeleteOnExit(file);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return new ViewObject(ViewObject.RET_FAILURE, "下载失败,请联系管理员").toJSon();
+	}
+
+	/**
 	 * 上传并识别人员的Excel
 	 * 
 	 * @param number
@@ -1704,7 +1709,7 @@ public class PersonStoreController {
 	 * OpenSessionInView导致的一直创建新的session，不关闭最终导致session不足；
 	 * 解决方式是不要在request里面进行循环读取，放到service层里
 	 *****************************/
-	@RequestMapping(value="/findPersonTest.do",method=RequestMethod.GET)
+	@RequestMapping(value = "/findPersonTest.do", method = RequestMethod.GET)
 	@ResponseBody
 	public String findPersonTest(@RequestParam(value = "count") int count) {
 		String result = "success";

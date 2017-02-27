@@ -1,5 +1,6 @@
 package com.ushine.storesinfo.service;
 
+import java.io.File;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -121,9 +122,8 @@ public interface IPersonStoreService {
 	/**
 	 * 把人员信息导入word中
 	 * @param id 人员的id
-	 * @param filePath 文件保存的路径
 	 */
-	public void outputPersonStoreToWord(String id,String filePath);
+	public File outputPersonStoreToWord(String id);
 	
 	public void testFindPersonStoreById(int count);
 }

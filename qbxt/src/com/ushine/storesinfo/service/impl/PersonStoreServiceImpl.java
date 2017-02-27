@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -16,7 +17,8 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.SetUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
@@ -25,9 +27,6 @@ import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hwpf.HWPFDocument;
-import org.apache.poi.hwpf.usermodel.CharacterRun;
-import org.apache.poi.hwpf.usermodel.Paragraph;
-import org.apache.poi.hwpf.usermodel.ParagraphProperties;
 import org.apache.poi.hwpf.usermodel.Range;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.Cell;
@@ -36,6 +35,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
+import org.apache.solr.util.FileUtils;
 import org.dom4j.Element;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
@@ -67,7 +67,6 @@ import com.ushine.storesinfo.model.PersonStore;
 import com.ushine.storesinfo.service.IInfoTypeService;
 import com.ushine.storesinfo.service.IPersonStoreService;
 import com.ushine.storesinfo.storefinal.StoreFinal;
-import com.ushine.util.CustomXWPFDocument;
 import com.ushine.util.StringUtil;
 import com.ushine.util.XmlUtils;
 
@@ -687,113 +686,77 @@ public class PersonStoreServiceImpl implements IPersonStoreService {
 			}
 		}
 	}
-
+	//模板文件夹
+	private static final String DOC_FOLDER="doctemplate";
+	//模板名称
+	private static final String DOC_TEMPLATE="personstore.doc";
 	@Override
-	public void outputPersonStoreToWord(String id, String filePath) {
+	public File outputPersonStoreToWord(String id) {
 		FileOutputStream fos = null;
-		String fontFamily = "宋体";
-		int fontSize = 30;
+		File targetDocFile=null;
 		try {
 			PersonStore store = findPersonStoreById(id);
-			CustomXWPFDocument document = new CustomXWPFDocument();
-			// word2003
-			String temple = PathUtils.getConfigPath(VocationalWorkStoreServiceImpl.class) + "temple.doc";
-			POIFSFileSystem fs = new POIFSFileSystem(new FileInputStream(temple));
-			HWPFDocument doc = new HWPFDocument(fs);
-			if (null != store) {
-				/*
-				 * //标题 XWPFParagraph title = document.createParagraph();
-				 * title.setAlignment(ParagraphAlignment.CENTER); XWPFRun
-				 * titleRun = title.createRun(); titleRun.setBold(true);
-				 * titleRun.setFontFamily(fontFamily);
-				 * titleRun.setText(store.getPersonName()+"的信息");
-				 * titleRun.setFontSize(fontSize);
-				 */
-				// 利用反射给属性赋值
-				String[] properties = new String[] { "infoType", "personName", "nameUsedBefore", "englishName", "sex",
-						"bebornTime", "registerAddress", "presentAddress", "workUnit", "antecedents",
-						"activityCondition", };
-				String[] chinese_properties = new String[] { "人员类别", "姓名", "曾用名", "英文名", "性别", "出生日期", "户籍地址", "现住地址",
-						"工作单位", "履历", "活动情况" };
-				Range range = doc.getRange();
-				Paragraph titlePar = range.insertAfter(new ParagraphProperties(), 0);
-				CharacterRun titleRun = titlePar.insertAfter("");
-				titleRun.insertAfter(store.getPersonName() + "详细信息：");
-				titleRun.setFontSize(50);
-
-				for (int i = 0; i < properties.length; i++) {
-					// 设置内容
-					Paragraph paragraph = range.insertAfter(new ParagraphProperties(), 0);
-					String string = properties[i];
-					CharacterRun run1 = paragraph.insertAfter("");
-					run1.setFontSize(fontSize);
-					if (string.equals("infoType")) {
-						// 直接利用PropertyUtils获得属性值
-						InfoType infoType = (InfoType) PropertyUtils.getSimpleProperty(store, string);
-						if (null != infoType) {
-							run1.insertAfter(chinese_properties[i] + "：" + infoType.getTypeName());
-						} else {
-							run1.insertAfter(chinese_properties[i] + "：");
-						}
-					} else {
-						run1.insertAfter(chinese_properties[i] + "：" + PropertyUtils.getSimpleProperty(store, string));
-					}
-				}
-				// 插入表格
-				List<InfoType> list = infoTypeService.findInfoTypeByTypeName("CertificatesStore");
-				Paragraph cParagraph = range.insertAfter(new ParagraphProperties(), 0);
-				CharacterRun cRun = cParagraph.insertAfter("");
-				cRun.insertAfter("证件信息：");
-				cRun.setFontSize(36);
-
-				for (int i = 0; i < list.size(); i++) {
-					InfoType infoType = list.get(i);
-					Paragraph c = range.insertAfter(new ParagraphProperties(), 0);
-
-					CharacterRun run1 = c.insertAfter("");
-					DetachedCriteria criteria = DetachedCriteria.forClass(CertificatesStore.class);
-					// 用DetachedCriteria的关联查询就可
-					criteria.createAlias("personStore", "p").add(Restrictions.eq("p.id", id));
-					criteria.createAlias("infoType", "i").add(Restrictions.eq("i.id", infoType.getId()));
-					StringBuffer number = new StringBuffer();
-					List<CertificatesStore> cList = iBaseDao.findByCriteria(criteria);
-					for (CertificatesStore certificatesStore : cList) {
-						number.append(certificatesStore.getCertificatesNumber() + ",");
-					}
-					run1.insertAfter(infoType.getTypeName() + "：" + number.toString());
-				}
-
-				List<InfoType> list2 = infoTypeService.findInfoTypeByTypeName("NetworkAccountStore");
-				Paragraph tParagraph = range.insertAfter(new ParagraphProperties(), 0);
-				CharacterRun tRun = tParagraph.insertAfter("");
-				tRun.insertAfter("联系方式信息：");
-				tRun.setFontSize(36);
-
-				for (int i = 0; i < list2.size(); i++) {
-					InfoType infoType = list2.get(i);
-					Paragraph c = range.insertAfter(new ParagraphProperties(), 0);
-
-					CharacterRun run1 = c.insertAfter("");
-					DetachedCriteria criteria = DetachedCriteria.forClass(NetworkAccountStore.class);
-					// 用DetachedCriteria的关联查询就可
-					criteria.createAlias("personStore", "p").add(Restrictions.eq("p.id", id));
-					criteria.createAlias("infoType", "i").add(Restrictions.eq("i.id", infoType.getId()));
-					StringBuffer number = new StringBuffer();
-					List<NetworkAccountStore> clist2 = iBaseDao.findByCriteria(criteria);
-					for (NetworkAccountStore networkAccountStore : clist2) {
-						number.append(networkAccountStore.getNetworkNumber() + ",");
-					}
-					run1.insertAfter(infoType.getTypeName() + "：" + number.toString());
-				}
-
-				fos = new FileOutputStream(new File(filePath));
-				doc.write(fos);
+			//获得属性
+			Map<String,String> map=new HashMap<>();
+			map.put("infoType", store.getInfoType().getTypeName());
+			map.put("personName", store.getPersonName());
+			map.put("sex", store.getSex());
+			map.put("antecedents", store.getAntecedents());
+			map.put("activityCondition", store.getActivityCondition());
+			map.put("bebornTime", store.getBebornTime());
+			map.put("registerAddress", store.getRegisterAddress());
+			map.put("workUnit", store.getWorkUnit());
+			map.put("presentAddress", store.getPresentAddress());
+			map.put("nameUsedBefore", store.getNameUsedBefore());
+			map.put("englishName", store.getEnglishName());
+			//证件号码
+			Set<CertificatesStore> cerStores=store.getCertificatesStores();
+			StringBuffer cerBuffer=new StringBuffer();
+			String mark="，";
+			for (CertificatesStore certificatesStore : cerStores) {
+				cerBuffer.append(certificatesStore.getCertificatesNumber()).append(mark);
 			}
+			if (cerBuffer.length()>mark.length()) {
+				String cer=cerBuffer.toString().substring(0, cerBuffer.length()-mark.length());
+				map.put("certificatesStores", cer);
+			}else{
+				map.put("certificatesStores", "");
+			}
+			Set<NetworkAccountStore> netStores = store.getNetworkAccountStores();
+			StringBuffer netBuffer=new StringBuffer();
+			for (NetworkAccountStore networkAccountStore : netStores) {
+				netBuffer.append(networkAccountStore.getNetworkNumber()).append(mark);
+			}
+			if (netBuffer.length()>mark.length()) {
+				String net=netBuffer.toString().substring(0,netBuffer.length()-mark.length());
+				map.put("networkAccountStores", net);
+			}else{
+				map.put("networkAccountStores", "");
+			}
+			//获得模板doc
+			String docFolder=PathUtils.getWebRoot(VocationalWorkStoreServiceImpl.class)+File.separator+DOC_FOLDER;
+			File srcDoc=new File(docFolder+File.separator+DOC_TEMPLATE);
+			//目标doc
+			targetDocFile=new File(docFolder+File.separator+id+".doc");
+			FileUtils.copyFile(srcDoc, targetDocFile);
+			//编辑
+			//写文档
+			POIFSFileSystem pfs=new POIFSFileSystem(new FileInputStream(targetDocFile));
+			HWPFDocument document=new HWPFDocument(pfs);
+			Range range = document.getRange();
+			//写数据
+			for (Map.Entry<String, String> entry : map.entrySet()) {
+				range.replaceText(entry.getKey(), entry.getValue());
+			}
+			//输出
+			fos=new FileOutputStream(targetDocFile);
+			document.write(fos);
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			IOUtils.closeQuietly(fos);
 		}
+		return targetDocFile;
 	}
 
 	@Override

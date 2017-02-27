@@ -1,6 +1,7 @@
 package com.ushine.storesinfo;
 
 import org.apache.log4j.Logger;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -15,8 +16,15 @@ public class PersonStoreServiceImplTest extends AbstractSpringJUnitTest<PersonSt
 	@Autowired IPersonStoreService service;
 	
 	@Test
+	@Ignore
 	public void testGet() throws Exception{
 		logger.warn("详细信息：\r\n"+service.findPersonStore(null, null, "1999-02-19", "2017-02-19", 1, 2, null, null, null, null, null));
 		logger.warn("详细信息：\r\n"+service.findPersonStore("infoType", "反颠覆", "2001-02-19", "2017-02-19", 1, 2, null, null, null, null, null));
+	}
+	
+	@Test
+	public void testOutputPersonStoreToWord()throws Exception{
+		String id="40283181597819b90159781a51e60001";
+		service.outputPersonStoreToWord(id);
 	}
 }
