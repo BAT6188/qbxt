@@ -12,11 +12,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-/**
- * 依据关键字查询所有库中符合的数据
- * @author octocat
- *
- */
+
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,25 +23,22 @@ import com.ushine.core.service.IPermitService;
 import com.ushine.core.service.IResourceService;
 import com.ushine.core.verify.session.UserSessionMgr;
 import com.ushine.solr.futuretask.MyFutureTask;
-import com.ushine.solr.service.IOutsideDocStoreSolrService;
 import com.ushine.solr.solrbean.MyJsonObject;
-import com.ushine.solr.solrbean.QueryBean;
 import com.ushine.solr.util.MyJSonUtils;
 import com.ushine.storesinfo.model.ClueStore;
 import com.ushine.storesinfo.model.LeadSpeakStore;
 import com.ushine.storesinfo.model.OutsideDocStore;
 import com.ushine.storesinfo.model.PersonStore;
 import com.ushine.storesinfo.model.VocationalWorkStore;
-import com.ushine.storesinfo.service.IClueStoreService;
-import com.ushine.storesinfo.service.ILeadSpeakStoreService;
-import com.ushine.storesinfo.service.IOutsideDocStoreService;
-import com.ushine.storesinfo.service.IPersonStoreService;
-import com.ushine.storesinfo.service.IVocationalWorkStoreService;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-
-@Controller
+/**
+ * 依据关键字查询所有库中符合的数据
+ * @author octocat
+ *
+ */
+@Controller(value="searchAllStoresController")
 public class SearchAllStoresController {
 	@Autowired
 	private IResourceService resourceService;

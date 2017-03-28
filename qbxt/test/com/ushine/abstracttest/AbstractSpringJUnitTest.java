@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component()
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "/applicationContext.xml")
+@ContextConfiguration(locations = {"/applicationContext.xml","classpath*:/controller-servlet.xml"})
 @TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = false)
 @Transactional
 public abstract class AbstractSpringJUnitTest<T> extends AbstractAssert {

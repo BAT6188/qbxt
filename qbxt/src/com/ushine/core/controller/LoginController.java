@@ -31,6 +31,8 @@ import com.ushine.core.service.IRoleService;
 import com.ushine.core.verify.ILoginService;
 import com.ushine.core.verify.session.UserSessionMgr;
 
+import jxl.common.log.LoggerName;
+
 /**
  * 登录控制器，接受用户登录请求，验证成功后将用户信
  * 息保存到session，并添加在线用户列表，提供查看在线人数及用户名
@@ -39,7 +41,7 @@ import com.ushine.core.verify.session.UserSessionMgr;
  * @Modeify xiongrt 140826
  *
  */
-@Controller
+@Controller(value="loginController")
 public class LoginController {
 	private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
 	
@@ -72,6 +74,7 @@ public class LoginController {
 		loginfo.setOperationType(com.tdcq.common.logging.Logger.LOG_OPERATION_TYPE_LOGIN);
 		try {
 			UserSessionMgr sessionMgr = UserSessionMgr.getInstance();
+			
 			String userInfo = loginService.isLogin(uName, EncryptUtils.getEncrypt(uPass));
 			if(userInfo == null) {
 				loginfo.setResult("登录失败：用户名或密码错误");
@@ -104,16 +107,15 @@ public class LoginController {
 				}
 			}
 		} catch(Exception e) {
-			logger.error("用户登录操作出现异常." + e);
+			e.printStackTrace();
+			logger.error("用户登录操作出现异常." + e.getMessage());
 			try {
 				loginfo.setResult("登录失败：用户名或密码错误");
 				request.setAttribute("error", "用户名或密码错误");
 				request.getRequestDispatcher("login.jsp").forward(request, response);
 			} catch (ServletException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		} finally{
